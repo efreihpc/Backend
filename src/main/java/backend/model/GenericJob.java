@@ -32,7 +32,7 @@ public abstract class GenericJob<T> implements Job {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long m_id;
     private String m_name;
-    private Result<T> m_result;
+    private T m_result;
 
 	@OneToMany
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
@@ -66,20 +66,16 @@ public abstract class GenericJob<T> implements Job {
     	return m_name;
     }
     
-    public Result<T> getResult()
+    public T getResult()
     {
     	return m_result;
     }
     
-    void setResults(Result<T> result)
+    void setResults(T result)
     {
     	m_result = result;
     }
     
-    protected void addResult(String key, T value)
-    {
-    	m_result.addValue(key, value);
-    }
     
     public void addSecondaryJob(GenericJob job)
     {

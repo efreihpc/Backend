@@ -4,6 +4,6 @@ import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
-public interface ServiceProviderRepository extends CrudRepository<GenericServiceProvider, Long>{
+public interface ResultRepository extends CrudRepository<Result, Long>{
 	List<GenericServiceProvider> findByName(String name);
 }
