@@ -19,5 +19,10 @@ public abstract class GenericService<T> implements Service<T> {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
 	private long m_id;
-    private String name;
+    private static String m_name;
+    
+    public static String name()
+    {
+    	return m_name;
+    }
 }
