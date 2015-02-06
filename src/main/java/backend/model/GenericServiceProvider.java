@@ -2,7 +2,9 @@ package backend.model;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -30,14 +32,25 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
 	private long m_id;
-    private String name;
+    private static String m_name;
     
     @Transient
-    private HashMap<String, Class> m_registeredServices;
+    private HashMap<String, Class<GenericService>> m_registeredServices;
     
     public GenericServiceProvider()
     {
     	registerServices();
+    }
+    
+    public static String name()
+    {
+    	return m_name;
+    }
+    
+    @Override
+    public List<String> services()
+    {
+    	return new ArrayList<String>(m_registeredServices.keySet());
     }
     
     private void registerServices()
