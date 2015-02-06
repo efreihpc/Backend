@@ -37,6 +37,11 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     
     public GenericServiceProvider()
     {
+    	registerServices();
+    }
+    
+    private void registerServices()
+    {
     	// create scanner and disable default filters (that is the 'false' argument)
     	final ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
     	// add include filters which matches all the classes (or use your own)
