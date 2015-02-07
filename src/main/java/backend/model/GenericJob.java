@@ -13,6 +13,8 @@ import javax.persistence.Transient;
 
 import org.springframework.core.task.TaskExecutor;
 
+import backend.system.JobExecutor;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @Entity
@@ -38,16 +40,16 @@ public abstract class GenericJob<T> implements Job {
     private List<GenericJob> m_secondaryJobs = new Vector<GenericJob>();
 	
     @Transient
-    private TaskExecutor m_taskExecutor;
+    private JobExecutor m_executor;
     
     public GenericJob()
     {
     	
     }
         
-    public GenericJob(TaskExecutor executor)
+    public GenericJob(JobExecutor executor)
     {
-    	m_taskExecutor = executor;
+    	m_executor = executor;
     }
     
     public long getId()
@@ -81,25 +83,30 @@ public abstract class GenericJob<T> implements Job {
     	m_secondaryJobs.add(job);
     }
     
-    public void taskExecutor(TaskExecutor executor)
+    public void executor(JobExecutor executor)
     {
-    	m_taskExecutor = executor;
+    	m_executor = executor;
     	for (GenericJob job : m_secondaryJobs) {
-    		job.taskExecutor(executor);
+    		job.executor(executor);
     	}
     }
     
-    public TaskExecutor taskExecutor()
+    public JobExecutor executor()
     {
-    	return m_taskExecutor;
+    	return m_executor;
+    }
+    
+    public JobExecutor taskExecutor()
+    {
+    	return m_executor;
     }
     
     private void runSecondaryJobs()
     {
-    	if(m_taskExecutor != null)
+    	if(m_executor != null)
 	    	for(GenericJob job : m_secondaryJobs)
 	    	{
-	    		m_taskExecutor.execute(job);
+	    		m_executor.execute(job);
 	    	}
     }
     

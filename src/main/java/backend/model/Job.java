@@ -1,9 +1,10 @@
 package backend.model;
 
+import backend.system.JobExecutor;
 import backend.system.JobPersistenceUnit;
 
 public interface Job extends Runnable {
-	
-	public void persistenceUnit(JobPersistenceUnit persistenceUnit);
+	public void executor(JobExecutor executor);
+	public JobExecutor executor();
 
 }

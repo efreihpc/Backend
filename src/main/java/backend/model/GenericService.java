@@ -60,4 +60,15 @@ public abstract class GenericService<T> implements Service<T> {
 	{
 		return m_jobExecutor;
 	}
+	
+	protected void executeJob(GenericJob job)
+	{
+		job.executor(m_jobExecutor);
+		
+//		Persist persist = new Persist(m_taskExecutor, m_jobRepository, job);
+//		job.addSecondaryJob(persist);
+		
+		m_jobRepository.save(job);
+		m_jobExecutor.execute(job);
+	}
 }

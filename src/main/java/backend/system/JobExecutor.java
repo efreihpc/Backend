@@ -5,6 +5,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import backend.model.Job;
+
 public class JobExecutor {
 	
 	private TaskExecutor m_taskExecutor;
@@ -16,5 +18,9 @@ public class JobExecutor {
 	    m_taskExecutor = (ThreadPoolTaskExecutor) m_context.getBean("taskExecutor");
 	}
 	
+	public void execute(Job job)
+	{
+		m_taskExecutor.execute(job);
+	}
 
 }
