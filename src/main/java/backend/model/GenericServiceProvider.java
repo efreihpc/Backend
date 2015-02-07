@@ -19,6 +19,8 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 
+import backend.system.GlobalPersistenceUnit;
+import backend.system.JobExecutor;
 import backend.system.ServicePersistenceUnit;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -39,10 +41,15 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     @Transient
     private HashMap<String, Class<GenericService>> m_registeredServices;
     @Transient
-    private ServicePersistenceUnit m_servicePersistenceUnit;
+    private GlobalPersistenceUnit m_globalPersistenceUnit;
+    @Transient
+    private ServiceRepository m_serviceRepository;
+    @Transient
+    JobExecutor m_jobExecutor;
     
     public GenericServiceProvider()
     {
+    	m_jobExecutor = new JobExecutor();
     	registerServices();
     }
     
@@ -62,7 +69,14 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     {
     	Class<GenericService> serviceClass = m_registeredServices.get(serviceName);
     	GenericService<E> newService = (GenericService<E>) serviceClass.newInstance();
-    	m_servicePersistenceUnit.serviceRepository().save(newService);
+    	
+    	newService.jobExecutor(m_jobExecutor);
+    	
+    	if(m_globalPersistenceUnit != null)
+    		newService.persistenceUnit(m_globalPersistenceUnit);
+    	
+    	if(m_serviceRepository != null)
+    		m_serviceRepository.save(newService);
     	
     	return newService;
     }
@@ -118,14 +132,15 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     }
     
 	@Override
-	public void persistenceUnit(ServicePersistenceUnit persistenceUnit) {
-		m_servicePersistenceUnit = persistenceUnit;
+	public void persistenceUnit(GlobalPersistenceUnit persistenceUnit) {
+		m_globalPersistenceUnit = persistenceUnit;
+		m_serviceRepository = persistenceUnit.serviceRepository();
 	}
 	
 	@Override
-	public ServicePersistenceUnit persistenceUnit()
+	public GlobalPersistenceUnit persistenceUnit()
 	{
-		return m_servicePersistenceUnit;
+		return m_globalPersistenceUnit;
 	}
     
 }

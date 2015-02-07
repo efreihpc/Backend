@@ -2,12 +2,13 @@ package backend.model;
 
 import java.util.List;
 
+import backend.system.GlobalPersistenceUnit;
 import backend.system.ServicePersistenceUnit;
 
 public interface ServiceProvider {
 	
-	public void persistenceUnit(ServicePersistenceUnit persistenceUnit);
-	public ServicePersistenceUnit persistenceUnit();
+	public void persistenceUnit(GlobalPersistenceUnit persistenceUnit);
+	public GlobalPersistenceUnit persistenceUnit();
 	
 	// returns a hasmap cansisting of a preconfigured Service and the services description
 	List<String> services();

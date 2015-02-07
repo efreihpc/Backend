@@ -1,6 +1,5 @@
 package backend.model;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -82,15 +81,15 @@ public abstract class GenericJob<T> implements Job {
     	m_secondaryJobs.add(job);
     }
     
-    public void setTaskExecutor(TaskExecutor executor)
+    public void taskExecutor(TaskExecutor executor)
     {
     	m_taskExecutor = executor;
     	for (GenericJob job : m_secondaryJobs) {
-    		job.setTaskExecutor(executor);
+    		job.taskExecutor(executor);
     	}
     }
     
-    public TaskExecutor getTaskExecutor()
+    public TaskExecutor taskExecutor()
     {
     	return m_taskExecutor;
     }
