@@ -19,6 +19,8 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 
+import backend.system.ServicePersistenceUnit;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @Entity
@@ -36,6 +38,8 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     
     @Transient
     private HashMap<String, Class<GenericService>> m_registeredServices;
+    @Transient
+    private ServicePersistenceUnit m_servicePersistenceUnit;
     
     public GenericServiceProvider()
     {
@@ -51,6 +55,23 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     public List<String> services()
     {
     	return new ArrayList<String>(m_registeredServices.keySet());
+    }
+    
+    @Override
+    public <E> GenericService<E> service(String serviceName) throws InstantiationException, IllegalAccessException
+    {
+    	Class<GenericService> serviceClass = m_registeredServices.get(serviceName);
+    	GenericService<E> newService = (GenericService<E>) serviceClass.newInstance();
+    	m_servicePersistenceUnit.serviceRepository().save(newService);
+    	
+    	return newService;
+    }
+    
+    @Override
+    public <T> T executeService(Service<T> serviceToExecute)
+    {
+    	serviceToExecute.execute();
+    	return serviceToExecute.result();
     }
     
     private void registerServices()
@@ -95,5 +116,16 @@ public abstract class GenericServiceProvider implements ServiceProvider{
 			}
     	}
     }
+    
+	@Override
+	public void persistenceUnit(ServicePersistenceUnit persistenceUnit) {
+		m_servicePersistenceUnit = persistenceUnit;
+	}
+	
+	@Override
+	public ServicePersistenceUnit persistenceUnit()
+	{
+		return m_servicePersistenceUnit;
+	}
     
 }
