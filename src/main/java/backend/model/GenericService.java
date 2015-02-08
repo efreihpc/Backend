@@ -1,5 +1,7 @@
 package backend.model;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,6 +26,7 @@ public abstract class GenericService<T> implements Service<T> {
     @GeneratedValue(strategy=GenerationType.AUTO)
 	private long m_id;
     private static String m_name;
+    private GenericService<T> m_dataSource;
     
     @Transient
     private GlobalPersistenceUnit m_globalPersistenceUnit;
@@ -47,6 +50,21 @@ public abstract class GenericService<T> implements Service<T> {
 	public GlobalPersistenceUnit persistenceUnit()
 	{
 		return m_globalPersistenceUnit;
+	}
+	
+	public void dataSource(GenericService<T> dataSource)
+	{
+		m_dataSource = dataSource;
+	}
+	
+	public GenericService<T> dataSource()
+	{
+		return m_dataSource;
+	}
+	
+	protected T data()
+	{
+		return m_dataSource.result();
 	}
 	
 	@Override

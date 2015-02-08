@@ -11,8 +11,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
-import org.springframework.core.task.TaskExecutor;
-
 import backend.system.JobExecutor;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -32,7 +30,7 @@ public abstract class GenericJob<T> implements Job {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long m_id;
-    private String m_name;
+    private static String s_name;
     private T m_result;
 
 	@OneToMany
@@ -57,26 +55,25 @@ public abstract class GenericJob<T> implements Job {
     	return m_id;
     }
     
-    public void setName(String name)
+    public static void name(String name)
     {
-    	m_name = name;
+    	s_name = name;
     }
     
-    public String getName()
+    public static String name()
     {
-    	return m_name;
+    	return s_name;
     }
     
-    public T getResult()
+    public T result()
     {
     	return m_result;
     }
     
-    void setResults(T result)
+    void result(T result)
     {
     	m_result = result;
-    }
-    
+    } 
     
     public void addSecondaryJob(GenericJob job)
     {
