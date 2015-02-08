@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.Transient;
 
+import backend.model.job.PersistJob;
 import backend.system.GlobalPersistenceUnit;
 import backend.system.JobExecutor;
 
@@ -83,10 +84,17 @@ public abstract class GenericService<T> implements Service<T> {
 	{
 		job.executor(m_jobExecutor);
 		
-//		Persist persist = new Persist(m_taskExecutor, m_jobRepository, job);
-//		job.addSecondaryJob(persist);
+		PersistJob persist = new PersistJob();
+		persist.jobRepository(m_jobRepository);
+		persist.jobToPersist(job);
+		job.addSecondaryJob(persist);
 		
 		m_jobRepository.save(job);
 		m_jobExecutor.execute(job);
+	}
+	
+	public Iterable<GenericJob> getAllJobs()
+	{
+		return m_jobRepository.findAll();
 	}
 }

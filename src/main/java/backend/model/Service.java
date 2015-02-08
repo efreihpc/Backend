@@ -15,10 +15,4 @@ public interface Service<T> {
 	
 	public void execute();
 	public T result();
-	
-	//set the datasource thats used by the service 
-	public void dataSource(Service<T> dataService);
-	
-	public Service<T> dataSource();
-
 }

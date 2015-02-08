@@ -1,7 +1,8 @@
-package backend.model.SPHPC;
+package backend.model.job;
 
 import backend.model.GenericJob;
 import backend.model.JobRepository;
+import backend.model.SPHPC.SimpleResult;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
