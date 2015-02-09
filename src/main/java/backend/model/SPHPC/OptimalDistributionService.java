@@ -5,15 +5,16 @@ import backend.model.result.SimpleResult;
 
 public class OptimalDistributionService extends GenericService<SimpleResult> {
 
+	private PrototypeJob m_job;
+	
 	@Override
 	public void execute() {
-		// TODO Auto-generated method stub
-		
+		m_job = new PrototypeJob();
+		executeJob(m_job);
 	}
 
 	@Override
 	public SimpleResult result() {
-		// TODO Auto-generated method stub
-		return null;
+		return m_job.result();
 	}
 }
