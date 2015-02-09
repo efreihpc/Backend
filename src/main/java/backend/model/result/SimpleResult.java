@@ -1,4 +1,4 @@
-package backend.model.SPHPC;
+package backend.model.result;
 
 import java.util.HashMap;
 
@@ -9,7 +9,7 @@ public class SimpleResult implements Result<String>{
 	HashMap<String, String> m_storage = new HashMap<String, String>();
 
 	@Override
-	public void addValue(String key, String value) {
+	public void value(String key, String value) {
 		m_storage.put(key, value)	;	
 	}
 	@Override

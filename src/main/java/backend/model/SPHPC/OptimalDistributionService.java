@@ -1,10 +1,7 @@
 package backend.model.SPHPC;
 
 import backend.model.GenericService;
-import backend.model.Service;
-import backend.system.GlobalPersistenceUnit;
-import backend.system.JobExecutor;
-import backend.system.JobPersistenceUnit;
+import backend.model.result.SimpleResult;
 
 public class OptimalDistributionService extends GenericService<SimpleResult> {
 
