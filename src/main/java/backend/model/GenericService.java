@@ -1,10 +1,12 @@
 package backend.model;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import backend.model.job.PersistJob;
@@ -19,12 +21,15 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 	    use = JsonTypeInfo.Id.NAME,  
 	    include = JsonTypeInfo.As.PROPERTY,  
 	    property = "type")  
-public abstract class GenericService<T> implements Service<T> {
+public abstract class GenericService<T extends Result> implements Service<T> {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
 	private long m_id;
     private static String m_name;
+    
+    @OneToOne(fetch = FetchType.EAGER, targetEntity = GenericService.class)
+	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
     private GenericService<T> m_dataSource;
     
     @Transient

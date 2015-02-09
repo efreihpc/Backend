@@ -35,7 +35,7 @@ public abstract class GenericServiceProvider implements ServiceProvider{
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-	private long m_id;
+	private long m_uid;
     private static String m_name;
     
     @Transient
@@ -49,6 +49,7 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     
     public GenericServiceProvider()
     {
+    	m_registeredServices = new HashMap<String, Class<GenericService>>();
     	m_jobExecutor = new JobExecutor();
     	registerServices();
     }
@@ -65,7 +66,7 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     }
     
     @Override
-    public <E> GenericService<E> service(String serviceName) throws InstantiationException, IllegalAccessException
+    public <E extends Result> GenericService<E> service(String serviceName) throws InstantiationException, IllegalAccessException
     {
     	Class<GenericService> serviceClass = m_registeredServices.get(serviceName);
     	GenericService<E> newService = (GenericService<E>) serviceClass.newInstance();
@@ -82,7 +83,7 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     }
     
     @Override
-    public <T> T executeService(Service<T> serviceToExecute)
+    public <T extends Result> T executeService(Service<T> serviceToExecute)
     {
     	serviceToExecute.execute();
     	return serviceToExecute.result();
@@ -106,7 +107,8 @@ public abstract class GenericServiceProvider implements ServiceProvider{
 				Method method = registeredClass.getMethod("name");
 				String classname = (String) method.invoke(null);
     		
-				m_registeredServices.put(classname, registeredClass);
+				if(registeredClass != null)
+					m_registeredServices.put(classname, registeredClass);
 			} 
 			catch (NoSuchMethodException | SecurityException e) 
 			{

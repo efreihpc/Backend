@@ -2,9 +2,12 @@ package backend.model.result;
 
 import java.util.HashMap;
 
+import javax.persistence.Entity;
+
 import backend.model.Result;
 
-public class SimpleResult implements Result<String>{
+@Entity
+public class SimpleResult extends Result<String>{
 	
 	HashMap<String, String> m_storage = new HashMap<String, String>();
 

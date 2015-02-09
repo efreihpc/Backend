@@ -4,12 +4,16 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
+
+import org.hibernate.annotations.*;
 
 import backend.system.JobExecutor;
 
@@ -25,12 +29,15 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 //    @Type(value = Prototype.class, name = "Prototype") })
 
 //T specifies the jobs result type
-public abstract class GenericJob<T> implements Job {
+public abstract class GenericJob<T extends Result> implements Job {
 	
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long m_id;
     private static String s_name;
+    
+    @OneToOne(fetch = FetchType.EAGER, targetEntity = Result.class)
+	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
     private T m_result;
 
 	@OneToMany
@@ -41,9 +48,7 @@ public abstract class GenericJob<T> implements Job {
     private JobExecutor m_executor;
     
     public GenericJob()
-    {
-    	
-    }
+    {}
         
     public GenericJob(JobExecutor executor)
     {
