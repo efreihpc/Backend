@@ -1,7 +1,8 @@
 package backend.model;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,6 @@ import org.springframework.core.type.filter.TypeFilter;
 
 import backend.system.GlobalPersistenceUnit;
 import backend.system.JobExecutor;
-import backend.system.ServicePersistenceUnit;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -32,14 +32,13 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 	    include = JsonTypeInfo.As.PROPERTY,  
 	    property = "type")  
 public abstract class GenericServiceProvider implements ServiceProvider{
-
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
 	private long m_uid;
     private static String m_name;
     
     @Transient
-    private HashMap<String, Class<GenericService>> m_registeredServices;
+    private HashMap<String, GenericService.ServiceDescriptor> m_registeredServices;
     @Transient
     private GlobalPersistenceUnit m_globalPersistenceUnit;
     @Transient
@@ -50,7 +49,7 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     public GenericServiceProvider()
     {
     	name(this.getClass().getName());
-    	m_registeredServices = new HashMap<String, Class<GenericService>>();
+    	m_registeredServices = new HashMap<String, GenericService.ServiceDescriptor>();
     	m_jobExecutor = new JobExecutor();
     	registerServices();
     }
@@ -66,15 +65,15 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     }
     
     @Override
-    public List<String> services()
+    public HashMap<String, GenericService.ServiceDescriptor> services()
     {
-    	return new ArrayList<String>(m_registeredServices.keySet());
+    	return m_registeredServices;
     }
     
     @Override
     public <E extends Result> GenericService<E> service(String serviceName) throws InstantiationException, IllegalAccessException
     {
-    	Class<GenericService> serviceClass = m_registeredServices.get(serviceName);
+    	Class<GenericService> serviceClass = m_registeredServices.get(serviceName).classDescriptor();
     	GenericService<E> newService = (GenericService<E>) serviceClass.newInstance();
     	
     	newService.jobExecutor(m_jobExecutor);
@@ -110,9 +109,14 @@ public abstract class GenericServiceProvider implements ServiceProvider{
 				Class<GenericService> registeredClass;
 				registeredClass = (Class<GenericService>) Class.forName(definition.getBeanClassName());
 
-				String classname = registeredClass.newInstance().name(); 
-				if(registeredClass != null)
-					m_registeredServices.put(classname, registeredClass);
+				GenericService instance = registeredClass.newInstance();
+				String commonName = instance.name();
+				String identifier = registeredClass.getCanonicalName();
+				MessageDigest messageDigest = MessageDigest.getInstance("SHA");
+				messageDigest.update(identifier.getBytes());
+				identifier = String.format("%040x", new BigInteger(1, messageDigest.digest()));
+				
+				m_registeredServices.put(identifier, instance.descriptor());
 			} 
 			catch (ClassNotFoundException e) 
 			{
@@ -127,6 +131,9 @@ public abstract class GenericServiceProvider implements ServiceProvider{
 				e.printStackTrace();
 			} 
 			catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchAlgorithmException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

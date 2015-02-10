@@ -13,6 +13,8 @@ import backend.model.job.PersistJob;
 import backend.system.GlobalPersistenceUnit;
 import backend.system.JobExecutor;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @Entity
@@ -22,6 +24,37 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 	    include = JsonTypeInfo.As.PROPERTY,  
 	    property = "type")  
 public abstract class GenericService<T extends Result> implements Service<T> {
+	
+	public class ServiceDescriptor
+	{
+		@JsonIgnore
+		Class<GenericService> m_classDescriptor;
+		
+		@JsonProperty("commonName")
+		String m_commonName;
+		
+		public ServiceDescriptor(Class<GenericService> clazz)
+		{
+			m_classDescriptor = clazz;
+		}
+		
+		public Class<GenericService> classDescriptor()
+		{
+			return m_classDescriptor;
+		}	
+		
+		@JsonProperty("commonName")
+		public void commonName(String name)
+		{
+			m_commonName = name;
+		}
+		
+		@JsonProperty("commonName")
+		public String commonName()
+		{
+			return m_commonName;
+		}
+	}
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -42,6 +75,13 @@ public abstract class GenericService<T extends Result> implements Service<T> {
     public GenericService()
     {
     	name(this.getClass().getName());
+    }
+    
+    public ServiceDescriptor descriptor()
+    {
+    	ServiceDescriptor descriptor = new ServiceDescriptor((Class<GenericService>)this.getClass());
+    	descriptor.commonName(name());
+    	return descriptor;
     }
     
     public static String name()

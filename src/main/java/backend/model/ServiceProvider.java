@@ -1,5 +1,6 @@
 package backend.model;
 
+import java.util.HashMap;
 import java.util.List;
 
 import backend.system.GlobalPersistenceUnit;
@@ -11,7 +12,7 @@ public interface ServiceProvider {
 	public GlobalPersistenceUnit persistenceUnit();
 	
 	// returns a hasmap cansisting of a preconfigured Service and the services description
-	List<String> services();
+	HashMap<String, GenericService.ServiceDescriptor> services();
 	
 	// returns the service identified by its Classname
 	public <T extends Result> Service<T> service(String serviceName) throws InstantiationException, IllegalAccessException;
