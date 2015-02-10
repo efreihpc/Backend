@@ -39,9 +39,19 @@ public abstract class GenericService<T extends Result> implements Service<T> {
     @Transient 
     private JobExecutor m_jobExecutor;
     
+    public GenericService()
+    {
+    	name(this.getClass().getName());
+    }
+    
     public static String name()
     {
     	return m_name;
+    }
+    
+    protected static void name(String name)
+    {
+    	m_name = name;
     }
     
 	@Override

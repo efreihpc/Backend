@@ -48,7 +48,9 @@ public abstract class GenericJob<T extends Result> implements Job {
     private JobExecutor m_executor;
     
     public GenericJob()
-    {}
+    {
+    	name(this.getClass().getName());
+    }
         
     public GenericJob(JobExecutor executor)
     {
@@ -65,7 +67,7 @@ public abstract class GenericJob<T extends Result> implements Job {
     	s_name = name;
     }
     
-    public static String name()
+    protected static String name()
     {
     	return s_name;
     }

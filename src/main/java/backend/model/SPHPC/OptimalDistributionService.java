@@ -7,6 +7,11 @@ public class OptimalDistributionService extends GenericService<SimpleResult> {
 
 	private PrototypeJob m_job;
 	
+	public OptimalDistributionService()
+	{
+		name("Optimal Distribution Service");
+	}
+		
 	@Override
 	public void execute() {
 		m_job = new PrototypeJob();

@@ -49,6 +49,7 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     
     public GenericServiceProvider()
     {
+    	name(this.getClass().getName());
     	m_registeredServices = new HashMap<String, Class<GenericService>>();
     	m_jobExecutor = new JobExecutor();
     	registerServices();
@@ -57,6 +58,11 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     public static String name()
     {
     	return m_name;
+    }
+    
+    protected static void name(String name)
+    {
+    	m_name = name;
     }
     
     @Override
@@ -104,16 +110,10 @@ public abstract class GenericServiceProvider implements ServiceProvider{
 				Class<GenericService> registeredClass;
 				registeredClass = (Class<GenericService>) Class.forName(definition.getBeanClassName());
 
-				Method method = registeredClass.getMethod("name");
-				String classname = (String) method.invoke(null);
-    		
+				String classname = registeredClass.newInstance().name(); 
 				if(registeredClass != null)
 					m_registeredServices.put(classname, registeredClass);
 			} 
-			catch (NoSuchMethodException | SecurityException e) 
-			{
-				e.printStackTrace();
-			}
 			catch (ClassNotFoundException e) 
 			{
 				e.printStackTrace();
@@ -126,8 +126,8 @@ public abstract class GenericServiceProvider implements ServiceProvider{
 			{
 				e.printStackTrace();
 			} 
-			catch (InvocationTargetException e) 
-			{
+			catch (InstantiationException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
     	}
