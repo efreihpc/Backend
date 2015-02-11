@@ -65,6 +65,12 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     }
     
     @Override
+    public GenericService.ServiceDescriptor serviceDescriptor(String serviceIdentifier)
+    {
+    	return m_registeredServices.get(serviceIdentifier);
+    }
+    
+    @Override
     public HashMap<String, GenericService.ServiceDescriptor> services()
     {
     	return m_registeredServices;

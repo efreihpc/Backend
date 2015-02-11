@@ -19,4 +19,9 @@ public class Backend {
 	{
 		return m_serviceProvider.services();
 	}
+	
+	public GenericService.ServiceDescriptor serviceDescriptor(String serviceIdentifier)
+	{
+		return m_serviceProvider.serviceDescriptor(serviceIdentifier);
+	}
 }
