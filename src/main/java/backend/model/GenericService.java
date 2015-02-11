@@ -65,6 +65,10 @@ public abstract class GenericService<T extends Result> implements Service<T> {
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
     private GenericService<T> m_dataSource;
     
+    @OneToOne(fetch = FetchType.EAGER, targetEntity = GenericService.class)
+	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private T m_result;
+    
     @Transient
     private GlobalPersistenceUnit m_globalPersistenceUnit;
     @Transient
@@ -92,6 +96,11 @@ public abstract class GenericService<T extends Result> implements Service<T> {
     protected static void name(String name)
     {
     	m_name = name;
+    }
+    
+    protected void result(T result)
+    {
+    	m_result = result;
     }
     
 	@Override
@@ -142,7 +151,9 @@ public abstract class GenericService<T extends Result> implements Service<T> {
 		persist.jobToPersist(job);
 		job.addSecondaryJob(persist);
 		
-		m_jobRepository.save(job);
+		if(m_jobRepository != null)
+			m_jobRepository.save(job);
+		
 		m_jobExecutor.execute(job);
 	}
 	

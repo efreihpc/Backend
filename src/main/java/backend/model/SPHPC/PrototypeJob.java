@@ -27,6 +27,7 @@ public class PrototypeJob extends GenericJob<SimpleResult>{
     public PrototypeJob()
     {
     	name("Prototype");
+    	result(new SimpleResult());
     }
 	
 	public void execute()

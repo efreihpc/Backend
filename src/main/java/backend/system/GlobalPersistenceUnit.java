@@ -18,7 +18,7 @@ public class GlobalPersistenceUnit implements
 	ServiceRepository m_serviceRepository;
 	JobRepository m_jobRepository;
 	
-	GlobalPersistenceUnit()
+	public GlobalPersistenceUnit()
 	{
 		m_context = new ClassPathXmlApplicationContext("Spring-Config.xml");
 		m_serviceProviderRepository = m_context.getBean(ServiceProviderRepository.class);

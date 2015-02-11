@@ -51,11 +51,6 @@ public abstract class GenericJob<T extends Result> implements Job {
     {
     	name(this.getClass().getName());
     }
-        
-    public GenericJob(JobExecutor executor)
-    {
-    	m_executor = executor;
-    }
     
     public long getId()
     {
@@ -77,7 +72,7 @@ public abstract class GenericJob<T extends Result> implements Job {
     	return m_result;
     }
     
-    void result(T result)
+    protected void result(T result)
     {
     	m_result = result;
     } 

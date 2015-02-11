@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import backend.model.GenericService;
+import backend.model.Service;
 import backend.model.SPHPC.FinanceServiceProvider;
+import backend.system.GlobalPersistenceUnit;
 
 public class Backend {
 	
@@ -13,6 +15,7 @@ public class Backend {
 	public Backend()
 	{
 		m_serviceProvider = new FinanceServiceProvider();
+		m_serviceProvider.persistenceUnit(new GlobalPersistenceUnit());
 	}
 	
 	public HashMap<String, GenericService.ServiceDescriptor> services()
@@ -23,5 +26,18 @@ public class Backend {
 	public GenericService.ServiceDescriptor serviceDescriptor(String serviceIdentifier)
 	{
 		return m_serviceProvider.serviceDescriptor(serviceIdentifier);
+	}
+	
+	public void schedule(String serviceIdentifier)
+	{
+		Service service;
+		try {
+			service = m_serviceProvider.service(serviceIdentifier);
+			m_serviceProvider.executeService(service);
+		} 
+		catch (InstantiationException | IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

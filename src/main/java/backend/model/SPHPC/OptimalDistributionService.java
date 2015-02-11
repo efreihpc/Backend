@@ -1,15 +1,26 @@
 package backend.model.SPHPC;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
+
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 import backend.model.GenericService;
 import backend.model.result.SimpleResult;
 
+@Entity
+@JsonTypeName("SPHPCOptimalDistributionService")
 public class OptimalDistributionService extends GenericService<SimpleResult> {
 
+    @OneToOne
+	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private PrototypeJob m_job;
 	
 	public OptimalDistributionService()
 	{
 		name("Optimal Distribution Service");
+		result(new SimpleResult());
 	}
 		
 	@Override

@@ -30,5 +30,10 @@ public class HPCController{
     public GenericService.ServiceDescriptor service(@PathVariable String identifier) {
     	return m_backend.serviceDescriptor(identifier);
     }
+    
+    @RequestMapping(value = "/schedule/{identifier}", method = RequestMethod.GET)
+    public void schedule(@PathVariable String identifier) {
+    	m_backend.schedule(identifier);
+    }
 
 }
