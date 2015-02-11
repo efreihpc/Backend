@@ -34,7 +34,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 public abstract class GenericServiceProvider implements ServiceProvider{
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-	private long m_uid;
+	private long m_id;
     private static String m_name;
     
     @Transient

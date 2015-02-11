@@ -1,22 +1,25 @@
 package backend.model;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
 public abstract class Result<T> {
 	
-	@Id
-	private int m_uid;
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+	private long m_id;
 	
-	public void uid(int uid)
+	public void id(long id)
 	{
-		m_uid = uid;
+		m_id = id;
 	}
 	
-	public int uid()
+	public long id()
 	{
-		return m_uid;
+		return m_id;
 	}
 		
 	public abstract void value(String key, T value);

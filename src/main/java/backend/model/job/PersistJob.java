@@ -34,7 +34,6 @@ public class PersistJob extends GenericJob<SimpleResult> {
 	
 	@Override
 	protected void execute() {
-		System.out.println("Persisting");
 		m_jobRepository.save(this.m_jobToPersist);	
 	}
 	
