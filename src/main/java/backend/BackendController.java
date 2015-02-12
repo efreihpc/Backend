@@ -12,13 +12,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import backend.model.service.GenericService;
+import backend.system.GlobalState;
 
 @Component
 @Controller
 @RestController
 public class BackendController{
 	
-	private Backend m_backend = new Backend();
+	private Backend m_backend =  GlobalState.get("Backend");
 	
     @RequestMapping(value = "/services", method = RequestMethod.GET)
     public HashMap<String, GenericService.ServiceDescriptor> services() {

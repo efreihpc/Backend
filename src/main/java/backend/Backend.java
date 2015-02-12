@@ -7,6 +7,7 @@ import backend.model.SPHPC.FinanceServiceProvider;
 import backend.model.service.GenericService;
 import backend.model.service.Service;
 import backend.system.GlobalPersistenceUnit;
+import backend.system.GlobalState;
 
 public class Backend {
 	
@@ -15,7 +16,10 @@ public class Backend {
 	public Backend()
 	{
 		m_serviceProvider = new FinanceServiceProvider();
-		m_serviceProvider.persistenceUnit(new GlobalPersistenceUnit());
+		
+		GlobalPersistenceUnit persistence = new GlobalPersistenceUnit();
+		m_serviceProvider.persistenceUnit(persistence);
+		GlobalState.set("GlobalPersistenceUnit", persistence);
 	}
 	
 	public HashMap<String, GenericService.ServiceDescriptor> services()
