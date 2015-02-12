@@ -1,4 +1,4 @@
-package backend.model;
+package backend.model.service;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,7 +9,10 @@ import javax.persistence.Inheritance;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import backend.model.job.GenericJob;
+import backend.model.job.JobRepository;
 import backend.model.job.PersistJob;
+import backend.model.result.Result;
 import backend.system.GlobalPersistenceUnit;
 import backend.system.JobExecutor;
 

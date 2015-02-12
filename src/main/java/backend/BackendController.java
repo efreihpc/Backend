@@ -1,4 +1,4 @@
-package frontend;
+package backend;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,13 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import backend.Backend;
-import backend.model.GenericService;
+import backend.model.service.GenericService;
 
 @Component
 @Controller
 @RestController
-public class HPCController{
+public class BackendController{
 	
 	private Backend m_backend = new Backend();
 	

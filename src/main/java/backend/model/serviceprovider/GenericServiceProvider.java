@@ -1,4 +1,4 @@
-package backend.model;
+package backend.model.serviceprovider;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -20,6 +20,10 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 
+import backend.model.result.Result;
+import backend.model.service.GenericService;
+import backend.model.service.Service;
+import backend.model.service.ServiceRepository;
 import backend.system.GlobalPersistenceUnit;
 import backend.system.JobExecutor;
 

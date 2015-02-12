@@ -4,8 +4,6 @@ import java.util.HashMap;
 
 import javax.persistence.Entity;
 
-import backend.model.Result;
-
 @Entity
 public class SimpleResult extends Result<String>{
 	

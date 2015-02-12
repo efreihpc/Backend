@@ -4,9 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
 
-import backend.model.GenericJob;
-import backend.model.GenericService;
-import backend.model.Result;
+import backend.model.result.Result;
+import backend.model.service.GenericService;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 

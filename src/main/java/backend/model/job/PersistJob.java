@@ -1,7 +1,5 @@
 package backend.model.job;
 
-import backend.model.GenericJob;
-import backend.model.JobRepository;
 import backend.model.result.SimpleResult;
 
 import javax.persistence.Entity;

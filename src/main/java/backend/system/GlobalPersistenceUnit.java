@@ -3,9 +3,9 @@ package backend.system;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import backend.model.JobRepository;
-import backend.model.ServiceProviderRepository;
-import backend.model.ServiceRepository;
+import backend.model.job.JobRepository;
+import backend.model.service.ServiceRepository;
+import backend.model.serviceprovider.ServiceProviderRepository;
 
 public class GlobalPersistenceUnit implements
 	ServiceProviderPersistenceUnit,

@@ -1,4 +1,4 @@
-package backend.model;
+package backend.model.result;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

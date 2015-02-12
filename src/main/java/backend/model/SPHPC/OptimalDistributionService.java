@@ -6,8 +6,8 @@ import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
-import backend.model.GenericService;
 import backend.model.result.SimpleResult;
+import backend.model.service.GenericService;
 
 @Entity
 @JsonTypeName("SPHPCOptimalDistributionService")

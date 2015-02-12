@@ -1,4 +1,4 @@
-package backend.model;
+package backend.model.job;
 
 import java.util.List;
 import java.util.Vector;
@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.*;
 
+import backend.model.result.Result;
 import backend.system.JobExecutor;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

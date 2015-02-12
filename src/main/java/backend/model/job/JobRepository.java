@@ -1,4 +1,4 @@
-package backend.model;
+package backend.model.job;
 
 import java.util.List;
 

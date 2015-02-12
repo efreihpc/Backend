@@ -1,4 +1,4 @@
-package backend.model;
+package backend.model.serviceprovider;
 
 import java.util.List;
 

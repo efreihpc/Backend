@@ -1,4 +1,4 @@
-package backend.model;
+package backend.model.service;
 
 import backend.system.GlobalPersistenceUnit;
 import backend.system.JobExecutor;

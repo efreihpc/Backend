@@ -3,11 +3,12 @@ package backend.model.SPHPC;
 import javax.persistence.Entity;
 
 import static org.jocl.CL.*;
+
 import org.jocl.*;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
-import backend.model.GenericJob;
+import backend.model.job.GenericJob;
 import backend.model.result.SimpleResult;
 
 @Entity

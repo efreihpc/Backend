@@ -3,9 +3,9 @@ package backend;
 import java.util.HashMap;
 import java.util.List;
 
-import backend.model.GenericService;
-import backend.model.Service;
 import backend.model.SPHPC.FinanceServiceProvider;
+import backend.model.service.GenericService;
+import backend.model.service.Service;
 import backend.system.GlobalPersistenceUnit;
 
 public class Backend {
