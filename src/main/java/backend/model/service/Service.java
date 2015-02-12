@@ -1,10 +1,13 @@
 package backend.model.service;
 
+import javax.persistence.Entity;
+
 import backend.system.GlobalPersistenceUnit;
 import backend.system.JobExecutor;
 import backend.system.JobPersistenceUnit;
 
 // T defines the type of the returned result
+
 public interface Service<T> {
 	
 	public void persistenceUnit(GlobalPersistenceUnit persistenceUnit);

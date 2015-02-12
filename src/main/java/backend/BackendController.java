@@ -17,6 +17,7 @@ import backend.system.GlobalState;
 @Component
 @Controller
 @RestController
+@RequestMapping("/backend")
 public class BackendController{
 	
 	private Backend m_backend =  GlobalState.get("Backend");
