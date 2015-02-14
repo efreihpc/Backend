@@ -33,7 +33,7 @@ public class ServiceProviderRepository{
     	// add include filters which matches all the classes (or use your own)
     	provider.addIncludeFilter((TypeFilter) new AssignableTypeFilter(GenericServiceProvider.class));
     	// get matching classes defined in the package
-    	final Set<BeanDefinition> classes = provider.findCandidateComponents("backend.model");
+    	final Set<BeanDefinition> classes = provider.findCandidateComponents("backend.model.SPHPC");
     	
     	for (BeanDefinition definition : classes) {
 			try 
