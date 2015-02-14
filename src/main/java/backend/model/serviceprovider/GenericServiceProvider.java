@@ -29,25 +29,18 @@ import backend.system.JobExecutor;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-@Entity
-@Inheritance
 @JsonTypeInfo(  
 	    use = JsonTypeInfo.Id.NAME,  
 	    include = JsonTypeInfo.As.PROPERTY,  
 	    property = "type")  
 public abstract class GenericServiceProvider implements ServiceProvider{
-    @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-	private long m_id;
+	
     private static String m_name;
     
-    @Transient
+
     private HashMap<String, GenericService.ServiceDescriptor> m_registeredServices;
-    @Transient
     private GlobalPersistenceUnit m_globalPersistenceUnit;
-    @Transient
     private ServiceRepository m_serviceRepository;
-    @Transient
     JobExecutor m_jobExecutor;
     
     public GenericServiceProvider()
