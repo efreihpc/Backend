@@ -12,6 +12,11 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 
+import backend.model.GlobalPersistenceUnit;
+import backend.model.result.Result;
+import backend.model.service.GenericService;
+import backend.system.GlobalState;
+
 
 public class ServiceProviderRepository{
 	
@@ -44,7 +49,6 @@ public class ServiceProviderRepository{
 				identifier = String.format("%040x", new BigInteger(1, messageDigest.digest()));
 				
 				m_registry.put(identifier, instance.descriptor());
-				m_instances.put(identifier, instance);
 			} 
 			catch (ClassNotFoundException e) 
 			{
@@ -68,24 +72,56 @@ public class ServiceProviderRepository{
     	}
 	}
 	
-    public GenericServiceProvider serviceProvider(String serviceProviderName) throws InstantiationException, IllegalAccessException
+    public GenericServiceProvider serviceProvider(String identifier) throws InstantiationException, IllegalAccessException
     {
-    	return m_instances.get(serviceProviderName);
+    	if(!m_instances.containsKey(identifier))
+    		loadInstance(identifier);
+    	return m_instances.get(identifier);
     }
     
-    public GenericServiceProvider.ServiceProviderDescriptor serviceProviderDescriptor(String serviceProviderName) throws InstantiationException, IllegalAccessException
+    public GenericServiceProvider.ServiceProviderDescriptor serviceProviderDescriptor(String identifier) throws InstantiationException, IllegalAccessException
     {
-    	return m_registry.get(serviceProviderName);
+    	return m_registry.get(identifier);
     }
 	
 	public Iterable<GenericServiceProvider> findAll()
 	{
+		if(m_registry.size() != m_instances.size())
+			loadAllInstances();
+			
 		return new ArrayList<GenericServiceProvider>(m_instances.values());
 	}
 	
 	public Iterable<GenericServiceProvider.ServiceProviderDescriptor> findAllDescriptors()
 	{
 		return new ArrayList<GenericServiceProvider.ServiceProviderDescriptor>(m_registry.values());
+	}
+	
+	private void loadInstance(String identifier)
+	{
+    	Class<GenericServiceProvider> serviceClass = m_registry.get(identifier).classDescriptor();
+    	GenericServiceProvider newServiceProvider;
+		try 
+		{
+			newServiceProvider = (GenericServiceProvider) serviceClass.newInstance();
+	    	
+	    	newServiceProvider.persistenceUnit((GlobalPersistenceUnit) GlobalState.get("GlobalPersistenceUnit"));
+	    	    	
+	    	m_instances.put(identifier, newServiceProvider);
+		} 
+		catch (InstantiationException | IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
+	private void loadAllInstances()
+	{
+		for (String identifier : m_registry.keySet()) {
+	    	if(!m_instances.containsKey(identifier))
+	    		loadInstance(identifier);
+		}
 	}
 	
 }
