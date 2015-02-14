@@ -69,8 +69,9 @@ public abstract class GenericServiceProvider implements ServiceProvider{
 	@JsonProperty("descriptor")
     private static ServiceProviderDescriptor m_descriptor;
     
-
+	@JsonProperty("services")
     private HashMap<String, GenericService.ServiceDescriptor> m_registeredServices;
+    
     private GlobalPersistenceUnit m_globalPersistenceUnit;
     private ServiceRepository m_serviceRepository;
     JobExecutor m_jobExecutor;
@@ -85,18 +86,16 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     }
     
     @JsonProperty("descriptor")
-    public static ServiceProviderDescriptor descriptor()
+    public ServiceProviderDescriptor descriptor()
     {
     	return m_descriptor;
     }
     
-    @JsonProperty("commonName")
     public static String commonName()
     {
     	return m_descriptor.commonName();
     }
     
-    @JsonProperty("commonName")
     protected static void commonName(String name)
     {
     	m_descriptor.commonName(name);
@@ -108,6 +107,7 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     	return m_registeredServices.get(serviceIdentifier);
     }
     
+    @JsonProperty("services")
     @Override
     public HashMap<String, GenericService.ServiceDescriptor> services()
     {
