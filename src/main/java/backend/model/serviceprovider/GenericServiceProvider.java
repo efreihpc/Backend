@@ -27,6 +27,7 @@ import backend.model.service.ServiceRepository;
 import backend.system.GlobalPersistenceUnit;
 import backend.system.JobExecutor;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @JsonTypeInfo(  
@@ -35,7 +36,38 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 	    property = "type")  
 public abstract class GenericServiceProvider implements ServiceProvider{
 	
-    private static String m_name;
+	public static class ServiceProviderDescriptor
+	{
+		private Class<GenericServiceProvider> m_classDescriptor;
+		
+		@JsonProperty("commonName")
+		private String m_commonName;
+		
+		public ServiceProviderDescriptor(Class<GenericServiceProvider> clazz)
+		{
+			m_classDescriptor = clazz;
+		}
+		
+		public Class<GenericServiceProvider> classDescriptor()
+		{
+			return m_classDescriptor;
+		}	
+		
+		@JsonProperty("commonName")
+		public void commonName(String name)
+		{
+			m_commonName = name;
+		}
+		
+		@JsonProperty("commonName")
+		public String commonName()
+		{
+			return m_commonName;
+		}
+	}
+	
+	@JsonProperty("descriptor")
+    private static ServiceProviderDescriptor m_descriptor;
     
 
     private HashMap<String, GenericService.ServiceDescriptor> m_registeredServices;
@@ -45,20 +77,29 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     
     public GenericServiceProvider()
     {
-    	name(this.getClass().getName());
+    	m_descriptor = new ServiceProviderDescriptor((Class<GenericServiceProvider>)this.getClass());
+    	m_descriptor.commonName(this.getClass().getName());
     	m_registeredServices = new HashMap<String, GenericService.ServiceDescriptor>();
     	m_jobExecutor = new JobExecutor();
     	registerServices();
     }
     
-    public static String name()
+    @JsonProperty("descriptor")
+    public static ServiceProviderDescriptor descriptor()
     {
-    	return m_name;
+    	return m_descriptor;
     }
     
-    protected static void name(String name)
+    @JsonProperty("commonName")
+    public static String commonName()
     {
-    	m_name = name;
+    	return m_descriptor.commonName();
+    }
+    
+    @JsonProperty("commonName")
+    protected static void commonName(String name)
+    {
+    	m_descriptor.commonName(name);
     }
     
     @Override
@@ -134,10 +175,8 @@ public abstract class GenericServiceProvider implements ServiceProvider{
 				e.printStackTrace();
 			} 
 			catch (InstantiationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
     	}
