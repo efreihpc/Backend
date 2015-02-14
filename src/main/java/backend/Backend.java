@@ -3,10 +3,10 @@ package backend;
 import java.util.HashMap;
 import java.util.List;
 
+import backend.model.GlobalPersistenceUnit;
 import backend.model.SPHPC.FinanceServiceProvider;
 import backend.model.service.GenericService;
 import backend.model.service.Service;
-import backend.system.GlobalPersistenceUnit;
 import backend.system.GlobalState;
 
 public class Backend {

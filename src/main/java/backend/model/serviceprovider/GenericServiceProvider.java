@@ -20,12 +20,12 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 
+import backend.model.GlobalPersistenceUnit;
+import backend.model.job.JobExecutor;
 import backend.model.result.Result;
 import backend.model.service.GenericService;
 import backend.model.service.Service;
 import backend.model.service.ServiceRepository;
-import backend.system.GlobalPersistenceUnit;
-import backend.system.JobExecutor;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

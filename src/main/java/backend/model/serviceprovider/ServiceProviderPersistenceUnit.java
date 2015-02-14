@@ -1,6 +1,5 @@
-package backend.system;
+package backend.model.serviceprovider;
 
-import backend.model.serviceprovider.ServiceProviderRepository;
 
 public interface ServiceProviderPersistenceUnit {
 	ServiceProviderRepository serviceProviderRepository();

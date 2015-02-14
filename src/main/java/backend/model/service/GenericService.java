@@ -9,12 +9,12 @@ import javax.persistence.Inheritance;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import backend.model.GlobalPersistenceUnit;
 import backend.model.job.GenericJob;
+import backend.model.job.JobExecutor;
 import backend.model.job.JobRepository;
 import backend.model.job.PersistJob;
 import backend.model.result.Result;
-import backend.system.GlobalPersistenceUnit;
-import backend.system.JobExecutor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

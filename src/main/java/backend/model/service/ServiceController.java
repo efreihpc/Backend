@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import backend.system.GlobalState;
-import backend.system.ServicePersistenceUnit;
 
 @Component
 @Controller

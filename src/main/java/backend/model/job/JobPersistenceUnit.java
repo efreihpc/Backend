@@ -1,6 +1,5 @@
-package backend.system;
+package backend.model.job;
 
-import backend.model.job.JobRepository;
 
 public interface JobPersistenceUnit {
 	JobRepository jobRepository();

@@ -1,6 +1,5 @@
-package backend.system;
+package backend.model.service;
 
-import backend.model.service.ServiceRepository;
 
 public interface ServicePersistenceUnit {
 	ServiceRepository serviceRepository();

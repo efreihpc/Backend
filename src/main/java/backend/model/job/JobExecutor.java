@@ -1,11 +1,9 @@
-package backend.system;
+package backend.model.job;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-
-import backend.model.job.Job;
 
 public class JobExecutor {
 	
