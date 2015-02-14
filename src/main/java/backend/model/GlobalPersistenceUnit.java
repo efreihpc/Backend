@@ -5,6 +5,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import backend.model.job.JobPersistenceUnit;
 import backend.model.job.JobRepository;
+import backend.model.result.ResultPersistenceUnit;
+import backend.model.result.ResultRepository;
 import backend.model.service.ServicePersistenceUnit;
 import backend.model.service.ServiceRepository;
 import backend.model.serviceprovider.ServiceProviderPersistenceUnit;
@@ -13,13 +15,15 @@ import backend.model.serviceprovider.ServiceProviderRepository;
 public class GlobalPersistenceUnit implements
 	ServiceProviderPersistenceUnit,
 	ServicePersistenceUnit,
-	JobPersistenceUnit{
+	JobPersistenceUnit,
+	ResultPersistenceUnit{
 	
 	private ApplicationContext m_context;
 	
 	ServiceProviderRepository m_serviceProviderRepository;
 	ServiceRepository m_serviceRepository;
 	JobRepository m_jobRepository;
+	ResultRepository m_resultRepository;
 	
 	public GlobalPersistenceUnit()
 	{
@@ -27,6 +31,7 @@ public class GlobalPersistenceUnit implements
 		m_serviceProviderRepository = new ServiceProviderRepository();
 		m_serviceRepository = m_context.getBean(ServiceRepository.class);
 	    m_jobRepository = m_context.getBean(JobRepository.class);
+	    m_resultRepository = m_context.getBean(ResultRepository.class);
 	}
 
 	@Override
@@ -42,6 +47,11 @@ public class GlobalPersistenceUnit implements
 	@Override
 	public ServiceProviderRepository serviceProviderRepository() {
 		return m_serviceProviderRepository;
+	}
+	
+	@Override
+	public ResultRepository resultRepository() {
+		return m_resultRepository;
 	}
 
 }
