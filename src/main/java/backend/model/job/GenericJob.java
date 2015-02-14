@@ -17,6 +17,7 @@ import org.hibernate.annotations.*;
 
 import backend.model.result.Result;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -32,6 +33,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 //T specifies the jobs result type
 public abstract class GenericJob<T extends Result> implements Job {
 	
+	@JsonIgnore
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long m_id;
@@ -55,7 +57,8 @@ public abstract class GenericJob<T extends Result> implements Job {
     	name(this.getClass().getName());	
     }
     
-    public long getId()
+    @JsonIgnore
+    public long gyd()
     {
     	return m_id;
     }
