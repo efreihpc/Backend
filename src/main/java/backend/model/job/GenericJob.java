@@ -17,6 +17,7 @@ import org.hibernate.annotations.*;
 
 import backend.model.result.Result;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @Entity
@@ -36,11 +37,13 @@ public abstract class GenericJob<T extends Result> implements Job {
     private long m_id;
     private static String s_name;
     
+    @JsonProperty("result")
     @OneToOne(fetch = FetchType.EAGER, targetEntity = Result.class)
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
     private T m_result;
 
-	@OneToMany
+    @JsonProperty("secondaryJobs")
+    @OneToMany(fetch = FetchType.EAGER)
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<GenericJob> m_secondaryJobs = new Vector<GenericJob>();
 	
@@ -49,7 +52,7 @@ public abstract class GenericJob<T extends Result> implements Job {
     
     public GenericJob()
     {
-    	name(this.getClass().getName());
+    	name(this.getClass().getName());	
     }
     
     public long getId()
@@ -67,19 +70,28 @@ public abstract class GenericJob<T extends Result> implements Job {
     	return s_name;
     }
     
+    @JsonProperty("result")
     public T result()
     {
     	return m_result;
     }
     
+    @JsonProperty("result")
     protected void result(T result)
     {
     	m_result = result;
     } 
     
+    @JsonProperty("secondaryJobs")
     public void addSecondaryJob(GenericJob job)
     {
     	m_secondaryJobs.add(job);
+    }
+    
+    @JsonProperty("secondaryJobs")
+    public List<GenericJob> secondaryJobs()
+    {
+    	return m_secondaryJobs;
     }
     
     public void executor(JobExecutor executor)

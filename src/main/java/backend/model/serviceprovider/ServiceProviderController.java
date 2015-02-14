@@ -26,7 +26,6 @@ public class ServiceProviderController {
     public Iterable<GenericServiceProvider> serviceProviders() {
     	Iterable<GenericServiceProvider> result =  m_serviceProviderRepository.findAll();
     	
-    	System.out.println(result);
     	return result;
     }
 	
