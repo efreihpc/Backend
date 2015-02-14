@@ -120,7 +120,7 @@ public abstract class GenericServiceProvider implements ServiceProvider{
 				registeredClass = (Class<GenericService>) Class.forName(definition.getBeanClassName());
 
 				GenericService instance = registeredClass.newInstance();
-				String commonName = instance.name();
+				String commonName = instance.commonName();
 				String identifier = registeredClass.getCanonicalName();
 				MessageDigest messageDigest = MessageDigest.getInstance("SHA");
 				messageDigest.update(identifier.getBytes());

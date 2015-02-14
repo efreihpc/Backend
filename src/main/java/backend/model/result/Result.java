@@ -1,9 +1,13 @@
 package backend.model.result;
 
+import java.util.HashMap;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 public abstract class Result<T> {

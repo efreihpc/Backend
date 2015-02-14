@@ -33,8 +33,10 @@ public class BackendController{
     }
     
     @RequestMapping(value = "/schedule/{identifier}", method = RequestMethod.GET)
-    public void schedule(@PathVariable String identifier) {
+    public boolean schedule(@PathVariable String identifier) {
     	m_backend.schedule(identifier);
+    	
+    	return true;
     }
 
 }

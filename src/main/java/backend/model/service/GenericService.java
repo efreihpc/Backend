@@ -28,13 +28,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 	    property = "type")  
 public abstract class GenericService<T extends Result> implements Service<T> {
 	
-	public class ServiceDescriptor
+	public static class ServiceDescriptor
 	{
-		@JsonIgnore
-		Class<GenericService> m_classDescriptor;
+		private Class<GenericService> m_classDescriptor;
 		
 		@JsonProperty("commonName")
-		String m_commonName;
+		private String m_commonName;
 		
 		public ServiceDescriptor(Class<GenericService> clazz)
 		{
@@ -62,13 +61,17 @@ public abstract class GenericService<T extends Result> implements Service<T> {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
 	private long m_id;
-    private static String m_name;
     
+    @JsonProperty("descriptor")
+    private static ServiceDescriptor m_descriptor;
+       
+    @JsonIgnore
     @OneToOne(fetch = FetchType.EAGER, targetEntity = GenericService.class)
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
     private GenericService<T> m_dataSource;
     
-    @OneToOne(fetch = FetchType.EAGER, targetEntity = GenericService.class)
+    @JsonProperty("result")
+    @OneToOne(fetch = FetchType.EAGER, targetEntity = Result.class)
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
     private T m_result;
     
@@ -81,29 +84,37 @@ public abstract class GenericService<T extends Result> implements Service<T> {
     
     public GenericService()
     {
-    	name(this.getClass().getName());
+    	m_descriptor = new ServiceDescriptor((Class<GenericService>)this.getClass());
+    	m_descriptor.commonName(commonName());
+    	commonName(this.getClass().getName());
     }
     
+    @JsonProperty("descriptor")
     public ServiceDescriptor descriptor()
     {
-    	ServiceDescriptor descriptor = new ServiceDescriptor((Class<GenericService>)this.getClass());
-    	descriptor.commonName(name());
-    	return descriptor;
+    	return m_descriptor;
     }
     
-    public static String name()
+    public static String commonName()
     {
-    	return m_name;
+    	return m_descriptor.commonName();
     }
     
-    protected static void name(String name)
+    protected static void commonName(String name)
     {
-    	m_name = name;
+    	m_descriptor.commonName(name);
     }
     
+    @JsonProperty("result")
     protected void result(T result)
     {
     	m_result = result;
+    }
+    
+    @JsonProperty("result")
+    public T result()
+    {
+    	return m_result;
     }
     
 	@Override
@@ -118,11 +129,13 @@ public abstract class GenericService<T extends Result> implements Service<T> {
 		return m_globalPersistenceUnit;
 	}
 	
+	@JsonProperty("dataSource")
 	public void dataSource(GenericService<T> dataSource)
 	{
 		m_dataSource = dataSource;
 	}
 	
+	@JsonProperty("dataSource")
 	public GenericService<T> dataSource()
 	{
 		return m_dataSource;
@@ -158,10 +171,5 @@ public abstract class GenericService<T extends Result> implements Service<T> {
 			m_jobRepository.save(job);
 		
 		m_jobExecutor.execute(job);
-	}
-	
-	public Iterable<GenericJob> getAllJobs()
-	{
-		return m_jobRepository.findAll();
 	}
 }

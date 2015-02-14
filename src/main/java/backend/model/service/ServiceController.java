@@ -25,7 +25,9 @@ public class ServiceController {
 	
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public Iterable<GenericService> services() {
-    	return m_serviceRepository.findAll();
+    	Iterable<GenericService> result =  m_serviceRepository.findAll();
+    	System.out.println(result);
+    	return result;
     }
 	
 }
