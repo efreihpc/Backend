@@ -2,6 +2,7 @@ package backend.model.service;
 
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +26,12 @@ public class ServiceController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public Iterable<GenericService> services() {
     	Iterable<GenericService> result =  m_serviceRepository.findAll();
+    	return result;
+    }
+    
+    @RequestMapping(value = "/id/{identifier}", method = RequestMethod.GET)
+    public Iterable<GenericService> byId(@PathVariable String identifier) {
+    	Iterable<GenericService> result =  m_serviceRepository.findById(Long.parseLong(identifier));
     	return result;
     }
 	
