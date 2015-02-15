@@ -1,10 +1,12 @@
 package backend.model.SPHPC;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToOne;
 
 import backend.model.job.ChainJob;
+import backend.model.result.Result;
 import backend.model.result.SimpleResult;
 import backend.model.service.GenericService;
 
@@ -16,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 public class OptimalDistributionService extends GenericService<SimpleResult> {
 
-    @OneToOne
+	@OneToOne(fetch = FetchType.EAGER)
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private PrototypeJob m_job;
 	

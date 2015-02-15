@@ -25,7 +25,7 @@ public class ResultController {
 		m_resultRepository = persistence.resultRepository();
 	}
 	
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public Iterable<Result> serviceProviders() {
     	Iterable<Result> result =  m_resultRepository.findAll();
     	
@@ -36,6 +36,16 @@ public class ResultController {
     public Iterable<Result> byId(@PathVariable String identifier) {
     	Iterable<Result> result =  m_resultRepository.findById(Long.parseLong(identifier));
     	return result;
+    }
+    
+    @RequestMapping(value = "/delete/id/{identifier}", method = RequestMethod.GET)
+    public void deleteById(@PathVariable String identifier) {
+    	Iterable<Result> results = m_resultRepository.findById(Long.parseLong(identifier));
+    	
+    	for(Result result : results)
+    	{
+    		m_resultRepository.delete(result);
+    	}
     }
 	
 }

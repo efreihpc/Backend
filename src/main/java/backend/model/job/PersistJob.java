@@ -1,8 +1,10 @@
 package backend.model.job;
 
+import backend.model.result.Result;
 import backend.model.result.SimpleResult;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
@@ -18,7 +20,7 @@ public class PersistJob extends GenericJob<SimpleResult> {
 	@Transient
 	JobRepository m_jobRepository;
 	
-	@OneToOne
+	@OneToOne(fetch = FetchType.EAGER)
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
 	GenericJob m_jobToPersist;
 	

@@ -24,7 +24,7 @@ public class JobController {
 		m_jobRepository = persistence.jobRepository();
 	}
 	
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public Iterable<GenericJob> serviceProviders() {
     	Iterable<GenericJob> result =  m_jobRepository.findAll();
     	
@@ -35,6 +35,16 @@ public class JobController {
     public Iterable<GenericJob> byId(@PathVariable String identifier) {
     	Iterable<GenericJob> result =  m_jobRepository.findById(Long.parseLong(identifier));
     	return result;
+    }
+    
+    @RequestMapping(value = "/delete/id/{identifier}", method = RequestMethod.GET)
+    public void deleteById(@PathVariable String identifier) {
+    	Iterable<GenericJob> jobs = m_jobRepository.findById(Long.parseLong(identifier));
+    	
+    	for(GenericJob job : jobs)
+    	{
+    		m_jobRepository.delete(job);
+    	}
     }
 	
 }

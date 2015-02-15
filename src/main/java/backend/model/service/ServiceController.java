@@ -23,16 +23,26 @@ public class ServiceController {
 		m_serviceRepository = persistence.serviceRepository();
 	}
 	
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public Iterable<GenericService> services() {
     	Iterable<GenericService> result =  m_serviceRepository.findAll();
     	return result;
     }
     
     @RequestMapping(value = "/id/{identifier}", method = RequestMethod.GET)
-    public Iterable<GenericService> byId(@PathVariable String identifier) {
+    public Iterable<GenericService> getById(@PathVariable String identifier) {
     	Iterable<GenericService> result =  m_serviceRepository.findById(Long.parseLong(identifier));
     	return result;
+    }
+    
+    @RequestMapping(value = "/delete/id/{identifier}", method = RequestMethod.GET)
+    public void deleteById(@PathVariable String identifier) {
+    	Iterable<GenericService> services = m_serviceRepository.findById(Long.parseLong(identifier));
+    	
+    	for(GenericService service : services)
+    	{
+    		m_serviceRepository.delete(service);
+    	}
     }
 	
 }
