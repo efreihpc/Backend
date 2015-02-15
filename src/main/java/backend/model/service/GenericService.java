@@ -59,7 +59,8 @@ public abstract class GenericService<T extends Result> implements Service<T> {
 	private long m_id;
     
     @JsonProperty("descriptor")
-    private static ServiceDescriptor m_descriptor;
+    @Transient
+    private ServiceDescriptor m_descriptor;
        
     @JsonIgnore
     @OneToOne(fetch = FetchType.EAGER, targetEntity = GenericService.class)
@@ -90,12 +91,12 @@ public abstract class GenericService<T extends Result> implements Service<T> {
     	return m_descriptor;
     }
     
-    public static String commonName()
+    public String commonName()
     {
     	return m_descriptor.commonName();
     }
     
-    protected static void commonName(String name)
+    protected void commonName(String name)
     {
     	m_descriptor.commonName(name);
     }

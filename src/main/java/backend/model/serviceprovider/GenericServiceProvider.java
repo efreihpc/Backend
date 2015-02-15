@@ -63,7 +63,7 @@ public abstract class GenericServiceProvider implements ServiceProvider{
 	}
 	
 	@JsonProperty("descriptor")
-    private static ServiceProviderDescriptor m_descriptor;
+    private ServiceProviderDescriptor m_descriptor;
     
 	@JsonProperty("services")
     private HashMap<String, GenericService.ServiceDescriptor> m_registeredServices;
@@ -87,12 +87,12 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     	return m_descriptor;
     }
     
-    public static String commonName()
+    public String commonName()
     {
     	return m_descriptor.commonName();
     }
     
-    protected static void commonName(String name)
+    protected void commonName(String name)
     {
     	m_descriptor.commonName(name);
     }

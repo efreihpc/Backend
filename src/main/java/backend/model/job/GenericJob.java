@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 //T specifies the jobs result type
 public abstract class GenericJob<T extends Result> implements Job {
 	
-	public static class JobDescriptor
+	public class JobDescriptor
 	{
 		private Class<GenericJob> m_classDescriptor;
 		
@@ -65,7 +65,8 @@ public abstract class GenericJob<T extends Result> implements Job {
     private long m_id;
 	
     @JsonProperty("descriptor")
-    private static JobDescriptor m_descriptor;
+    @Transient
+    private JobDescriptor m_descriptor;
     
     @JsonProperty("result")
     @OneToOne(fetch = FetchType.EAGER, targetEntity = Result.class)
@@ -98,12 +99,12 @@ public abstract class GenericJob<T extends Result> implements Job {
     	return m_id;
     }
     
-    public static void commonName(String name)
+    public void commonName(String name)
     {
     	m_descriptor.commonName(name);
     }
     
-    protected static String commonName()
+    protected String commonName()
     {
     	return m_descriptor.commonName();
     }
