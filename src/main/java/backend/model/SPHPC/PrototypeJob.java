@@ -1,18 +1,49 @@
 package backend.model.SPHPC;
 
+import static org.jocl.CL.CL_CONTEXT_PLATFORM;
+import static org.jocl.CL.CL_DEVICE_TYPE_ALL;
+import static org.jocl.CL.CL_MEM_COPY_HOST_PTR;
+import static org.jocl.CL.CL_MEM_READ_ONLY;
+import static org.jocl.CL.CL_MEM_READ_WRITE;
+import static org.jocl.CL.CL_TRUE;
+import static org.jocl.CL.clBuildProgram;
+import static org.jocl.CL.clCreateBuffer;
+import static org.jocl.CL.clCreateCommandQueue;
+import static org.jocl.CL.clCreateContext;
+import static org.jocl.CL.clCreateKernel;
+import static org.jocl.CL.clCreateProgramWithSource;
+import static org.jocl.CL.clEnqueueNDRangeKernel;
+import static org.jocl.CL.clEnqueueReadBuffer;
+import static org.jocl.CL.clGetDeviceIDs;
+import static org.jocl.CL.clGetPlatformIDs;
+import static org.jocl.CL.clReleaseCommandQueue;
+import static org.jocl.CL.clReleaseContext;
+import static org.jocl.CL.clReleaseKernel;
+import static org.jocl.CL.clReleaseMemObject;
+import static org.jocl.CL.clReleaseProgram;
+import static org.jocl.CL.clSetKernelArg;
+
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
 
-import static org.jocl.CL.*;
-
-import org.jocl.*;
-
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import org.jocl.CL;
+import org.jocl.Pointer;
+import org.jocl.Sizeof;
+import org.jocl.cl_command_queue;
+import org.jocl.cl_context;
+import org.jocl.cl_context_properties;
+import org.jocl.cl_device_id;
+import org.jocl.cl_kernel;
+import org.jocl.cl_mem;
+import org.jocl.cl_platform_id;
+import org.jocl.cl_program;
 
 import backend.model.job.GenericJob;
 import backend.model.result.SimpleResult;
 
 @Entity
-@JsonTypeName("SPHPCPrototypeJob")
+@Inheritance 
+
 public class PrototypeJob extends GenericJob<SimpleResult>{
 	
     private static String programSource =
@@ -27,7 +58,7 @@ public class PrototypeJob extends GenericJob<SimpleResult>{
     
     public PrototypeJob()
     {
-    	name("Prototype");
+    	commonName("PrototypeJob");
     	result(new SimpleResult());
     }
 	

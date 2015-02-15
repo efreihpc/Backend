@@ -30,10 +30,6 @@ import backend.model.service.ServiceRepository;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-@JsonTypeInfo(  
-	    use = JsonTypeInfo.Id.NAME,  
-	    include = JsonTypeInfo.As.PROPERTY,  
-	    property = "type")  
 public abstract class GenericServiceProvider implements ServiceProvider{
 	
 	public static class ServiceProviderDescriptor

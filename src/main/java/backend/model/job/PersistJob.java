@@ -3,6 +3,7 @@ package backend.model.job;
 import backend.model.result.SimpleResult;
 
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
@@ -10,7 +11,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 
 @Entity
-@JsonTypeName("PersistJob")
+@Inheritance 
+
 public class PersistJob extends GenericJob<SimpleResult> {
 
 	@Transient
@@ -22,7 +24,7 @@ public class PersistJob extends GenericJob<SimpleResult> {
 	
 	public PersistJob()
 	{
-		name("PersistJob");
+		commonName("PersistJob");
 	}
 	
 	public void jobRepository(JobRepository repository)

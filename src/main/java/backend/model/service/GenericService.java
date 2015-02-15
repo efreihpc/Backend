@@ -22,10 +22,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @Entity
 @Inheritance
-@JsonTypeInfo(  
-	    use = JsonTypeInfo.Id.NAME,  
-	    include = JsonTypeInfo.As.PROPERTY,  
-	    property = "type")  
 public abstract class GenericService<T extends Result> implements Service<T> {
 	
 	public static class ServiceDescriptor
@@ -85,8 +81,7 @@ public abstract class GenericService<T extends Result> implements Service<T> {
     public GenericService()
     {
     	m_descriptor = new ServiceDescriptor((Class<GenericService>)this.getClass());
-    	m_descriptor.commonName(commonName());
-    	commonName(this.getClass().getName());
+    	m_descriptor.commonName(this.getClass().getName());
     }
     
     @JsonProperty("descriptor")

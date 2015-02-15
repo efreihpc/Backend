@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToOne;
 
+import backend.model.job.ChainJob;
 import backend.model.result.SimpleResult;
 import backend.model.service.GenericService;
 
@@ -12,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @Entity
 @Inheritance                                                                                                                                                 
-@JsonTypeName("SPHPCOptimalDistributionService")
+
 public class OptimalDistributionService extends GenericService<SimpleResult> {
 
     @OneToOne

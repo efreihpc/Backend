@@ -16,6 +16,8 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.*;
 
 import backend.model.result.Result;
+import backend.model.service.GenericService;
+import backend.model.service.GenericService.ServiceDescriptor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,21 +25,47 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @Entity
 @Inheritance
-@JsonTypeInfo(  
-	    use = JsonTypeInfo.Id.NAME,  
-	    include = JsonTypeInfo.As.PROPERTY,  
-	    property = "type")  
-//@JsonSubTypes({  
-//    @Type(value = Prototype.class, name = "Prototype") })
 
 //T specifies the jobs result type
 public abstract class GenericJob<T extends Result> implements Job {
+	
+	public static class JobDescriptor
+	{
+		private Class<GenericJob> m_classDescriptor;
+		
+		@JsonProperty("commonName")
+		private String m_commonName;
+		
+		public JobDescriptor(Class<GenericJob> clazz)
+		{
+			m_classDescriptor = clazz;
+		}
+		
+		public Class<GenericJob> classDescriptor()
+		{
+			return m_classDescriptor;
+		}	
+		
+		@JsonProperty("commonName")
+		public void commonName(String name)
+		{
+			m_commonName = name;
+		}
+		
+		@JsonProperty("commonName")
+		public String commonName()
+		{
+			return m_commonName;
+		}
+	}
 	
 	@JsonIgnore
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long m_id;
-    private static String s_name;
+	
+    @JsonProperty("descriptor")
+    private static JobDescriptor m_descriptor;
     
     @JsonProperty("result")
     @OneToOne(fetch = FetchType.EAGER, targetEntity = Result.class)
@@ -54,23 +82,30 @@ public abstract class GenericJob<T extends Result> implements Job {
     
     public GenericJob()
     {
-    	name(this.getClass().getName());	
+    	m_descriptor = new JobDescriptor((Class<GenericJob>)this.getClass());
+    	commonName(this.getClass().getName());
+    }
+    
+    @JsonProperty("descriptor")
+    public JobDescriptor descriptor()
+    {
+    	return m_descriptor;
     }
     
     @JsonIgnore
-    public long gyd()
+    public long id()
     {
     	return m_id;
     }
     
-    public static void name(String name)
+    public static void commonName(String name)
     {
-    	s_name = name;
+    	m_descriptor.commonName(name);
     }
     
-    protected static String name()
+    protected static String commonName()
     {
-    	return s_name;
+    	return m_descriptor.commonName();
     }
     
     @JsonProperty("result")
