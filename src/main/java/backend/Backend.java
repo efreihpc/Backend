@@ -5,7 +5,7 @@ import java.util.List;
 
 import backend.model.GlobalPersistenceUnit;
 import backend.model.SPHPC.FinanceServiceProvider;
-import backend.model.service.GenericService;
+import backend.model.service.ServiceEntity;
 import backend.model.service.Service;
 import backend.system.GlobalState;
 
@@ -22,12 +22,12 @@ public class Backend {
 		GlobalState.set("GlobalPersistenceUnit", persistence);
 	}
 	
-	public HashMap<String, GenericService.ServiceDescriptor> services()
+	public HashMap<String, ServiceEntity.ServiceDescriptor> services()
 	{
 		return m_serviceProvider.services();
 	}
 	
-	public GenericService.ServiceDescriptor serviceDescriptor(String serviceIdentifier)
+	public ServiceEntity.ServiceDescriptor serviceDescriptor(String serviceIdentifier)
 	{
 		return m_serviceProvider.serviceDescriptor(serviceIdentifier);
 	}

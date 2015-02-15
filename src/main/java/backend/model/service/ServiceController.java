@@ -24,22 +24,22 @@ public class ServiceController {
 	}
 	
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public Iterable<GenericService> services() {
-    	Iterable<GenericService> result =  m_serviceRepository.findAll();
+    public Iterable<ServiceEntity> services() {
+    	Iterable<ServiceEntity> result =  m_serviceRepository.findAll();
     	return result;
     }
     
     @RequestMapping(value = "/id/{identifier}", method = RequestMethod.GET)
-    public Iterable<GenericService> getById(@PathVariable String identifier) {
-    	Iterable<GenericService> result =  m_serviceRepository.findById(Long.parseLong(identifier));
+    public Iterable<ServiceEntity> getById(@PathVariable String identifier) {
+    	Iterable<ServiceEntity> result =  m_serviceRepository.findById(Long.parseLong(identifier));
     	return result;
     }
     
     @RequestMapping(value = "/delete/id/{identifier}", method = RequestMethod.GET)
     public void deleteById(@PathVariable String identifier) {
-    	Iterable<GenericService> services = m_serviceRepository.findById(Long.parseLong(identifier));
+    	Iterable<ServiceEntity> services = m_serviceRepository.findById(Long.parseLong(identifier));
     	
-    	for(GenericService service : services)
+    	for(ServiceEntity service : services)
     	{
     		m_serviceRepository.delete(service);
     	}

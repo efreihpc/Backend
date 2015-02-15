@@ -8,8 +8,8 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-public interface ServiceRepository extends CrudRepository<GenericService, Long>{
+public interface ServiceRepository extends CrudRepository<ServiceEntity, Long>{
 	
-	@Query("select s from GenericService s where s.m_id = :id")
-	List<GenericService> findById(@Param("id") long id);
+	@Query("select s from ServiceEntity s where s.m_id = :id")
+	List<ServiceEntity> findById(@Param("id") long id);
 }

@@ -5,12 +5,12 @@ import javax.persistence.Inheritance;
 
 import backend.model.job.ChainJob;
 import backend.model.result.SimpleResult;
-import backend.model.service.GenericService;
+import backend.model.service.ServiceEntity;
 
 @Entity
 @Inheritance   
 
-public class MonteCarloService<T> extends GenericService<SimpleResult> {
+public class MonteCarloService<T> extends ServiceEntity<SimpleResult> {
 
 	public MonteCarloService()
 	{

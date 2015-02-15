@@ -16,8 +16,8 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.*;
 
 import backend.model.result.Result;
-import backend.model.service.GenericService;
-import backend.model.service.GenericService.ServiceDescriptor;
+import backend.model.service.ServiceEntity;
+import backend.model.service.ServiceEntity.ServiceDescriptor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,21 +27,21 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @Inheritance
 
 //T specifies the jobs result type
-public abstract class GenericJob<T extends Result> implements Job {
+public abstract class JobEntity<T extends Result> implements Job {
 	
 	public class JobDescriptor
 	{
-		private Class<GenericJob> m_classDescriptor;
+		private Class<JobEntity> m_classDescriptor;
 		
 		@JsonProperty("commonName")
 		private String m_commonName;
 		
-		public JobDescriptor(Class<GenericJob> clazz)
+		public JobDescriptor(Class<JobEntity> clazz)
 		{
 			m_classDescriptor = clazz;
 		}
 		
-		public Class<GenericJob> classDescriptor()
+		public Class<JobEntity> classDescriptor()
 		{
 			return m_classDescriptor;
 		}	
@@ -76,14 +76,14 @@ public abstract class GenericJob<T extends Result> implements Job {
     @JsonProperty("secondaryJobs")
     @OneToMany(fetch = FetchType.EAGER)
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private List<GenericJob> m_secondaryJobs = new Vector<GenericJob>();
+    private List<JobEntity> m_secondaryJobs = new Vector<JobEntity>();
 	
     @Transient
     private JobExecutor m_executor;
     
-    public GenericJob()
+    public JobEntity()
     {
-    	m_descriptor = new JobDescriptor((Class<GenericJob>)this.getClass());
+    	m_descriptor = new JobDescriptor((Class<JobEntity>)this.getClass());
     	commonName(this.getClass().getName());
     }
     
@@ -122,13 +122,13 @@ public abstract class GenericJob<T extends Result> implements Job {
     } 
     
     @JsonProperty("secondaryJobs")
-    public void addSecondaryJob(GenericJob job)
+    public void addSecondaryJob(JobEntity job)
     {
     	m_secondaryJobs.add(job);
     }
     
     @JsonProperty("secondaryJobs")
-    public List<GenericJob> secondaryJobs()
+    public List<JobEntity> secondaryJobs()
     {
     	return m_secondaryJobs;
     }
@@ -136,7 +136,7 @@ public abstract class GenericJob<T extends Result> implements Job {
     public void executor(JobExecutor executor)
     {
     	m_executor = executor;
-    	for (GenericJob job : m_secondaryJobs) {
+    	for (JobEntity job : m_secondaryJobs) {
     		job.executor(executor);
     	}
     }
@@ -154,7 +154,7 @@ public abstract class GenericJob<T extends Result> implements Job {
     private void runSecondaryJobs()
     {
     	if(m_executor != null)
-	    	for(GenericJob job : m_secondaryJobs)
+	    	for(JobEntity job : m_secondaryJobs)
 	    	{
 	    		m_executor.execute(job);
 	    	}

@@ -38,13 +38,13 @@ import org.jocl.cl_mem;
 import org.jocl.cl_platform_id;
 import org.jocl.cl_program;
 
-import backend.model.job.GenericJob;
+import backend.model.job.JobEntity;
 import backend.model.result.SimpleResult;
 
 @Entity
 @Inheritance 
 
-public class PrototypeJob extends GenericJob<SimpleResult>{
+public class PrototypeJob extends JobEntity<SimpleResult>{
 	
     private static String programSource =
             "__kernel void "+

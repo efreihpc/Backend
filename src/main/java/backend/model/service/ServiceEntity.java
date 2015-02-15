@@ -10,7 +10,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import backend.model.GlobalPersistenceUnit;
-import backend.model.job.GenericJob;
+import backend.model.job.JobEntity;
 import backend.model.job.JobExecutor;
 import backend.model.job.JobRepository;
 import backend.model.job.PersistJob;
@@ -22,21 +22,21 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @Entity
 @Inheritance
-public abstract class GenericService<T extends Result> implements Service<T> {
+public abstract class ServiceEntity<T extends Result> implements Service<T> {
 	
 	public static class ServiceDescriptor
 	{
-		private Class<GenericService> m_classDescriptor;
+		private Class<ServiceEntity> m_classDescriptor;
 		
 		@JsonProperty("commonName")
 		private String m_commonName;
 		
-		public ServiceDescriptor(Class<GenericService> clazz)
+		public ServiceDescriptor(Class<ServiceEntity> clazz)
 		{
 			m_classDescriptor = clazz;
 		}
 		
-		public Class<GenericService> classDescriptor()
+		public Class<ServiceEntity> classDescriptor()
 		{
 			return m_classDescriptor;
 		}	
@@ -63,9 +63,9 @@ public abstract class GenericService<T extends Result> implements Service<T> {
     private ServiceDescriptor m_descriptor;
        
     @JsonIgnore
-    @OneToOne(fetch = FetchType.EAGER, targetEntity = GenericService.class)
+    @OneToOne(fetch = FetchType.EAGER, targetEntity = ServiceEntity.class)
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private GenericService<T> m_dataSource;
+    private ServiceEntity<T> m_dataSource;
     
     @JsonProperty("result")
     @OneToOne(fetch = FetchType.EAGER, targetEntity = Result.class)
@@ -79,9 +79,9 @@ public abstract class GenericService<T extends Result> implements Service<T> {
     @Transient 
     private JobExecutor m_jobExecutor;
     
-    public GenericService()
+    public ServiceEntity()
     {
-    	m_descriptor = new ServiceDescriptor((Class<GenericService>)this.getClass());
+    	m_descriptor = new ServiceDescriptor((Class<ServiceEntity>)this.getClass());
     	m_descriptor.commonName(this.getClass().getName());
     }
     
@@ -126,13 +126,13 @@ public abstract class GenericService<T extends Result> implements Service<T> {
 	}
 	
 	@JsonProperty("dataSource")
-	public void dataSource(GenericService<T> dataSource)
+	public void dataSource(ServiceEntity<T> dataSource)
 	{
 		m_dataSource = dataSource;
 	}
 	
 	@JsonProperty("dataSource")
-	public GenericService<T> dataSource()
+	public ServiceEntity<T> dataSource()
 	{
 		return m_dataSource;
 	}
@@ -154,7 +154,7 @@ public abstract class GenericService<T extends Result> implements Service<T> {
 		return m_jobExecutor;
 	}
 	
-	protected void executeJob(GenericJob job)
+	protected void executeJob(JobEntity job)
 	{
 		job.executor(m_jobExecutor);
 		

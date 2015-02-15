@@ -8,7 +8,7 @@ import javax.persistence.OneToOne;
 import backend.model.job.ChainJob;
 import backend.model.result.Result;
 import backend.model.result.SimpleResult;
-import backend.model.service.GenericService;
+import backend.model.service.ServiceEntity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 @Entity
 @Inheritance                                                                                                                                                 
 
-public class OptimalDistributionService extends GenericService<SimpleResult> {
+public class OptimalDistributionService extends ServiceEntity<SimpleResult> {
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)

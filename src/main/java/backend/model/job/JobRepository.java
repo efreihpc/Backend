@@ -8,7 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-public interface JobRepository extends CrudRepository<GenericJob, Long> {
-	@Query("select j from GenericJob j where j.m_id = :id")
-	List<GenericJob> findById(@Param("id") long id);
+public interface JobRepository extends CrudRepository<JobEntity, Long> {
+	@Query("select j from JobEntity j where j.m_id = :id")
+	List<JobEntity> findById(@Param("id") long id);
 }

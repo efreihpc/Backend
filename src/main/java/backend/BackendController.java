@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import backend.model.service.GenericService;
+import backend.model.service.ServiceEntity;
 import backend.system.GlobalState;
 
 @Component
@@ -23,12 +23,12 @@ public class BackendController{
 	private Backend m_backend =  GlobalState.get("Backend");
 	
     @RequestMapping(value = "/services", method = RequestMethod.GET)
-    public HashMap<String, GenericService.ServiceDescriptor> services() {
+    public HashMap<String, ServiceEntity.ServiceDescriptor> services() {
     	return m_backend.services();
     }
     
     @RequestMapping(value = "/service/{identifier}", method = RequestMethod.GET)
-    public GenericService.ServiceDescriptor service(@PathVariable String identifier) {
+    public ServiceEntity.ServiceDescriptor service(@PathVariable String identifier) {
     	return m_backend.serviceDescriptor(identifier);
     }
     

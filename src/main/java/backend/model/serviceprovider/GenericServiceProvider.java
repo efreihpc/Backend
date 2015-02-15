@@ -23,7 +23,7 @@ import org.springframework.core.type.filter.TypeFilter;
 import backend.model.GlobalPersistenceUnit;
 import backend.model.job.JobExecutor;
 import backend.model.result.Result;
-import backend.model.service.GenericService;
+import backend.model.service.ServiceEntity;
 import backend.model.service.Service;
 import backend.model.service.ServiceRepository;
 
@@ -66,7 +66,7 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     private ServiceProviderDescriptor m_descriptor;
     
 	@JsonProperty("services")
-    private HashMap<String, GenericService.ServiceDescriptor> m_registeredServices;
+    private HashMap<String, ServiceEntity.ServiceDescriptor> m_registeredServices;
     
     private GlobalPersistenceUnit m_globalPersistenceUnit;
     private ServiceRepository m_serviceRepository;
@@ -76,7 +76,7 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     {
     	m_descriptor = new ServiceProviderDescriptor((Class<GenericServiceProvider>)this.getClass());
     	m_descriptor.commonName(this.getClass().getName());
-    	m_registeredServices = new HashMap<String, GenericService.ServiceDescriptor>();
+    	m_registeredServices = new HashMap<String, ServiceEntity.ServiceDescriptor>();
     	m_jobExecutor = new JobExecutor();
     	registerServices();
     }
@@ -98,23 +98,23 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     }
     
     @Override
-    public GenericService.ServiceDescriptor serviceDescriptor(String serviceIdentifier)
+    public ServiceEntity.ServiceDescriptor serviceDescriptor(String serviceIdentifier)
     {
     	return m_registeredServices.get(serviceIdentifier);
     }
     
     @JsonProperty("services")
     @Override
-    public HashMap<String, GenericService.ServiceDescriptor> services()
+    public HashMap<String, ServiceEntity.ServiceDescriptor> services()
     {
     	return m_registeredServices;
     }
     
     @Override
-    public <E extends Result> GenericService<E> service(String serviceName) throws InstantiationException, IllegalAccessException
+    public <E extends Result> ServiceEntity<E> service(String serviceName) throws InstantiationException, IllegalAccessException
     {
-    	Class<GenericService> serviceClass = m_registeredServices.get(serviceName).classDescriptor();
-    	GenericService<E> newService = (GenericService<E>) serviceClass.newInstance();
+    	Class<ServiceEntity> serviceClass = m_registeredServices.get(serviceName).classDescriptor();
+    	ServiceEntity<E> newService = (ServiceEntity<E>) serviceClass.newInstance();
     	
     	newService.jobExecutor(m_jobExecutor);
     	
@@ -139,17 +139,17 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     	// create scanner and disable default filters (that is the 'false' argument)
     	final ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
     	// add include filters which matches all the classes (or use your own)
-    	provider.addIncludeFilter((TypeFilter) new AssignableTypeFilter(GenericService.class));
+    	provider.addIncludeFilter((TypeFilter) new AssignableTypeFilter(ServiceEntity.class));
     	// get matching classes defined in the package
     	final Set<BeanDefinition> classes = provider.findCandidateComponents(this.getClass().getPackage().getName());
     	
     	for (BeanDefinition definition : classes) {
 			try 
 			{
-				Class<GenericService> registeredClass;
-				registeredClass = (Class<GenericService>) Class.forName(definition.getBeanClassName());
+				Class<ServiceEntity> registeredClass;
+				registeredClass = (Class<ServiceEntity>) Class.forName(definition.getBeanClassName());
 
-				GenericService instance = registeredClass.newInstance();
+				ServiceEntity instance = registeredClass.newInstance();
 				String commonName = instance.commonName();
 				String identifier = registeredClass.getCanonicalName();
 				MessageDigest messageDigest = MessageDigest.getInstance("SHA");

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import backend.model.service.GenericService;
+import backend.model.service.ServiceEntity;
 import backend.system.GlobalState;
 
 @Component
@@ -25,23 +25,23 @@ public class JobController {
 	}
 	
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public Iterable<GenericJob> serviceProviders() {
-    	Iterable<GenericJob> result =  m_jobRepository.findAll();
+    public Iterable<JobEntity> serviceProviders() {
+    	Iterable<JobEntity> result =  m_jobRepository.findAll();
     	
     	return result;
     }
     
     @RequestMapping(value = "/id/{identifier}", method = RequestMethod.GET)
-    public Iterable<GenericJob> byId(@PathVariable String identifier) {
-    	Iterable<GenericJob> result =  m_jobRepository.findById(Long.parseLong(identifier));
+    public Iterable<JobEntity> byId(@PathVariable String identifier) {
+    	Iterable<JobEntity> result =  m_jobRepository.findById(Long.parseLong(identifier));
     	return result;
     }
     
     @RequestMapping(value = "/delete/id/{identifier}", method = RequestMethod.GET)
     public void deleteById(@PathVariable String identifier) {
-    	Iterable<GenericJob> jobs = m_jobRepository.findById(Long.parseLong(identifier));
+    	Iterable<JobEntity> jobs = m_jobRepository.findById(Long.parseLong(identifier));
     	
-    	for(GenericJob job : jobs)
+    	for(JobEntity job : jobs)
     	{
     		m_jobRepository.delete(job);
     	}

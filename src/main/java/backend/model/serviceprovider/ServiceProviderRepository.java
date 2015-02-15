@@ -14,7 +14,7 @@ import org.springframework.core.type.filter.TypeFilter;
 
 import backend.model.GlobalPersistenceUnit;
 import backend.model.result.Result;
-import backend.model.service.GenericService;
+import backend.model.service.ServiceEntity;
 import backend.system.GlobalState;
 
 
