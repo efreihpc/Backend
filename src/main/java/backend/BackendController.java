@@ -32,7 +32,7 @@ public class BackendController{
     	return m_backend.serviceDescriptor(identifier);
     }
     
-    @RequestMapping(value = "/schedule/{identifier}", method = RequestMethod.GET)
+    @RequestMapping(value = "/schedule/{identifier}", method = RequestMethod.POST)
     public boolean schedule(@PathVariable String identifier) {
     	m_backend.schedule(identifier);
     	

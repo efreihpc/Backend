@@ -22,7 +22,7 @@ public class ServiceProviderController {
 		m_serviceProviderRepository = persistence.serviceProviderRepository();
 	}
 	
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public Iterable<GenericServiceProvider> serviceProviders() {
     	Iterable<GenericServiceProvider> result =  m_serviceProviderRepository.findAll();
     	
