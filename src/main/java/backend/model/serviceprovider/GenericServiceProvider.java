@@ -20,6 +20,7 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 
+import ro.fortsoft.pf4j.ExtensionPoint;
 import backend.model.GlobalPersistenceUnit;
 import backend.model.job.JobExecutor;
 import backend.model.result.Result;
@@ -30,7 +31,7 @@ import backend.model.service.ServiceRepository;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-public abstract class GenericServiceProvider implements ServiceProvider{
+public abstract class GenericServiceProvider implements ExtensionPoint, ServiceProvider{
 	
 	public static class ServiceProviderDescriptor
 	{

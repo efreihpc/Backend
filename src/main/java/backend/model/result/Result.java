@@ -7,10 +7,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import ro.fortsoft.pf4j.ExtensionPoint;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
-public abstract class Result<T> {
+public abstract class Result<T> implements ExtensionPoint {
 	
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)

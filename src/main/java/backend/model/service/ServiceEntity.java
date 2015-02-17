@@ -9,6 +9,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import ro.fortsoft.pf4j.ExtensionPoint;
 import backend.model.GlobalPersistenceUnit;
 import backend.model.job.JobEntity;
 import backend.model.job.JobExecutor;
@@ -18,11 +19,10 @@ import backend.model.result.Result;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @Entity
 @Inheritance
-public abstract class ServiceEntity<T extends Result> implements Service<T> {
+public abstract class ServiceEntity<T extends Result> implements ExtensionPoint, Service<T> {
 	
 	public static class ServiceDescriptor
 	{
