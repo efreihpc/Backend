@@ -3,17 +3,8 @@ package backend.model.serviceprovider;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.Transient;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -24,12 +15,11 @@ import ro.fortsoft.pf4j.ExtensionPoint;
 import backend.model.GlobalPersistenceUnit;
 import backend.model.job.JobExecutor;
 import backend.model.result.Result;
-import backend.model.service.ServiceEntity;
 import backend.model.service.Service;
+import backend.model.service.ServiceEntity;
 import backend.model.service.ServiceRepository;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 public abstract class GenericServiceProvider implements ExtensionPoint, ServiceProvider{
 	
@@ -142,11 +132,13 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     	// add include filters which matches all the classes (or use your own)
     	provider.addIncludeFilter((TypeFilter) new AssignableTypeFilter(ServiceEntity.class));
     	// get matching classes defined in the package
+    	System.out.println("Scanning from Service in package: " + this.getClass().getPackage().getName());
     	final Set<BeanDefinition> classes = provider.findCandidateComponents(this.getClass().getPackage().getName());
     	
     	for (BeanDefinition definition : classes) {
 			try 
 			{
+				System.out.println("Found: " + definition);
 				Class<ServiceEntity> registeredClass;
 				registeredClass = (Class<ServiceEntity>) Class.forName(definition.getBeanClassName());
 
