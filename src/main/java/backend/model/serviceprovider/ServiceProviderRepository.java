@@ -25,6 +25,16 @@ public class ServiceProviderRepository{
 
 	public ServiceProviderRepository()
 	{
+		buildRegistry();
+	}
+	
+	public void reScan()
+	{
+		buildRegistry();
+	}
+	
+	private void buildRegistry()
+	{
 		m_registry = new HashMap<String, GenericServiceProvider.ServiceProviderDescriptor>();
 		m_instances = new HashMap<String, GenericServiceProvider>();
 		
