@@ -1,5 +1,9 @@
 package backend.model.service;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -31,9 +35,30 @@ public abstract class ServiceEntity<T extends Result> implements ExtensionPoint,
 		@JsonProperty("commonName")
 		private String m_commonName;
 		
+		@JsonProperty("providerIdentifier")
+		private String m_providerIdentifier;
+		
+		@JsonProperty("identifier")
+		private String m_identifier;
+		
 		public ServiceDescriptor(Class<ServiceEntity> clazz)
 		{
 			m_classDescriptor = clazz;
+			
+			try
+			{
+				String identifier = m_classDescriptor.getCanonicalName();
+				MessageDigest messageDigest;
+				messageDigest = MessageDigest.getInstance("SHA");
+				messageDigest.update(identifier.getBytes());
+				identifier = String.format("%040x", new BigInteger(1, messageDigest.digest()));
+		    	
+				identifier(identifier);
+			}
+			catch(NoSuchAlgorithmException e)
+			{
+				e.printStackTrace();
+			}
 		}
 		
 		public Class<ServiceEntity> classDescriptor()
@@ -51,6 +76,30 @@ public abstract class ServiceEntity<T extends Result> implements ExtensionPoint,
 		public String commonName()
 		{
 			return m_commonName;
+		}
+		
+		@JsonProperty("providerIdentifier")
+		public void providerIdentifier(String name)
+		{
+			m_providerIdentifier = name;
+		}
+		
+		@JsonProperty("providerIdentifier")
+		public String providerIdentifier()
+		{
+			return m_providerIdentifier;
+		}
+		
+		@JsonProperty("identifier")
+		public void identifier(String name)
+		{
+			m_identifier = name;
+		}
+		
+		@JsonProperty("identifier")
+		public String identifier()
+		{
+			return m_identifier;
 		}
 	}
 
@@ -99,6 +148,16 @@ public abstract class ServiceEntity<T extends Result> implements ExtensionPoint,
     protected void commonName(String name)
     {
     	m_descriptor.commonName(name);
+    }
+    
+    public void providerIdentifier(String providerIdentifier)
+    {
+    	m_descriptor.providerIdentifier(providerIdentifier);
+    }
+    
+    public String providerIdentifier()
+    {
+    	return m_descriptor.providerIdentifier();
     }
     
     @JsonProperty("result")

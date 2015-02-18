@@ -31,9 +31,26 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
 		@JsonProperty("commonName")
 		private String m_commonName;
 		
+		@JsonProperty("identifier")
+		private String m_identifier;
+		
 		public ServiceProviderDescriptor(Class<GenericServiceProvider> clazz)
 		{
 			m_classDescriptor = clazz;
+			try
+			{
+				String identifier = m_classDescriptor.getCanonicalName();
+				MessageDigest messageDigest;
+				messageDigest = MessageDigest.getInstance("SHA");
+				messageDigest.update(identifier.getBytes());
+				identifier = String.format("%040x", new BigInteger(1, messageDigest.digest()));
+		    	
+				identifier(identifier);
+			}
+			catch(NoSuchAlgorithmException e)
+			{
+				e.printStackTrace();
+			}
 		}
 		
 		public Class<GenericServiceProvider> classDescriptor()
@@ -52,6 +69,18 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
 		{
 			return m_commonName;
 		}
+		
+		@JsonProperty("identifier")
+		public void identifier(String name)
+		{
+			m_identifier = name;
+		}
+		
+		@JsonProperty("identifier")
+		public String identifier()
+		{
+			return m_identifier;
+		}
 	}
 	
 	@JsonProperty("descriptor")
@@ -66,11 +95,11 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     
     public GenericServiceProvider()
     {
-    	m_descriptor = new ServiceProviderDescriptor((Class<GenericServiceProvider>)this.getClass());
-    	m_descriptor.commonName(this.getClass().getName());
-    	m_registeredServices = new HashMap<String, ServiceEntity.ServiceDescriptor>();
-    	m_jobExecutor = new JobExecutor();
-    	registerServices();
+	    	m_descriptor = new ServiceProviderDescriptor((Class<GenericServiceProvider>)this.getClass());
+	    	m_descriptor.commonName(this.getClass().getName());
+	    	m_registeredServices = new HashMap<String, ServiceEntity.ServiceDescriptor>();
+	    	m_jobExecutor = new JobExecutor();
+	    	registerServices();
     }
     
     @JsonProperty("descriptor")
@@ -116,6 +145,8 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     	if(m_serviceRepository != null)
     		m_serviceRepository.save(newService);
     	
+    	newService.providerIdentifier(m_descriptor.identifier());
+    	
     	return newService;
     }
     
@@ -136,24 +167,20 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     	// add include filters which matches all the classes (or use your own)
     	provider.addIncludeFilter((TypeFilter) new AssignableTypeFilter(ServiceEntity.class));
     	// get matching classes defined in the package
-    	System.out.println("Scanning for Service in package: " + this.getClass().getPackage().getName());
     	final Set<BeanDefinition> classes = provider.findCandidateComponents(this.getClass().getPackage().getName());
     	
     	for (BeanDefinition definition : classes) {
 			try 
 			{
-				System.out.println("Found: " + definition);
 				Class<ServiceEntity> registeredClass;
 				registeredClass = (Class<ServiceEntity>) classLoader.loadClass(definition.getBeanClassName());
 
 				ServiceEntity instance = registeredClass.newInstance();
 				String commonName = instance.commonName();
-				String identifier = registeredClass.getCanonicalName();
-				MessageDigest messageDigest = MessageDigest.getInstance("SHA");
-				messageDigest.update(identifier.getBytes());
-				identifier = String.format("%040x", new BigInteger(1, messageDigest.digest()));
 				
-				m_registeredServices.put(identifier, instance.descriptor());
+				instance.providerIdentifier(m_descriptor.identifier());
+				
+				m_registeredServices.put(instance.descriptor().identifier(), instance.descriptor());
 			} 
 			catch (ClassNotFoundException e) 
 			{
@@ -167,9 +194,8 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
 			{
 				e.printStackTrace();
 			} 
-			catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (NoSuchAlgorithmException e) {
+			catch (InstantiationException e) 
+			{
 				e.printStackTrace();
 			}
     	}
