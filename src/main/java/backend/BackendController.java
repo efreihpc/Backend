@@ -26,12 +26,12 @@ public class BackendController{
 	
 	private Backend m_backend =  GlobalState.get("Backend");
 	
-//    @RequestMapping(value = "/schedule/{identifier}", method = RequestMethod.POST)
-//    public boolean schedule(@PathVariable String identifier) {
-//    	m_backend.schedule(identifier);
-//    	
-//    	return true;
-//    }
+    @RequestMapping(value = "/schedule", method = RequestMethod.POST)
+    public boolean schedule(@RequestBody ServiceEntity.ServiceDescriptor descriptor) {
+    	m_backend.schedule(descriptor);
+    	
+    	return true;
+    }
     
     @RequestMapping(value = "/plugins", method = RequestMethod.GET)
     public List<GenericServiceProvider> loadPugins()

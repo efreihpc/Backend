@@ -132,9 +132,9 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     }
     
     @Override
-    public <E extends Result> ServiceEntity<E> service(String serviceName) throws InstantiationException, IllegalAccessException
+    public <E extends Result> ServiceEntity<E> service(String serviceIdentifier) throws InstantiationException, IllegalAccessException
     {
-    	Class<ServiceEntity> serviceClass = m_registeredServices.get(serviceName).classDescriptor();
+    	Class<ServiceEntity> serviceClass = m_registeredServices.get(serviceIdentifier).classDescriptor();
     	ServiceEntity<E> newService = (ServiceEntity<E>) serviceClass.newInstance();
     	
     	newService.jobExecutor(m_jobExecutor);

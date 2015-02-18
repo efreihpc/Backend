@@ -41,6 +41,11 @@ public abstract class ServiceEntity<T extends Result> implements ExtensionPoint,
 		@JsonProperty("identifier")
 		private String m_identifier;
 		
+		public ServiceDescriptor()
+		{
+			
+		}
+		
 		public ServiceDescriptor(Class<ServiceEntity> clazz)
 		{
 			m_classDescriptor = clazz;
