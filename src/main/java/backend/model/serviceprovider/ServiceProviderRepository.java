@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 
+import ro.fortsoft.pf4j.PluginManager;
 import backend.model.GlobalPersistenceUnit;
 import backend.model.result.Result;
 import backend.model.service.ServiceEntity;
@@ -25,19 +27,44 @@ public class ServiceProviderRepository{
 
 	public ServiceProviderRepository()
 	{
-		buildRegistry();
+		scan();
 	}
 	
-	public void reScan()
-	{
-		buildRegistry();
-	}
-	
-	private void buildRegistry()
+	public void scan()
 	{
 		m_registry = new HashMap<String, GenericServiceProvider.ServiceProviderDescriptor>();
 		m_instances = new HashMap<String, GenericServiceProvider>();
+		registerLocalServiceProviders();
+		registerPluginServiceProviders();
+	}
+	
+	public void registerPluginServiceProviders()
+	{
+		System.out.println("Scanning for Plugins");
+		PluginManager pluginManager = GlobalState.get("PluginManager");
 		
+		List<GenericServiceProvider> serviceproviders = pluginManager.getExtensions(GenericServiceProvider.class);
+		
+		for(GenericServiceProvider provider: serviceproviders)
+		{
+			try 
+			{
+				String identifier = provider.getClass().getCanonicalName();
+				MessageDigest messageDigest;
+				messageDigest = MessageDigest.getInstance("SHA");
+				messageDigest.update(identifier.getBytes());
+				identifier = String.format("%040x", new BigInteger(1, messageDigest.digest()));
+				m_registry.put(identifier, provider.descriptor());
+			} 
+			catch (NoSuchAlgorithmException e) 
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private void registerLocalServiceProviders()
+	{	
     	// create scanner and disable default filters (that is the 'false' argument)
     	final ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
     	// add include filters which matches all the classes (or use your own)

@@ -26,42 +26,19 @@ public class BackendController{
 	
 	private Backend m_backend =  GlobalState.get("Backend");
 	
-    @RequestMapping(value = "/services", method = RequestMethod.GET)
-    public HashMap<String, ServiceEntity.ServiceDescriptor> services() {
-    	return m_backend.services();
-    }
-    
-    @RequestMapping(value = "/service/{identifier}", method = RequestMethod.GET)
-    public ServiceEntity.ServiceDescriptor service(@PathVariable String identifier) {
-    	return m_backend.serviceDescriptor(identifier);
-    }
-    
-    @RequestMapping(value = "/schedule/{identifier}", method = RequestMethod.POST)
-    public boolean schedule(@PathVariable String identifier) {
-    	m_backend.schedule(identifier);
-    	
-    	return true;
-    }
+//    @RequestMapping(value = "/schedule/{identifier}", method = RequestMethod.POST)
+//    public boolean schedule(@PathVariable String identifier) {
+//    	m_backend.schedule(identifier);
+//    	
+//    	return true;
+//    }
     
     @RequestMapping(value = "/plugins", method = RequestMethod.GET)
     public List<GenericServiceProvider> loadPugins()
     {
-	    PluginManager pluginManager = new DefaultPluginManager(new File("3rd_party"));
-	    pluginManager.loadPlugins();
-	    pluginManager.startPlugins();
-	    
-	    List<ServiceEntity> services = pluginManager.getExtensions(ServiceEntity.class);
-	    for (ServiceEntity service : services) {
-	        System.out.println(">>> " + service.commonName()  + " loader: " + service.getClass().getClassLoader());
-	    }
+	    PluginManager pluginManager = GlobalState.get("PluginManager");
 	    
 	    List<GenericServiceProvider> serviceproviders = pluginManager.getExtensions(GenericServiceProvider.class);
-	    for (GenericServiceProvider serviceProvider : serviceproviders) {
-	    	System.out.println(">>> " + serviceProvider.commonName() + " loader: " + serviceProvider.getClass().getClassLoader());
-	    	HashMap<String, ServiceEntity.ServiceDescriptor> servicehm = serviceProvider.services();
-	    	for(ServiceEntity.ServiceDescriptor service : servicehm.values())
-	    		System.out.println(">>>>>> " + service.commonName());
-	    }
 	    
 	    return serviceproviders;
     }

@@ -136,7 +136,7 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     	// add include filters which matches all the classes (or use your own)
     	provider.addIncludeFilter((TypeFilter) new AssignableTypeFilter(ServiceEntity.class));
     	// get matching classes defined in the package
-    	System.out.println("Scanning from Service in package: " + this.getClass().getPackage().getName());
+    	System.out.println("Scanning for Service in package: " + this.getClass().getPackage().getName());
     	final Set<BeanDefinition> classes = provider.findCandidateComponents(this.getClass().getPackage().getName());
     	
     	for (BeanDefinition definition : classes) {
