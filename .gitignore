@@ -1,6 +1,7 @@
 .gradle
 ld.gradle
 build/
+3rd_party
 
 .classpath
 .project

@@ -3,34 +3,26 @@ package backend.model.serviceprovider;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.Transient;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 
+import ro.fortsoft.pf4j.ExtensionPoint;
 import backend.model.GlobalPersistenceUnit;
 import backend.model.job.JobExecutor;
 import backend.model.result.Result;
-import backend.model.service.ServiceEntity;
 import backend.model.service.Service;
+import backend.model.service.ServiceEntity;
 import backend.model.service.ServiceRepository;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-public abstract class GenericServiceProvider implements ServiceProvider{
+public abstract class GenericServiceProvider implements ExtensionPoint, ServiceProvider{
 	
 	public static class ServiceProviderDescriptor
 	{
@@ -39,9 +31,26 @@ public abstract class GenericServiceProvider implements ServiceProvider{
 		@JsonProperty("commonName")
 		private String m_commonName;
 		
+		@JsonProperty("identifier")
+		private String m_identifier;
+		
 		public ServiceProviderDescriptor(Class<GenericServiceProvider> clazz)
 		{
 			m_classDescriptor = clazz;
+			try
+			{
+				String identifier = m_classDescriptor.getCanonicalName();
+				MessageDigest messageDigest;
+				messageDigest = MessageDigest.getInstance("SHA");
+				messageDigest.update(identifier.getBytes());
+				identifier = String.format("%040x", new BigInteger(1, messageDigest.digest()));
+		    	
+				identifier(identifier);
+			}
+			catch(NoSuchAlgorithmException e)
+			{
+				e.printStackTrace();
+			}
 		}
 		
 		public Class<GenericServiceProvider> classDescriptor()
@@ -60,6 +69,18 @@ public abstract class GenericServiceProvider implements ServiceProvider{
 		{
 			return m_commonName;
 		}
+		
+		@JsonProperty("identifier")
+		public void identifier(String name)
+		{
+			m_identifier = name;
+		}
+		
+		@JsonProperty("identifier")
+		public String identifier()
+		{
+			return m_identifier;
+		}
 	}
 	
 	@JsonProperty("descriptor")
@@ -74,11 +95,11 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     
     public GenericServiceProvider()
     {
-    	m_descriptor = new ServiceProviderDescriptor((Class<GenericServiceProvider>)this.getClass());
-    	m_descriptor.commonName(this.getClass().getName());
-    	m_registeredServices = new HashMap<String, ServiceEntity.ServiceDescriptor>();
-    	m_jobExecutor = new JobExecutor();
-    	registerServices();
+	    	m_descriptor = new ServiceProviderDescriptor((Class<GenericServiceProvider>)this.getClass());
+	    	m_descriptor.commonName(this.getClass().getName());
+	    	m_registeredServices = new HashMap<String, ServiceEntity.ServiceDescriptor>();
+	    	m_jobExecutor = new JobExecutor();
+	    	registerServices();
     }
     
     @JsonProperty("descriptor")
@@ -111,9 +132,9 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     }
     
     @Override
-    public <E extends Result> ServiceEntity<E> service(String serviceName) throws InstantiationException, IllegalAccessException
+    public <E extends Result> ServiceEntity<E> service(String serviceIdentifier) throws InstantiationException, IllegalAccessException
     {
-    	Class<ServiceEntity> serviceClass = m_registeredServices.get(serviceName).classDescriptor();
+    	Class<ServiceEntity> serviceClass = m_registeredServices.get(serviceIdentifier).classDescriptor();
     	ServiceEntity<E> newService = (ServiceEntity<E>) serviceClass.newInstance();
     	
     	newService.jobExecutor(m_jobExecutor);
@@ -123,6 +144,8 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     	
     	if(m_serviceRepository != null)
     		m_serviceRepository.save(newService);
+    	
+    	newService.providerIdentifier(m_descriptor.identifier());
     	
     	return newService;
     }
@@ -138,6 +161,9 @@ public abstract class GenericServiceProvider implements ServiceProvider{
     {
     	// create scanner and disable default filters (that is the 'false' argument)
     	final ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
+    	ClassLoader classLoader = this.getClass().getClassLoader();
+    	// set current classes classloader in case it had been loaded as a plugin
+    	provider.setResourceLoader(new PathMatchingResourcePatternResolver(classLoader));
     	// add include filters which matches all the classes (or use your own)
     	provider.addIncludeFilter((TypeFilter) new AssignableTypeFilter(ServiceEntity.class));
     	// get matching classes defined in the package
@@ -147,16 +173,14 @@ public abstract class GenericServiceProvider implements ServiceProvider{
 			try 
 			{
 				Class<ServiceEntity> registeredClass;
-				registeredClass = (Class<ServiceEntity>) Class.forName(definition.getBeanClassName());
+				registeredClass = (Class<ServiceEntity>) classLoader.loadClass(definition.getBeanClassName());
 
 				ServiceEntity instance = registeredClass.newInstance();
 				String commonName = instance.commonName();
-				String identifier = registeredClass.getCanonicalName();
-				MessageDigest messageDigest = MessageDigest.getInstance("SHA");
-				messageDigest.update(identifier.getBytes());
-				identifier = String.format("%040x", new BigInteger(1, messageDigest.digest()));
 				
-				m_registeredServices.put(identifier, instance.descriptor());
+				instance.providerIdentifier(m_descriptor.identifier());
+				
+				m_registeredServices.put(instance.descriptor().identifier(), instance.descriptor());
 			} 
 			catch (ClassNotFoundException e) 
 			{
@@ -170,9 +194,8 @@ public abstract class GenericServiceProvider implements ServiceProvider{
 			{
 				e.printStackTrace();
 			} 
-			catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (NoSuchAlgorithmException e) {
+			catch (InstantiationException e) 
+			{
 				e.printStackTrace();
 			}
     	}
