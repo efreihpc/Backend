@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 
@@ -129,6 +130,9 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     {
     	// create scanner and disable default filters (that is the 'false' argument)
     	final ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
+    	ClassLoader classLoader = this.getClass().getClassLoader();
+    	// set current classes classloader in case it had been loaded as a plugin
+    	provider.setResourceLoader(new PathMatchingResourcePatternResolver(classLoader));
     	// add include filters which matches all the classes (or use your own)
     	provider.addIncludeFilter((TypeFilter) new AssignableTypeFilter(ServiceEntity.class));
     	// get matching classes defined in the package
@@ -140,7 +144,7 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
 			{
 				System.out.println("Found: " + definition);
 				Class<ServiceEntity> registeredClass;
-				registeredClass = (Class<ServiceEntity>) Class.forName(definition.getBeanClassName());
+				registeredClass = (Class<ServiceEntity>) classLoader.loadClass(definition.getBeanClassName());
 
 				ServiceEntity instance = registeredClass.newInstance();
 				String commonName = instance.commonName();

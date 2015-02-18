@@ -44,7 +44,7 @@ public class BackendController{
     }
     
     @RequestMapping(value = "/plugins", method = RequestMethod.GET)
-    public void loadPugins()
+    public List<GenericServiceProvider> loadPugins()
     {
 	    PluginManager pluginManager = new DefaultPluginManager(new File("3rd_party"));
 	    pluginManager.loadPlugins();
@@ -52,13 +52,18 @@ public class BackendController{
 	    
 	    List<ServiceEntity> services = pluginManager.getExtensions(ServiceEntity.class);
 	    for (ServiceEntity service : services) {
-	        System.out.println(">>> " + service.commonName());
+	        System.out.println(">>> " + service.commonName()  + " loader: " + service.getClass().getClassLoader());
 	    }
 	    
 	    List<GenericServiceProvider> serviceproviders = pluginManager.getExtensions(GenericServiceProvider.class);
 	    for (GenericServiceProvider serviceProvider : serviceproviders) {
-	        System.out.println(">>> " + serviceProvider.services());
+	    	System.out.println(">>> " + serviceProvider.commonName() + " loader: " + serviceProvider.getClass().getClassLoader());
+	    	HashMap<String, ServiceEntity.ServiceDescriptor> servicehm = serviceProvider.services();
+	    	for(ServiceEntity.ServiceDescriptor service : servicehm.values())
+	    		System.out.println(">>>>>> " + service.commonName());
 	    }
+	    
+	    return serviceproviders;
     }
 
 }
