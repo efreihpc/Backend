@@ -20,6 +20,7 @@ import backend.model.job.JobExecutor;
 import backend.model.job.JobRepository;
 import backend.model.job.PersistJob;
 import backend.model.result.Result;
+import backend.model.serviceprovider.ServiceProviderRepository;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -188,6 +189,11 @@ public abstract class ServiceEntity<T extends Result> implements ExtensionPoint,
 	{
 		return m_globalPersistenceUnit;
 	}
+	
+    protected ServiceProviderRepository serviceProviderRepository()
+    {
+    	return m_globalPersistenceUnit.serviceProviderRepository();
+    }
 	
 	@JsonProperty("dataSource")
 	public void dataSource(ServiceEntity<T> dataSource)
