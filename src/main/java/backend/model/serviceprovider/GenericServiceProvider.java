@@ -6,8 +6,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
@@ -158,7 +161,7 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     }
     
     private void registerServices()
-    {
+    {    	
     	// create scanner and disable default filters (that is the 'false' argument)
     	final ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
     	ClassLoader classLoader = this.getClass().getClassLoader();
