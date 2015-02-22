@@ -10,7 +10,9 @@ import org.hibernate.ejb.HibernatePersistence;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.data.repository.core.support.RepositoryProxyPostProcessor;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -19,8 +21,9 @@ public class PluginEntityManagerFactory extends
 		LocalContainerEntityManagerFactoryBean {
 	
 	ApplicationContext m_context = new ClassPathXmlApplicationContext("Spring-Config.xml");
+	EntityManagerFactory m_entityManagerfactory;
 	
-	public EntityManager createEntityManager(ClassLoader classLoader)
+	public PluginEntityManagerFactory(ClassLoader classLoader)
 	{
 		setBeanClassLoader(classLoader);
 	    setResourceLoader(new PathMatchingResourcePatternResolver(classLoader));
@@ -40,9 +43,22 @@ public class PluginEntityManagerFactory extends
 	    props.put("hibernate.hbm2ddl.auto", "update");
 	    setJpaProperties(props);
 	    
-		EntityManagerFactory factory = createNativeEntityManagerFactory();
-		
-		return factory.createEntityManager();
+		m_entityManagerfactory = createNativeEntityManagerFactory();
+	}
+	
+	public EntityManager createEntityManager()
+	{		
+		return m_entityManagerfactory.createEntityManager();
+	}
+	
+	public JpaTransactionManager createTransactionManager()
+	{
+		return new JpaTransactionManager(m_entityManagerfactory);
+	}
+	
+	public RepositoryProxyPostProcessor createProxyPostProcessor()
+	{
+		return new PluginRepositoryProxyPostProcessor(createTransactionManager());
 	}
 
 }

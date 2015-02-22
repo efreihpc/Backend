@@ -18,10 +18,13 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.data.jpa.repository.support.PersistenceProvider;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
+import org.springframework.orm.jpa.EntityManagerHolder;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +38,8 @@ import backend.model.service.ServiceRepository;
 import backend.model.serviceprovider.GenericServiceProvider;
 import backend.system.GlobalState;
 import backend.system.PluginEntityManagerFactory;
+import backend.system.PluginRepositoryProxyPostProcessor;
+import backend.system.PluginRepositorySupport;
 
 @Component
 @Controller
@@ -60,47 +65,31 @@ public class BackendController{
 	    
 	    List<ServiceEntity> services = pluginManager.getExtensions(ServiceEntity.class);
 	    
-//	    Configuration configuration = new Configuration();
-//	    
-//	    for(ServiceEntity service : services)
-//	    {
-//	    	configuration.addAnnotatedClass(service.getClass());
-//	    }
-//	    
-//	    configuration.configure();
-//	    ServiceRegistry serviceRegistry = new ServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
-//	    SessionFactory sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-//	    Session session = sessionFactory.openSession();
-//	    
-//	    LocalContainerEntityManagerFactoryBean lcefb = new LocalContainerEntityManagerFactoryBean();
-//	    lcefb.setBeanClassLoader(services.get(0).getClass().getClassLoader());
-//	    lcefb.setResourceLoader(new PathMatchingResourcePatternResolver(services.get(0).getClass().getClassLoader()));
-//	    
-//	    
-//	    EntityManagerFactory emf = lcefb.createNativeEntityManagerFactory();
-//
-//	    
-//	    RepositoryFactorySupport factory = new JpaRepositoryFactory(em);
-//	    
-//	    System.out.println(services.get(0).getClass().getClassLoader());
-//	    
-//	    ServiceRepository repo = factory.getRepository(ServiceRepository.class);
-//	    
-//	    repo.save(services.get(0));
-	    PluginEntityManagerFactory factory = new PluginEntityManagerFactory();
-	    EntityManager em = factory.createEntityManager(services.get(0).getClass().getClassLoader());
+	    PluginEntityManagerFactory factory = new PluginEntityManagerFactory(services.get(0).getClass().getClassLoader());
+	    EntityManager em = factory.createEntityManager();
+	    JpaTransactionManager transactionManager = factory.createTransactionManager();
+	    JpaRepositoryFactory repositoryFactory = new JpaRepositoryFactory(em);
 	    
-	    RepositoryFactorySupport repositoryFactory = new JpaRepositoryFactory(em);
+	    repositoryFactory.addRepositoryProxyPostProcessor(new PluginRepositoryProxyPostProcessor(transactionManager));
 	    
 	    ServiceRepository repo = repositoryFactory.getRepository(ServiceRepository.class);
+	    TransactionSynchronizationManager.bindResource(factory, new EntityManagerHolder(em));
 	    
-	    for(ServiceEntity service: services)
+	    try
 	    {
-	    	em.getTransaction().begin();
-	    	repo.save(service);
-	    	em.getTransaction().commit();
+	    	for(ServiceEntity service: services)
+		    {
+//		    	em.getTransaction().begin();
+		    	repo.save(service);
+//		    	em.getTransaction().commit();
+		    }
+	    } 
+	    finally 
+	    {
+	        // Make sure to unbind when done with the repository instance
+	        TransactionSynchronizationManager.unbindResource(factory);
 	    }
-	    
+	    	    
 	    return serviceproviders;
     }
 
