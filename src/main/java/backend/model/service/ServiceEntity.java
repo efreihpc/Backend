@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 import org.springframework.transaction.annotation.Transactional;
 
 import ro.fortsoft.pf4j.ExtensionPoint;
+import backend.model.Descriptor;
 import backend.model.GlobalPersistenceUnit;
 import backend.model.job.JobEntity;
 import backend.model.job.JobExecutor;
@@ -32,59 +33,27 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Transactional
 public abstract class ServiceEntity<T extends Result> implements ExtensionPoint, Service<T> {
 	
-	public static class ServiceDescriptor
+	public static class ServiceDescriptor extends Descriptor<ServiceEntity>
 	{
-		private Class<ServiceEntity> m_classDescriptor;
-		
-		@JsonProperty("commonName")
-		private String m_commonName;
-		
 		@JsonProperty("providerIdentifier")
 		private String m_providerIdentifier;
 		
-		@JsonProperty("identifier")
-		private String m_identifier;
-		
-		public ServiceDescriptor()
-		{
-			
-		}
-		
 		public ServiceDescriptor(Class<ServiceEntity> clazz)
 		{
-			m_classDescriptor = clazz;
+			super(clazz);
 			
 			try
 			{
-				String identifier = m_classDescriptor.getCanonicalName();
 				MessageDigest messageDigest;
-				messageDigest = MessageDigest.getInstance("SHA");
-				messageDigest.update(identifier.getBytes());
+				messageDigest = MessageDigest.getInstance("SHA");	
+				String identifier = this.getClass().getPackage().getName();
 				identifier = String.format("%040x", new BigInteger(1, messageDigest.digest()));
-		    	
-				identifier(identifier);
+				pluginIdentifier(identifier);
 			}
 			catch(NoSuchAlgorithmException e)
 			{
 				e.printStackTrace();
 			}
-		}
-		
-		public Class<ServiceEntity> classDescriptor()
-		{
-			return m_classDescriptor;
-		}	
-		
-		@JsonProperty("commonName")
-		public void commonName(String name)
-		{
-			m_commonName = name;
-		}
-		
-		@JsonProperty("commonName")
-		public String commonName()
-		{
-			return m_commonName;
 		}
 		
 		@JsonProperty("providerIdentifier")
@@ -97,18 +66,6 @@ public abstract class ServiceEntity<T extends Result> implements ExtensionPoint,
 		public String providerIdentifier()
 		{
 			return m_providerIdentifier;
-		}
-		
-		@JsonProperty("identifier")
-		public void identifier(String name)
-		{
-			m_identifier = name;
-		}
-		
-		@JsonProperty("identifier")
-		public String identifier()
-		{
-			return m_identifier;
 		}
 	}
 
