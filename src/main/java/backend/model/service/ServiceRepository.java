@@ -9,6 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public interface ServiceRepository extends JpaRepository<ServiceEntity, Long>{
 	
 	@Query("select s from ServiceEntity s where s.m_id = :id")

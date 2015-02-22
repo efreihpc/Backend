@@ -29,6 +29,7 @@ public class PluginRepositorySupport<T extends Repository<S,ID>,S,ID extends Ser
 	protected RepositoryFactorySupport doCreateRepositoryFactory() {
 		return new JpaRepositoryFactory(m_entityManager);
 	}
+	
 	public RepositoryFactorySupport repositoryFactorySupport()
 	{
 		return createRepositoryFactory();

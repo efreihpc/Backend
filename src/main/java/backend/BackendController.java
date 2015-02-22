@@ -70,28 +70,17 @@ public class BackendController{
 	    
 	    PluginEntityManagerFactory factory = new PluginEntityManagerFactory(services.get(0).getClass().getClassLoader());
 	    EntityManager em = factory.createEntityManager();
-	    PluginTransactionManager transactionManager = factory.createTransactionManager();
-	    em = transactionManager.entityManager();
-	    JpaRepositoryFactory repositoryFactory = new JpaRepositoryFactory(em);
+	    PluginRepositorySupport prs = new PluginRepositorySupport(em);
 	    
-	    repositoryFactory.addRepositoryProxyPostProcessor(new PluginRepositoryProxyPostProcessor(transactionManager));
-	    
+	    JpaRepositoryFactory repositoryFactory = (JpaRepositoryFactory) prs.repositoryFactorySupport();
+
 	    ServiceRepository repo = repositoryFactory.getRepository(ServiceRepository.class);
-	    TransactionSynchronizationManager.bindResource(factory, new EntityManagerHolder(em));
 	    
-	    try
+    	for(ServiceEntity service: services)
 	    {
-	    	for(ServiceEntity service: services)
-		    {
 //		    	em.getTransaction().begin();
-		    	repo.save(service);
+	    	repo.save(service);
 //		    	em.getTransaction().commit();
-		    }
-	    } 
-	    finally 
-	    {
-	        // Make sure to unbind when done with the repository instance
-	        TransactionSynchronizationManager.unbindResource(factory);
 	    }
 	    	    
 	    return serviceproviders;
