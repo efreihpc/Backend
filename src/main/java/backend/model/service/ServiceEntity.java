@@ -13,6 +13,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import ro.fortsoft.pf4j.ExtensionPoint;
 import backend.model.GlobalPersistenceUnit;
 import backend.model.job.JobEntity;
@@ -27,6 +29,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Inheritance
+@Transactional
 public abstract class ServiceEntity<T extends Result> implements ExtensionPoint, Service<T> {
 	
 	public static class ServiceDescriptor

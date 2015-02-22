@@ -39,9 +39,6 @@ import backend.model.service.ServiceRepository;
 import backend.model.serviceprovider.GenericServiceProvider;
 import backend.system.GlobalState;
 import backend.system.PluginEntityManagerFactory;
-import backend.system.PluginRepositoryProxyPostProcessor;
-import backend.system.PluginRepositorySupport;
-import backend.system.PluginTransactionManager;
 
 @Component
 @Controller
@@ -59,7 +56,6 @@ public class BackendController{
     }
     
     @RequestMapping(value = "/plugins", method = RequestMethod.GET)
-    @Transactional
     public List<GenericServiceProvider> loadPugins()
     {
 	    PluginManager pluginManager = GlobalState.get("PluginManager");
@@ -70,17 +66,14 @@ public class BackendController{
 	    
 	    PluginEntityManagerFactory factory = new PluginEntityManagerFactory(services.get(0).getClass().getClassLoader());
 	    EntityManager em = factory.createEntityManager();
-	    PluginRepositorySupport prs = new PluginRepositorySupport(em);
-	    
-	    JpaRepositoryFactory repositoryFactory = (JpaRepositoryFactory) prs.repositoryFactorySupport();
-
+	    JpaRepositoryFactory repositoryFactory = new JpaRepositoryFactory(em);
 	    ServiceRepository repo = repositoryFactory.getRepository(ServiceRepository.class);
-	    
+
     	for(ServiceEntity service: services)
 	    {
-//		    	em.getTransaction().begin();
+	    	em.getTransaction().begin();
 	    	repo.save(service);
-//		    	em.getTransaction().commit();
+	    	em.getTransaction().commit();
 	    }
 	    	    
 	    return serviceproviders;

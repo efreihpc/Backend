@@ -50,15 +50,4 @@ public class PluginEntityManagerFactory extends
 	{		
 		return m_entityManagerfactory.createEntityManager();
 	}
-	
-	public PluginTransactionManager createTransactionManager()
-	{
-		return new PluginTransactionManager(m_entityManagerfactory);
-	}
-	
-	public RepositoryProxyPostProcessor createProxyPostProcessor()
-	{
-		return new PluginRepositoryProxyPostProcessor(createTransactionManager());
-	}
-
 }
