@@ -15,12 +15,11 @@ import backend.system.GlobalState;
 @RequestMapping("/service")
 public class ServiceController {
 
-	ServiceRepository m_serviceRepository;
+	ServicePersistenceUnit m_persistence;
 	
 	public ServiceController()
 	{
-		ServicePersistenceUnit persistence = GlobalState.get("GlobalPersistenceUnit");
-		m_serviceRepository = persistence.serviceRepository();
+		m_persistence = GlobalState.get("GlobalPersistenceUnit");
 	}
 	
     @RequestMapping(value = "", method = RequestMethod.GET)

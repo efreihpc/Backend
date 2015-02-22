@@ -30,7 +30,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Inheritance
-@Transactional
 public abstract class ServiceEntity<T extends Result> implements ExtensionPoint, Service<T> {
 	
 	public static class ServiceDescriptor extends Descriptor<ServiceEntity>
@@ -41,19 +40,6 @@ public abstract class ServiceEntity<T extends Result> implements ExtensionPoint,
 		public ServiceDescriptor(Class<ServiceEntity> clazz)
 		{
 			super(clazz);
-			
-			try
-			{
-				MessageDigest messageDigest;
-				messageDigest = MessageDigest.getInstance("SHA");	
-				String identifier = this.getClass().getPackage().getName();
-				identifier = String.format("%040x", new BigInteger(1, messageDigest.digest()));
-				pluginIdentifier(identifier);
-			}
-			catch(NoSuchAlgorithmException e)
-			{
-				e.printStackTrace();
-			}
 		}
 		
 		@JsonProperty("providerIdentifier")

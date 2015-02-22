@@ -9,9 +9,11 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import backend.model.PluginRepository;
+
 @Transactional
-public interface ServiceRepository extends JpaRepository<ServiceEntity, Long>{
+public abstract class ServiceRepository extends PluginRepository<ServiceEntity>{
 	
 	@Query("select s from ServiceEntity s where s.m_id = :id")
-	List<ServiceEntity> findById(@Param("id") long id);
+	abstract List<ServiceEntity> findById(@Param("id") long id);
 }
