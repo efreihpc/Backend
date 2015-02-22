@@ -22,7 +22,6 @@ public class PluginRepositoryProxyPostProcessor implements
 	@Override
 	public void postProcess(ProxyFactory factory,
 			RepositoryInformation repositoryInformation) {
-		System.out.println("Prostpocessing");
 		factory.addAdvice(new TransactionInterceptor(m_jpaTransactionManager, new MatchAlwaysTransactionAttributeSource()));
 	}
 

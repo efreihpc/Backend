@@ -24,6 +24,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -58,6 +59,7 @@ public class BackendController{
     }
     
     @RequestMapping(value = "/plugins", method = RequestMethod.GET)
+    @Transactional
     public List<GenericServiceProvider> loadPugins()
     {
 	    PluginManager pluginManager = GlobalState.get("PluginManager");
