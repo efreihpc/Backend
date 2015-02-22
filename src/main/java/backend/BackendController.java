@@ -40,6 +40,7 @@ import backend.system.GlobalState;
 import backend.system.PluginEntityManagerFactory;
 import backend.system.PluginRepositoryProxyPostProcessor;
 import backend.system.PluginRepositorySupport;
+import backend.system.PluginTransactionManager;
 
 @Component
 @Controller
@@ -67,7 +68,8 @@ public class BackendController{
 	    
 	    PluginEntityManagerFactory factory = new PluginEntityManagerFactory(services.get(0).getClass().getClassLoader());
 	    EntityManager em = factory.createEntityManager();
-	    JpaTransactionManager transactionManager = factory.createTransactionManager();
+	    PluginTransactionManager transactionManager = factory.createTransactionManager();
+	    em = transactionManager.entityManager();
 	    JpaRepositoryFactory repositoryFactory = new JpaRepositoryFactory(em);
 	    
 	    repositoryFactory.addRepositoryProxyPostProcessor(new PluginRepositoryProxyPostProcessor(transactionManager));
