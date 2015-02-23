@@ -22,6 +22,7 @@ import backend.model.job.JobExecutor;
 import backend.model.result.Result;
 import backend.model.service.Service;
 import backend.model.service.ServiceEntity;
+import backend.model.service.ServicePersistenceUnit;
 import backend.model.service.ServiceRepository;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -43,7 +44,7 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     private HashMap<String, ServiceEntity.ServiceDescriptor> m_registeredServices;
     
     private GlobalPersistenceUnit m_globalPersistenceUnit;
-    private ServiceRepository m_serviceRepository;
+    private ServicePersistenceUnit m_servicePersistenceUnit;
     JobExecutor m_jobExecutor;
     
     public GenericServiceProvider()
@@ -95,8 +96,8 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     	if(m_globalPersistenceUnit != null)
     		newService.persistenceUnit(m_globalPersistenceUnit);
     	
-    	if(m_serviceRepository != null)
-    		m_serviceRepository.save(newService);
+    	if(m_servicePersistenceUnit != null)
+    		m_servicePersistenceUnit.save(newService);
     	
     	newService.providerIdentifier(m_descriptor.identifier());
     	
@@ -157,7 +158,7 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
 	@Override
 	public void persistenceUnit(GlobalPersistenceUnit persistenceUnit) {
 		m_globalPersistenceUnit = persistenceUnit;
-//		m_serviceRepository = persistenceUnit.serviceRepository();
+		m_servicePersistenceUnit = persistenceUnit.servicePersistence();
 	}
 	
 	@Override

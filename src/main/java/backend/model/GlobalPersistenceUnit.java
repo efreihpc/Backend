@@ -56,8 +56,8 @@ public class GlobalPersistenceUnit implements
 		return m_servicePersistence;
 	}
 	
-	public Pair<ServiceRepository, EntityManager> serviceRepository(Descriptor descriptor)
+	public Pair<ServiceRepository, EntityManager> serviceRepository(Describable instance)
 	{
-		return m_servicePersistence.repository(descriptor.pluginIdentifier());
+		return m_servicePersistence.serviceRepository(instance);
 	}
 }

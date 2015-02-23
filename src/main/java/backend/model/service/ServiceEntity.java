@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 import org.springframework.transaction.annotation.Transactional;
 
 import ro.fortsoft.pf4j.ExtensionPoint;
+import backend.model.Describable;
 import backend.model.Descriptor;
 import backend.model.GlobalPersistenceUnit;
 import backend.model.job.JobEntity;
@@ -30,12 +31,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Inheritance
-public abstract class ServiceEntity<T extends Result> implements Service<T> {
+public abstract class ServiceEntity<T extends Result> implements Service<T>, Describable {
 	
 	public static class ServiceDescriptor extends Descriptor<ServiceEntity>
 	{
 		@JsonProperty("providerIdentifier")
 		private String m_providerIdentifier;
+		
+		public ServiceDescriptor()
+		{
+			super();	
+		}
 		
 		public ServiceDescriptor(Class<ServiceEntity> clazz)
 		{

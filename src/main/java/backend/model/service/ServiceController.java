@@ -1,5 +1,7 @@
 package backend.model.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,33 +19,36 @@ import backend.system.GlobalState;
 public class ServiceController {
 
 	GlobalPersistenceUnit m_persistence;
-	ServiceRepository m_serviceRepository;
+	ServicePersistenceUnit m_servicePersistence;
 	
 	public ServiceController()
 	{
 		m_persistence = GlobalState.get("GlobalPersistenceUnit");
-		m_serviceRepository = m_persistence.servicePersistence().repository("Default").left();
+		m_servicePersistence = m_persistence.servicePersistence();
 	}
 	
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public Iterable<ServiceEntity> services() {
-    	Iterable<ServiceEntity> result =  m_serviceRepository.findByClassLoader("Default");
+    public List<ServiceEntity> services() {
+    	List<ServiceEntity> result =  m_servicePersistence.localServiceRepository().findByClassLoader("Default");
+    	result.addAll(m_servicePersistence.pluginServiceRepository().findByClassLoader("Plugin"));
     	return result;
     }
     
     @RequestMapping(value = "/id/{identifier}", method = RequestMethod.GET)
-    public Iterable<ServiceEntity> getById(@PathVariable String identifier) {
-    	Iterable<ServiceEntity> result =  m_serviceRepository.findById(Long.parseLong(identifier));
+    public List<ServiceEntity> getById(@PathVariable String identifier) {
+    	List<ServiceEntity> result =  m_servicePersistence.localServiceRepository().findById(Long.parseLong(identifier));
+    	result.addAll(m_servicePersistence.pluginServiceRepository().findById(Long.parseLong(identifier)));
     	return result;
     }
     
     @RequestMapping(value = "/delete/id/{identifier}", method = RequestMethod.GET)
     public void deleteById(@PathVariable String identifier) {
-    	Iterable<ServiceEntity> services = m_serviceRepository.findById(Long.parseLong(identifier));
+    	List<ServiceEntity> services = m_servicePersistence.localServiceRepository().findById(Long.parseLong(identifier));
+    	services.addAll(m_servicePersistence.pluginServiceRepository().findById(Long.parseLong(identifier)));
     	
     	for(ServiceEntity service : services)
     	{
-    		m_serviceRepository.delete(service);
+    		m_servicePersistence.delete(service);
     	}
     }
 	

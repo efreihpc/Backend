@@ -18,7 +18,10 @@ public class Descriptor<T> {
 	private String m_identifier;
 	
 	@JsonProperty("pluginIdentifier")
-	private String m_pluginIdentifier;	
+	private boolean m_pluginIdentifier;	
+	
+	public Descriptor()
+	{}
 	
 	public Descriptor(Class<T> clazz)
 	{
@@ -32,10 +35,8 @@ public class Descriptor<T> {
 			
 			identifier = String.format("%040x", new BigInteger(1, messageDigest.digest()));
 			identifier(identifier);
-			
-			identifier = this.getClass().getPackage().getName();
-			identifier = String.format("%040x", new BigInteger(1, messageDigest.digest()));
-			pluginIdentifier(identifier);
+
+			pluginIdentifier(false);
 			
 		}
 		catch(NoSuchAlgorithmException e)
@@ -62,13 +63,13 @@ public class Descriptor<T> {
 	}
 	
 	@JsonProperty("pluginIdentifier")
-	public void pluginIdentifier(String identifier)
+	public void pluginIdentifier(boolean identifier)
 	{
 		m_pluginIdentifier = identifier;
 	}
 	
 	@JsonProperty("pluginIdentifier")
-	public String pluginIdentifier()
+	public boolean pluginIdentifier()
 	{
 		return m_pluginIdentifier;
 	}

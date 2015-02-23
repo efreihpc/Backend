@@ -18,19 +18,6 @@ public abstract class ServicePlugin<T extends Result> extends ServiceEntity<T> i
 	{
 		super();
     	m_classLoader = "Plugin";
-		
-		try
-		{
-			MessageDigest messageDigest;
-			messageDigest = MessageDigest.getInstance("SHA");	
-			String identifier = "local";
-			identifier = String.format("%040x", new BigInteger(1, messageDigest.digest()));
-			
-			descriptor().pluginIdentifier(identifier);
-		}
-		catch(NoSuchAlgorithmException e)
-		{
-			e.printStackTrace();
-		}
+    	descriptor().pluginIdentifier(true);
 	}
 }

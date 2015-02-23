@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ro.fortsoft.pf4j.DefaultPluginManager;
 import ro.fortsoft.pf4j.PluginManager;
+import backend.model.GlobalPersistenceUnit;
 import backend.model.service.ServiceEntity;
 import backend.model.service.ServicePlugin;
 import backend.model.service.ServiceRepository;
@@ -71,14 +72,10 @@ public class BackendController{
 	    PluginEntityManagerFactory factory = new PluginEntityManagerFactory(loader);
 	    EntityManager em = factory.createEntityManager();
 	    JpaRepositoryFactory repositoryFactory = new JpaRepositoryFactory(em);
-	    ServiceRepository repo = repositoryFactory.getRepository(ServiceRepository.class);
+	    ServiceRepository repository = repositoryFactory.getRepository(ServiceRepository.class);
 
-    	for(ServiceEntity service: services)
-	    {
-	    	em.getTransaction().begin();
-	    	repo.save(service);
-	    	em.getTransaction().commit();
-	    }
+	    GlobalPersistenceUnit persistence = GlobalState.get("GlobalPersistenceUnit");
+	    persistence.servicePersistence().addPluginRepository(repository, em);
 	    	    
 	    return serviceproviders;
     }
