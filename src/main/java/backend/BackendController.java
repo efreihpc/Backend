@@ -61,23 +61,7 @@ public class BackendController{
     @RequestMapping(value = "/plugins", method = RequestMethod.GET)
     public List<GenericServiceProvider> loadPugins()
     {
-	    PluginManager pluginManager = GlobalState.get("PluginManager");
-	    
-	    List<GenericServiceProvider> serviceproviders = pluginManager.getExtensions(GenericServiceProvider.class);
-	    
-	    List<ServicePlugin> services = pluginManager.getExtensions(ServicePlugin.class);
-	    
-	    ClassLoader loader = new JoinClassLoader(this.getClass().getClassLoader(), serviceproviders.get(0).getClass().getClassLoader(), serviceproviders.get(1).getClass().getClassLoader());
-	    
-	    PluginEntityManagerFactory factory = new PluginEntityManagerFactory(loader);
-	    EntityManager em = factory.createEntityManager();
-	    JpaRepositoryFactory repositoryFactory = new JpaRepositoryFactory(em);
-	    ServiceRepository repository = repositoryFactory.getRepository(ServiceRepository.class);
-
-	    GlobalPersistenceUnit persistence = GlobalState.get("GlobalPersistenceUnit");
-	    persistence.servicePersistence().addPluginRepository(repository, em);
-	    	    
-	    return serviceproviders;
+	    return m_backend.updatePlugins();
     }
 
 }
