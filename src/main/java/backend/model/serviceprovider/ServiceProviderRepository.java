@@ -43,6 +43,9 @@ public class ServiceProviderRepository{
 		System.out.println("Scanning for Plugins");
 		PluginManager pluginManager = GlobalState.get("PluginManager");
 		
+		if(pluginManager == null)
+			return;
+			
 		List<GenericServiceProvider> serviceproviders = pluginManager.getExtensions(GenericServiceProvider.class);
 		
 		for(GenericServiceProvider provider: serviceproviders)

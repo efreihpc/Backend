@@ -6,80 +6,34 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 
 import ro.fortsoft.pf4j.ExtensionPoint;
+import backend.model.Descriptor;
 import backend.model.GlobalPersistenceUnit;
 import backend.model.job.JobExecutor;
 import backend.model.result.Result;
 import backend.model.service.Service;
 import backend.model.service.ServiceEntity;
+import backend.model.service.ServicePersistenceUnit;
 import backend.model.service.ServiceRepository;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public abstract class GenericServiceProvider implements ExtensionPoint, ServiceProvider{
 	
-	public static class ServiceProviderDescriptor
+	public static class ServiceProviderDescriptor extends Descriptor<GenericServiceProvider>
 	{
-		private Class<GenericServiceProvider> m_classDescriptor;
-		
-		@JsonProperty("commonName")
-		private String m_commonName;
-		
-		@JsonProperty("identifier")
-		private String m_identifier;
-		
-		public ServiceProviderDescriptor(Class<GenericServiceProvider> clazz)
+		public ServiceProviderDescriptor(Class<GenericServiceProvider> providerClass)
 		{
-			m_classDescriptor = clazz;
-			try
-			{
-				String identifier = m_classDescriptor.getCanonicalName();
-				MessageDigest messageDigest;
-				messageDigest = MessageDigest.getInstance("SHA");
-				messageDigest.update(identifier.getBytes());
-				identifier = String.format("%040x", new BigInteger(1, messageDigest.digest()));
-		    	
-				identifier(identifier);
-			}
-			catch(NoSuchAlgorithmException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		
-		public Class<GenericServiceProvider> classDescriptor()
-		{
-			return m_classDescriptor;
-		}	
-		
-		@JsonProperty("commonName")
-		public void commonName(String name)
-		{
-			m_commonName = name;
-		}
-		
-		@JsonProperty("commonName")
-		public String commonName()
-		{
-			return m_commonName;
-		}
-		
-		@JsonProperty("identifier")
-		public void identifier(String name)
-		{
-			m_identifier = name;
-		}
-		
-		@JsonProperty("identifier")
-		public String identifier()
-		{
-			return m_identifier;
+			super(providerClass);
 		}
 	}
 	
@@ -90,7 +44,7 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     private HashMap<String, ServiceEntity.ServiceDescriptor> m_registeredServices;
     
     private GlobalPersistenceUnit m_globalPersistenceUnit;
-    private ServiceRepository m_serviceRepository;
+    private ServicePersistenceUnit m_servicePersistenceUnit;
     JobExecutor m_jobExecutor;
     
     public GenericServiceProvider()
@@ -142,8 +96,8 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     	if(m_globalPersistenceUnit != null)
     		newService.persistenceUnit(m_globalPersistenceUnit);
     	
-    	if(m_serviceRepository != null)
-    		m_serviceRepository.save(newService);
+    	if(m_servicePersistenceUnit != null)
+    		m_servicePersistenceUnit.save(newService);
     	
     	newService.providerIdentifier(m_descriptor.identifier());
     	
@@ -158,7 +112,7 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     }
     
     private void registerServices()
-    {
+    {    	
     	// create scanner and disable default filters (that is the 'false' argument)
     	final ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
     	ClassLoader classLoader = this.getClass().getClassLoader();
@@ -204,7 +158,7 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
 	@Override
 	public void persistenceUnit(GlobalPersistenceUnit persistenceUnit) {
 		m_globalPersistenceUnit = persistenceUnit;
-		m_serviceRepository = persistenceUnit.serviceRepository();
+		m_servicePersistenceUnit = persistenceUnit.servicePersistence();
 	}
 	
 	@Override

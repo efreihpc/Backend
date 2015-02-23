@@ -13,7 +13,11 @@ import javax.persistence.Inheritance;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import ro.fortsoft.pf4j.ExtensionPoint;
+import backend.model.Describable;
+import backend.model.Descriptor;
 import backend.model.GlobalPersistenceUnit;
 import backend.model.job.JobEntity;
 import backend.model.job.JobExecutor;
@@ -27,61 +31,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Inheritance
-public abstract class ServiceEntity<T extends Result> implements ExtensionPoint, Service<T> {
+public abstract class ServiceEntity<T extends Result> implements Service<T>, Describable {
 	
-	public static class ServiceDescriptor
+	public static class ServiceDescriptor extends Descriptor<ServiceEntity>
 	{
-		private Class<ServiceEntity> m_classDescriptor;
-		
-		@JsonProperty("commonName")
-		private String m_commonName;
-		
 		@JsonProperty("providerIdentifier")
 		private String m_providerIdentifier;
 		
-		@JsonProperty("identifier")
-		private String m_identifier;
-		
 		public ServiceDescriptor()
 		{
-			
+			super();	
 		}
 		
 		public ServiceDescriptor(Class<ServiceEntity> clazz)
 		{
-			m_classDescriptor = clazz;
-			
-			try
-			{
-				String identifier = m_classDescriptor.getCanonicalName();
-				MessageDigest messageDigest;
-				messageDigest = MessageDigest.getInstance("SHA");
-				messageDigest.update(identifier.getBytes());
-				identifier = String.format("%040x", new BigInteger(1, messageDigest.digest()));
-		    	
-				identifier(identifier);
-			}
-			catch(NoSuchAlgorithmException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		
-		public Class<ServiceEntity> classDescriptor()
-		{
-			return m_classDescriptor;
-		}	
-		
-		@JsonProperty("commonName")
-		public void commonName(String name)
-		{
-			m_commonName = name;
-		}
-		
-		@JsonProperty("commonName")
-		public String commonName()
-		{
-			return m_commonName;
+			super(clazz);
 		}
 		
 		@JsonProperty("providerIdentifier")
@@ -94,18 +58,6 @@ public abstract class ServiceEntity<T extends Result> implements ExtensionPoint,
 		public String providerIdentifier()
 		{
 			return m_providerIdentifier;
-		}
-		
-		@JsonProperty("identifier")
-		public void identifier(String name)
-		{
-			m_identifier = name;
-		}
-		
-		@JsonProperty("identifier")
-		public String identifier()
-		{
-			return m_identifier;
 		}
 	}
 
@@ -127,6 +79,8 @@ public abstract class ServiceEntity<T extends Result> implements ExtensionPoint,
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
     private T m_result;
     
+	protected String m_classLoader;
+    
     @Transient
     private GlobalPersistenceUnit m_globalPersistenceUnit;
     @Transient
@@ -138,6 +92,7 @@ public abstract class ServiceEntity<T extends Result> implements ExtensionPoint,
     {
     	m_descriptor = new ServiceDescriptor((Class<ServiceEntity>)this.getClass());
     	m_descriptor.commonName(this.getClass().getName());
+    	m_classLoader = "Default";
     }
     
     @JsonProperty("descriptor")
