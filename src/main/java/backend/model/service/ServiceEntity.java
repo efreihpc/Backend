@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Inheritance
-public abstract class ServiceEntity<T extends Result> implements ExtensionPoint, Service<T> {
+public abstract class ServiceEntity<T extends Result> implements Service<T> {
 	
 	public static class ServiceDescriptor extends Descriptor<ServiceEntity>
 	{
@@ -73,6 +73,8 @@ public abstract class ServiceEntity<T extends Result> implements ExtensionPoint,
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
     private T m_result;
     
+	protected String m_classLoader;
+    
     @Transient
     private GlobalPersistenceUnit m_globalPersistenceUnit;
     @Transient
@@ -84,6 +86,7 @@ public abstract class ServiceEntity<T extends Result> implements ExtensionPoint,
     {
     	m_descriptor = new ServiceDescriptor((Class<ServiceEntity>)this.getClass());
     	m_descriptor.commonName(this.getClass().getName());
+    	m_classLoader = "Default";
     }
     
     @JsonProperty("descriptor")

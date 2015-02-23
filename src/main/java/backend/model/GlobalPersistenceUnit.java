@@ -1,5 +1,7 @@
 package backend.model;
 
+import javax.persistence.EntityManager;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -54,7 +56,7 @@ public class GlobalPersistenceUnit implements
 		return m_servicePersistence;
 	}
 	
-	public ServiceRepository serviceRepository(Descriptor descriptor)
+	public Pair<ServiceRepository, EntityManager> serviceRepository(Descriptor descriptor)
 	{
 		return m_servicePersistence.repository(descriptor.pluginIdentifier());
 	}

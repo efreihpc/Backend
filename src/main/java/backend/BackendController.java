@@ -35,9 +35,11 @@ import org.springframework.web.bind.annotation.RestController;
 import ro.fortsoft.pf4j.DefaultPluginManager;
 import ro.fortsoft.pf4j.PluginManager;
 import backend.model.service.ServiceEntity;
+import backend.model.service.ServicePlugin;
 import backend.model.service.ServiceRepository;
 import backend.model.serviceprovider.GenericServiceProvider;
 import backend.system.GlobalState;
+import backend.system.JoinClassLoader;
 import backend.system.PluginEntityManagerFactory;
 
 @Component
@@ -62,9 +64,11 @@ public class BackendController{
 	    
 	    List<GenericServiceProvider> serviceproviders = pluginManager.getExtensions(GenericServiceProvider.class);
 	    
-	    List<ServiceEntity> services = pluginManager.getExtensions(ServiceEntity.class);
+	    List<ServicePlugin> services = pluginManager.getExtensions(ServicePlugin.class);
 	    
-	    PluginEntityManagerFactory factory = new PluginEntityManagerFactory(services.get(0).getClass().getClassLoader());
+	    ClassLoader loader = new JoinClassLoader(this.getClass().getClassLoader(), serviceproviders.get(0).getClass().getClassLoader(), serviceproviders.get(1).getClass().getClassLoader());
+	    
+	    PluginEntityManagerFactory factory = new PluginEntityManagerFactory(loader);
 	    EntityManager em = factory.createEntityManager();
 	    JpaRepositoryFactory repositoryFactory = new JpaRepositoryFactory(em);
 	    ServiceRepository repo = repositoryFactory.getRepository(ServiceRepository.class);

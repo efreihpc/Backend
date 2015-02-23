@@ -157,7 +157,7 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
 	@Override
 	public void persistenceUnit(GlobalPersistenceUnit persistenceUnit) {
 		m_globalPersistenceUnit = persistenceUnit;
-		m_serviceRepository = persistenceUnit.serviceRepository();
+//		m_serviceRepository = persistenceUnit.serviceRepository();
 	}
 	
 	@Override

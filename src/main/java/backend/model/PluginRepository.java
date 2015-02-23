@@ -8,7 +8,7 @@ import backend.model.service.ServiceEntity;
 
 public abstract class PluginRepository<T> implements JpaRepository<T, Long> {
 	
-	EntityManager m_entityManager;
+	EntityManager m_entityManager; 
 	
 	public void entityManager(EntityManager entityManager)
 	{

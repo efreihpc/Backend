@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import backend.model.GlobalPersistenceUnit;
 import backend.system.GlobalState;
 
 @Component
@@ -15,16 +16,18 @@ import backend.system.GlobalState;
 @RequestMapping("/service")
 public class ServiceController {
 
-	ServicePersistenceUnit m_persistence;
+	GlobalPersistenceUnit m_persistence;
+	ServiceRepository m_serviceRepository;
 	
 	public ServiceController()
 	{
 		m_persistence = GlobalState.get("GlobalPersistenceUnit");
+		m_serviceRepository = m_persistence.servicePersistence().repository("Default").left();
 	}
 	
     @RequestMapping(value = "", method = RequestMethod.GET)
     public Iterable<ServiceEntity> services() {
-    	Iterable<ServiceEntity> result =  m_serviceRepository.findAll();
+    	Iterable<ServiceEntity> result =  m_serviceRepository.findByClassLoader("Default");
     	return result;
     }
     

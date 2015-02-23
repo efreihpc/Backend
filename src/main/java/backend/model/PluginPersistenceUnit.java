@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public abstract class PluginPersistenceUnit<T extends JpaRepository> implements PersistenceUnit<T>{
 	
-	private HashMap<String, T> m_pluginRepositories;
+	private HashMap<String, Pair<T, EntityManager>> m_pluginRepositories;
 	T m_localRepository;
 	
 	public PluginPersistenceUnit()
@@ -27,21 +27,21 @@ public abstract class PluginPersistenceUnit<T extends JpaRepository> implements 
 		return m_pluginRepositories.containsKey(identifier);
 	}
 	
-	public void addPluginRepository(String identifier, T repository)
+	public void addPluginRepository(String identifier, T repository, EntityManager em)
 	{
 		if(!m_pluginRepositories.containsKey(identifier))
-			m_pluginRepositories.put(identifier, repository);
+			m_pluginRepositories.put(identifier, new Pair<T, EntityManager>(repository, em));
 	}
 	
-	public T repository(String pluginIdentifier)
+	public Pair<T, EntityManager> repository(String pluginIdentifier)
 	{
-		if(pluginIdentifier == null)
-			return m_localRepository;
+		if(pluginIdentifier.equals("Default"))
+			return new Pair<T, EntityManager>(m_localRepository, null);
 		
 		return m_pluginRepositories.get(pluginIdentifier);
 	}
 	
-	public T repository(Descriptor descriptor)
+	public Pair<T, EntityManager> repository(Descriptor descriptor)
 	{
 		return repository(descriptor.pluginIdentifier());
 	}
