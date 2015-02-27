@@ -8,91 +8,94 @@ import java.util.HashMap;
 import javax.persistence.EntityManager;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
+
+import backend.model.service.ServiceRepository;
+import backend.system.GlobalState;
+import backend.system.JoinClassLoader;
+import backend.system.PluginEntityManagerFactory;
 
 public abstract class PluginPersistenceUnit<T extends Describable> implements PersistenceUnit<T>{
 	
 	private JpaRepository<T, Long> m_pluginRepository;
 	private EntityManager m_pluginEntityManager;
 	private JpaRepository<T, Long> m_localRepository;
+	private ClassLoader m_pluginClassLoader;
 	
 	public PluginPersistenceUnit()
-	{}
+	{
+		m_pluginClassLoader = this.getClass().getClassLoader();
+	}
 	
 	protected void localRepository(JpaRepository<T, Long> repository)
 	{
 		m_localRepository = repository;
 	}
 	
-	public void addPluginRepository(JpaRepository<T, Long> repository, EntityManager em)
+	protected void addPluginRepository(JpaRepository<T, Long> repository, EntityManager em)
 	{
 		m_pluginRepository = repository;
 		m_pluginEntityManager = em;
 	}
 	
-	public Pair<JpaRepository<T, Long>, EntityManager> pluginRepository()
+	@Override
+	public <U extends JpaRepository<T, Long>>void registerPluginClassLoader(ClassLoader loader, Class<U> repositoryType)
 	{
-		return new Pair<JpaRepository<T, Long>, EntityManager>(m_pluginRepository, m_pluginEntityManager);
+	    m_pluginClassLoader = new JoinClassLoader(m_pluginClassLoader, m_pluginClassLoader, loader);
+	    
+	    PluginEntityManagerFactory factory = new PluginEntityManagerFactory(loader);
+	    EntityManager em = factory.createEntityManager();
+	    JpaRepositoryFactory repositoryFactory = new JpaRepositoryFactory(em);
+	    JpaRepository<T, Long> repository = repositoryFactory.getRepository(repositoryType);
+
+	    addPluginRepository(repository, em);
 	}
 	
+	@Override
+	public JpaRepository<T, Long> pluginRepository()
+	{
+		return m_pluginRepository;
+	}
+	
+	@Override
+	public EntityManager pluginEntityManager()
+	{
+		return m_pluginEntityManager;
+	}
+	
+	@Override
 	public JpaRepository<T, Long> localRepository()
 	{
 		return m_localRepository;
 	}
 	
-	public Pair<JpaRepository<T, Long>, EntityManager> repository(Describable instance)
-	{
-		System.out.println(m_pluginRepository);
-		System.out.println(m_pluginEntityManager);
-		if(instance.descriptor().pluginIdentifier())
-			return new Pair<JpaRepository<T, Long>, EntityManager>(m_pluginRepository, m_pluginEntityManager);
-		else
-			return new Pair<JpaRepository<T, Long>, EntityManager>(m_localRepository, null);
-
-	}
-	
-	// TODO: Repository should be updated with return value of save
 	public void save(T instance)
-	{
-		Pair<JpaRepository<T, Long>, EntityManager> pair = repository(instance);
-		
-		// Classloader does not exist
-		if(pair == null)
-			return;
-		
+	{		
 		// Default Repository
-		if(pair.right() == null)
+		if(!instance.descriptor().pluginIdentifier())
 		{
-			pair.left().save(instance);
+			m_localRepository.save(instance);
 			return;
 		}
 		
 		System.out.println("Persisting " + instance.descriptor().commonName());
-		pair.right().getTransaction().begin();
-		pair.left().save(instance);
-		pair.right().getTransaction().commit();
+		m_pluginEntityManager.getTransaction().begin();
+		m_pluginRepository.save(instance);
+		m_pluginEntityManager.getTransaction().commit();
 	}
 	
-	// TODO: Repository should be updated with return value of delete
 	public void delete(T instance)
 	{
-		Pair<JpaRepository<T, Long>, EntityManager> pair = repository(instance);
-		
-		// Classloader does not exist
-		if(pair == null)
-			return;
-		
-		System.out.println(pair.left());
-		System.out.println(pair.right());
-		
 		// Default Repository
-		if(pair.right() == null)
+		if(!instance.descriptor().pluginIdentifier())
 		{
-			pair.left().save(instance);
+			m_localRepository.save(instance);
 			return;
 		}
-			
-		pair.right().getTransaction().begin();
-		pair.left().delete(instance);
-		pair.right().getTransaction().commit();
+		
+		System.out.println("Persisting " + instance.descriptor().commonName());
+		m_pluginEntityManager.getTransaction().begin();
+		m_pluginRepository.delete(instance);
+		m_pluginEntityManager.getTransaction().commit();
 	}
 }
