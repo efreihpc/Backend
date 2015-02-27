@@ -75,5 +75,11 @@ public class Backend {
 //	    return serviceproviders;
 	    m_pluginManager.loadPlugins();
 	    m_pluginManager.startPlugins();
+	    List<GenericServiceProvider> serviceProviers = m_pluginManager.getExtensions(GenericServiceProvider.class);
+	    System.out.println("Found the following providers:");
+	    for(GenericServiceProvider provider : serviceProviers)
+	    {	
+	    	System.out.println(provider.commonName());
+	    }
 	}
 }

@@ -40,7 +40,6 @@ public class ServiceProviderRepository{
 	
 	public void registerPluginServiceProviders()
 	{
-		System.out.println("Scanning for Plugins");
 		PluginManager pluginManager = GlobalState.get("PluginManager");
 		
 		if(pluginManager == null)
