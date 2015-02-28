@@ -73,7 +73,6 @@ public class ServiceProviderRepository{
 	
 	public void registerServiceProvider(GenericServiceProvider provider)
 	{
-		System.out.println("Registering ServiceProvider: " + provider.commonName());
 		m_registry.put(provider.descriptor().identifier(), provider.descriptor());
 		m_instances.put(provider.descriptor().identifier(), provider);
 	}

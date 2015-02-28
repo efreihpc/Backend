@@ -38,8 +38,6 @@ public class Backend {
 		GlobalState.set("GlobalPersistenceUnit", persistence);
 			
 		m_providerRepository = persistence.serviceProviderRepository();
-		
-		updatePlugins();
 	}
 	
 	public void schedule(ServiceEntity.ServiceDescriptor descriptor)

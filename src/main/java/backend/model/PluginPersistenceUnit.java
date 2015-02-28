@@ -41,9 +41,10 @@ public abstract class PluginPersistenceUnit<T extends Describable> implements Pe
 	@Override
 	public <U extends JpaRepository<T, Long>>void registerPluginClassLoader(ClassLoader loader, Class<U> repositoryType)
 	{
+		System.out.println("Registering Classloader: " + loader);
 	    m_pluginClassLoader = new JoinClassLoader(m_pluginClassLoader, m_pluginClassLoader, loader);
 	    
-	    PluginEntityManagerFactory factory = new PluginEntityManagerFactory(loader);
+	    PluginEntityManagerFactory factory = new PluginEntityManagerFactory(m_pluginClassLoader);
 	    EntityManager em = factory.createEntityManager();
 	    JpaRepositoryFactory repositoryFactory = new JpaRepositoryFactory(em);
 	    JpaRepository<T, Long> repository = repositoryFactory.getRepository(repositoryType);
