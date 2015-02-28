@@ -61,7 +61,14 @@ public class Backend {
 	// returns all plugged in serviceproviders
 	public void updatePlugins()
 	{	    
-//	    List<GenericServiceProvider> serviceproviders = m_pluginManager.getExtensions(GenericServiceProvider.class);    
+//	    List<GenericServiceProvider> serviceproviders = m_pluginManager.getExtensions(GenericServiceProvider.class);
+//	    
+//	    System.out.println("Found the following providers:");
+//	    for(GenericServiceProvider provider : serviceproviders)
+//	    {	
+//	    	System.out.println(provider.commonName());
+//	    }
+//	    
 //	    ClassLoader loader = new JoinClassLoader(this.getClass().getClassLoader(), serviceproviders.get(0).getClass().getClassLoader(), serviceproviders.get(1).getClass().getClassLoader());
 //	    
 //	    PluginEntityManagerFactory factory = new PluginEntityManagerFactory(loader);
@@ -71,7 +78,7 @@ public class Backend {
 //
 //	    GlobalPersistenceUnit persistence = GlobalState.get("GlobalPersistenceUnit");
 //	    persistence.servicePersistence().addPluginRepository(repository, em);
-//	    
+	    
 //	    return serviceproviders;
 	    m_pluginManager.loadPlugins();
 	    m_pluginManager.startPlugins();

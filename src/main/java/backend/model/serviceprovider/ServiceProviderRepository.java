@@ -30,6 +30,8 @@ public class ServiceProviderRepository{
 		scan();
 	}
 	
+	
+	//TODO: incremental scan that doesn't rebuild the complete registry
 	public void scan()
 	{
 		m_registry = new HashMap<String, GenericServiceProvider.ServiceProviderDescriptor>();

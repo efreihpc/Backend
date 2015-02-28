@@ -18,6 +18,7 @@ public class RegisteringPlugin extends Plugin {
 		System.out.println("Registering Plugin");
 		GlobalPersistenceUnit globalPersistence = 	GlobalState.get("GlobalPersistenceUnit");
 		globalPersistence.servicePersistence().registerPluginClassLoader(this.getClass().getClassLoader(), ServiceRepository.class);
+		globalPersistence.serviceProviderRepository().scan();
 	 }
 
 }

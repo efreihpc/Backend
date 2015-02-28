@@ -32,7 +32,7 @@ public abstract class PluginPersistenceUnit<T extends Describable> implements Pe
 		m_localRepository = repository;
 	}
 	
-	protected void addPluginRepository(JpaRepository<T, Long> repository, EntityManager em)
+	public void addPluginRepository(JpaRepository<T, Long> repository, EntityManager em)
 	{
 		m_pluginRepository = repository;
 		m_pluginEntityManager = em;
