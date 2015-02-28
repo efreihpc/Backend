@@ -27,44 +27,9 @@ public class ServiceProviderRepository{
 
 	public ServiceProviderRepository()
 	{
-		scan();
-	}
-	
-	
-	//TODO: incremental scan that doesn't rebuild the complete registry
-	public void scan()
-	{
 		m_registry = new HashMap<String, GenericServiceProvider.ServiceProviderDescriptor>();
 		m_instances = new HashMap<String, GenericServiceProvider>();
 		registerLocalServiceProviders();
-		registerPluginServiceProviders();
-	}
-	
-	public void registerPluginServiceProviders()
-	{
-		PluginManager pluginManager = GlobalState.get("PluginManager");
-		
-		if(pluginManager == null)
-			return;
-			
-		List<GenericServiceProvider> serviceproviders = pluginManager.getExtensions(GenericServiceProvider.class);
-		
-		for(GenericServiceProvider provider: serviceproviders)
-		{
-			try 
-			{
-				String identifier = provider.getClass().getCanonicalName();
-				MessageDigest messageDigest;
-				messageDigest = MessageDigest.getInstance("SHA");
-				messageDigest.update(identifier.getBytes());
-				identifier = String.format("%040x", new BigInteger(1, messageDigest.digest()));
-				m_registry.put(identifier, provider.descriptor());
-			} 
-			catch (NoSuchAlgorithmException e) 
-			{
-				e.printStackTrace();
-			}
-		}
 	}
 	
 	private void registerLocalServiceProviders()
@@ -84,12 +49,8 @@ public class ServiceProviderRepository{
 
 				GenericServiceProvider instance = registeredClass.newInstance();
 				String commonName = instance.commonName();
-				String identifier = registeredClass.getCanonicalName();
-				MessageDigest messageDigest = MessageDigest.getInstance("SHA");
-				messageDigest.update(identifier.getBytes());
-				identifier = String.format("%040x", new BigInteger(1, messageDigest.digest()));
 				
-				m_registry.put(identifier, instance.descriptor());
+				m_registry.put(instance.descriptor().identifier(), instance.descriptor());
 			} 
 			catch (ClassNotFoundException e) 
 			{
@@ -106,11 +67,15 @@ public class ServiceProviderRepository{
 			catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
     	}
+	}
+	
+	public void registerServiceProvider(GenericServiceProvider provider)
+	{
+		System.out.println("Registering ServiceProvider: " + provider.commonName());
+		m_registry.put(provider.descriptor().identifier(), provider.descriptor());
+		m_instances.put(provider.descriptor().identifier(), provider);
 	}
 	
     public GenericServiceProvider serviceProvider(String identifier) throws InstantiationException, IllegalAccessException

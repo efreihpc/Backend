@@ -36,13 +36,10 @@ public class Backend {
 		
 		GlobalPersistenceUnit persistence = new GlobalPersistenceUnit();
 		GlobalState.set("GlobalPersistenceUnit", persistence);
-		
-//	    m_pluginManager.loadPlugins();
-//	    m_pluginManager.startPlugins();
-		
+			
 		m_providerRepository = persistence.serviceProviderRepository();
 		
-//		updatePlugins();
+		updatePlugins();
 	}
 	
 	public void schedule(ServiceEntity.ServiceDescriptor descriptor)
@@ -58,35 +55,9 @@ public class Backend {
 		}
 	}
 	
-	// returns all plugged in serviceproviders
 	public void updatePlugins()
-	{	    
-//	    List<GenericServiceProvider> serviceproviders = m_pluginManager.getExtensions(GenericServiceProvider.class);
-//	    
-//	    System.out.println("Found the following providers:");
-//	    for(GenericServiceProvider provider : serviceproviders)
-//	    {	
-//	    	System.out.println(provider.commonName());
-//	    }
-//	    
-//	    ClassLoader loader = new JoinClassLoader(this.getClass().getClassLoader(), serviceproviders.get(0).getClass().getClassLoader(), serviceproviders.get(1).getClass().getClassLoader());
-//	    
-//	    PluginEntityManagerFactory factory = new PluginEntityManagerFactory(loader);
-//	    EntityManager em = factory.createEntityManager();
-//	    JpaRepositoryFactory repositoryFactory = new JpaRepositoryFactory(em);
-//	    ServiceRepository repository = repositoryFactory.getRepository(ServiceRepository.class);
-//
-//	    GlobalPersistenceUnit persistence = GlobalState.get("GlobalPersistenceUnit");
-//	    persistence.servicePersistence().addPluginRepository(repository, em);
-	    
-//	    return serviceproviders;
+	{
 	    m_pluginManager.loadPlugins();
 	    m_pluginManager.startPlugins();
-	    List<GenericServiceProvider> serviceProviers = m_pluginManager.getExtensions(GenericServiceProvider.class);
-	    System.out.println("Found the following providers:");
-	    for(GenericServiceProvider provider : serviceProviers)
-	    {	
-	    	System.out.println(provider.commonName());
-	    }
 	}
 }
