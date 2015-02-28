@@ -27,7 +27,6 @@ public class RegisteringPlugin extends Plugin {
 
 	@Override
 	 public void start() {
-		System.out.println("Registering Plugin");
 		GlobalPersistenceUnit globalPersistence = 	GlobalState.get("GlobalPersistenceUnit");
 		ClassLoader localPluginLoader = this.getClass().getClassLoader();
 				
@@ -36,8 +35,6 @@ public class RegisteringPlugin extends Plugin {
     	// create scanner and disable default filters (that is the 'false' argument)
     	final ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
     	provider.setResourceLoader(new PathMatchingResourcePatternResolver(localPluginLoader));
-    	
-    	System.out.println("Searching Providers for package: " + this.getClass().getPackage().getName());
     	
     	// add include filters which matches all the classes (or use your own)
     	provider.addIncludeFilter((TypeFilter) new AssignableTypeFilter(GenericServiceProvider.class));

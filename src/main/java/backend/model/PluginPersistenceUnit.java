@@ -41,7 +41,6 @@ public abstract class PluginPersistenceUnit<T extends Describable> implements Pe
 	@Override
 	public <U extends JpaRepository<T, Long>>void registerPluginClassLoader(ClassLoader loader, Class<U> repositoryType)
 	{
-		System.out.println("Registering Classloader: " + loader);
 	    m_pluginClassLoader = new JoinClassLoader(m_pluginClassLoader, m_pluginClassLoader, loader);
 	    
 	    PluginEntityManagerFactory factory = new PluginEntityManagerFactory(m_pluginClassLoader);
@@ -79,7 +78,6 @@ public abstract class PluginPersistenceUnit<T extends Describable> implements Pe
 			return;
 		}
 		
-		System.out.println("Persisting " + instance.descriptor().commonName());
 		m_pluginEntityManager.getTransaction().begin();
 		m_pluginRepository.save(instance);
 		m_pluginEntityManager.getTransaction().commit();
@@ -94,7 +92,6 @@ public abstract class PluginPersistenceUnit<T extends Describable> implements Pe
 			return;
 		}
 		
-		System.out.println("Persisting " + instance.descriptor().commonName());
 		m_pluginEntityManager.getTransaction().begin();
 		m_pluginRepository.delete(instance);
 		m_pluginEntityManager.getTransaction().commit();
