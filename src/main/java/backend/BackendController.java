@@ -59,9 +59,9 @@ public class BackendController{
     }
     
     @RequestMapping(value = "/plugins", method = RequestMethod.GET)
-    public List<GenericServiceProvider> loadPugins()
+    public void loadPugins()
     {
-	    return m_backend.updatePlugins();
+	    m_backend.updatePlugins();
     }
 
 }

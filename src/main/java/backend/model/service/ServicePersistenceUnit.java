@@ -30,12 +30,4 @@ public class ServicePersistenceUnit extends PluginPersistenceUnit<ServiceEntity>
 		return (ServiceRepository) pluginRepository();
 	}
 	
-	public Pair<ServiceRepository, EntityManager> serviceRepository(Describable instance)
-	{
-		Pair<JpaRepository<ServiceEntity, Long>, EntityManager> repopair = repository(instance);
-		Pair<ServiceRepository, EntityManager> newPair = new Pair<ServiceRepository, EntityManager>((ServiceRepository)repopair.left(), repopair.right());
-		
-		return newPair;
-	}
-	
 }
