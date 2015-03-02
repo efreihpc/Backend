@@ -1,0 +1,10 @@
+include 'application'
+include 'api'
+
+// include all plugins
+File pluginsDir = file('plugins')
+include pluginsDir.listFiles().findAll {
+  it.isDirectory() && !( it =~ ".*/\\..*") && !( it =~ "^\\..*")
+}.collect {
+  it.getName()
+}.toArray(new java.lang.String[0])
