@@ -4,7 +4,7 @@ include 'api'
 // include all plugins
 File pluginsDir = file('plugins')
 include pluginsDir.listFiles().findAll {
-  it.isDirectory() && !( it =~ ".*/\\..*") && !( it =~ "^\\..*")
+  it.isDirectory() && !( it =~ ".*/\\..*") && !( it =~ "^\\..*") && !( it =~ "build")
 }.collect {
-  it.getName()
+  'plugins:' + it.getName()
 }.toArray(new java.lang.String[0])
