@@ -1,27 +1,14 @@
 package backend;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
-import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import ro.fortsoft.pf4j.DefaultPluginManager;
 import ro.fortsoft.pf4j.PluginManager;
 import backend.model.GlobalPersistenceUnit;
-import backend.model.SPHPC.FinanceServiceProvider;
 import backend.model.service.ServiceEntity;
-import backend.model.service.Service;
-import backend.model.service.ServicePlugin;
-import backend.model.service.ServiceRepository;
 import backend.model.serviceprovider.GenericServiceProvider;
 import backend.model.serviceprovider.ServiceProviderRepository;
 import backend.system.GlobalState;
-import backend.system.JoinClassLoader;
-import backend.system.PluginEntityManagerFactory;
 
 public class Backend {
 	

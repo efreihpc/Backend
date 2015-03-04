@@ -1,11 +1,10 @@
-package backend.model.PluginPrototype;
+package backend.model.SPHPC;
+
 import ro.fortsoft.pf4j.PluginWrapper;
 import backend.model.RegisteringPlugin;
 
-
-public class Prototype extends RegisteringPlugin{
-
-	public Prototype(PluginWrapper wrapper) {
+public class SPHPC extends RegisteringPlugin {
+	public SPHPC(PluginWrapper wrapper) {
 		super(wrapper);
 		// TODO Auto-generated constructor stub
 	}
@@ -14,5 +13,4 @@ public class Prototype extends RegisteringPlugin{
 		// TODO Auto-generated method stub
 
 	}
-
 }
