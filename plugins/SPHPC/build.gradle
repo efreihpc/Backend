@@ -23,12 +23,16 @@ task plugin(type: Jar) {
 repositories {
   mavenLocal()
   mavenCentral()
-  maven { url "https://repo.spring.io/libs-release" }
+  maven {
+    url "https://repo.spring.io/libs-release" 
+    url "http://maven.opengamma.com/nexus/content/groups/public/"
+  }
+
 }
 
 dependencies {
-  // compile 'org.scalanlp:jcuda:0.5.5'
   compile project(':application')
+  compile 'com.jimmoores:quandl:0.8.1'
   compile 'org.jocl:jocl:0.1.9'
   compile 'org.springframework.boot:spring-boot-starter-web'
   compile 'org.springframework.boot:spring-boot-starter-data-jpa'

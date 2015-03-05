@@ -8,6 +8,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.data.mongodb.MongoDbFactory;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
@@ -22,7 +23,7 @@ public class JsonResult extends Result {
 	DB m_db;
 	DBCollection m_collection;
 
-	JsonResult()
+	public JsonResult()
 	{
 		MongoDbFactory factory = (MongoDbFactory) m_context.getBean("mongoDbFactory");
 		m_db = factory.getDb();
@@ -31,14 +32,18 @@ public class JsonResult extends Result {
 
 	public void insert(String jsonObject)
 	{
-		DBObject dbObject = (DBObject) JSON.parse(jsonObject);
+		BasicDBObject dbObject = new BasicDBObject("id", id());
+		dbObject.append("storage", (DBObject) JSON.parse(jsonObject));
 		m_collection.insert(dbObject);
 	}
 	
-	public void find(String jsonQuery)
+	public void find(String jsonRef, String jsonKeys)
 	{
-		DBObject dbObject = (DBObject) JSON.parse(jsonQuery);
-		m_collection.find(dbObject);
+		DBObject objectRef = (DBObject) JSON.parse(jsonRef);
+		DBObject objectKeys = (DBObject) JSON.parse(jsonKeys);
+		
+		objectRef.put("id", id());
+		m_collection.find(objectRef, objectKeys);
 	}
 	
 }
