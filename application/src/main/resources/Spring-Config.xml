@@ -3,14 +3,19 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:jpa="http://www.springframework.org/schema/data/jpa"  
 	xmlns:jee="http://www.springframework.org/schema/jee"       
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 	http://www.springframework.org/schema/context
 	http://www.springframework.org/schema/context/spring-context-3.1.xsd
 	http://www.springframework.org/schema/data/jpa 
     http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+    http://www.springframework.org/schema/data/repository
+    http://www.springframework.org/schema/data/repository/spring-repository-1.5.xsd
     http://www.springframework.org/schema/jee
-    http://www.springframework.org/schema/jee/spring-jee.xsd">
+    http://www.springframework.org/schema/jee/spring-jee.xsd
+    http://www.springframework.org/schema/data/mongo
+	http://www.springframework.org/schema/data/mongo/spring-mongo-1.1.xsd">
  
  
 	<bean id="taskExecutor"
@@ -26,6 +31,19 @@
         <property name="username" value="test" />
         <property name="password" value="password" />
     </bean>
+    
+    <mongo:mongo host="localhost" port="27017"/>
+ 
+	<mongo:db-factory id="mongoDbFactory"
+                  host="localhost"
+                  port="27017"
+                  dbname="test"
+                  username="test"
+                  password="password"/>
+                  
+   	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+  		<constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
+	</bean>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource" />

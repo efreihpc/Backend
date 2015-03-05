@@ -39,12 +39,12 @@ import org.jocl.cl_platform_id;
 import org.jocl.cl_program;
 
 import backend.model.job.JobEntity;
-import backend.model.result.SimpleResult;
+import backend.model.result.DictionaryResult;
 
 @Entity
 @Inheritance 
 
-public class PrototypeJob extends JobEntity<SimpleResult>{
+public class PrototypeJob extends JobEntity<DictionaryResult>{
 	
     private static String programSource =
             "__kernel void "+
@@ -59,7 +59,7 @@ public class PrototypeJob extends JobEntity<SimpleResult>{
     public PrototypeJob()
     {
     	commonName("PrototypeJob");
-    	result(new SimpleResult());
+    	result(new DictionaryResult());
     }
 	
 	public void execute()

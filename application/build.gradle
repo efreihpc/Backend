@@ -17,6 +17,7 @@ dependencies {
   compile 'org.jocl:jocl:0.1.9'
   compile 'org.springframework.boot:spring-boot-starter-web'
   compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+  compile 'org.springframework.data:spring-data-mongodb:1.6.2.RELEASE'
   compile 'mysql:mysql-connector-java:5.1.6'
   compile 'com.h2database:h2'
   compile 'ro.fortsoft.pf4j:pf4j:0.4'

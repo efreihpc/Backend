@@ -10,8 +10,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @Entity
 @Inheritance                                                                                                                                                 
-@JsonTypeName("SPHPCSimpleResult")
-public class SimpleResult extends Result<String>{
+@JsonTypeName("DictionaryResult")
+public class DictionaryResult extends Result<String>{
 	
 	@JsonProperty("storage")
 	HashMap<String, String> m_storage = new HashMap<String, String>();

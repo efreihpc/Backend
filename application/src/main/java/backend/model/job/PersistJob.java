@@ -1,7 +1,7 @@
 package backend.model.job;
 
 import backend.model.result.Result;
-import backend.model.result.SimpleResult;
+import backend.model.result.DictionaryResult;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 @Entity
 @Inheritance 
 
-public class PersistJob extends JobEntity<SimpleResult> {
+public class PersistJob extends JobEntity<DictionaryResult> {
 
 	@Transient
 	JobRepository m_jobRepository;
