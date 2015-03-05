@@ -12,7 +12,7 @@ import ro.fortsoft.pf4j.ExtensionPoint;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
-public abstract class Result<T> implements ExtensionPoint {
+public abstract class Result implements ExtensionPoint {
 	
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -28,6 +28,6 @@ public abstract class Result<T> implements ExtensionPoint {
 		return m_id;
 	}
 		
-	public abstract void value(String key, T value);
-	public abstract T value(String key);
+//	public abstract void value(String key, T value);
+//	public abstract T value(String key);
 }
