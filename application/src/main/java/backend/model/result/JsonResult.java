@@ -2,6 +2,7 @@ package backend.model.result;
 
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
+import javax.persistence.Transient;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -19,8 +20,13 @@ import com.mongodb.util.JSON;
 @JsonTypeName("JsonResult")
 public class JsonResult extends Result {
 	
+	@Transient
 	ApplicationContext m_context = new ClassPathXmlApplicationContext("Spring-Config.xml");
+	
+	@Transient
 	DB m_db;
+	
+	@Transient
 	DBCollection m_collection;
 
 	public JsonResult()
