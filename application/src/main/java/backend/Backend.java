@@ -4,10 +4,10 @@ import java.io.File;
 
 import ro.fortsoft.pf4j.DefaultPluginManager;
 import ro.fortsoft.pf4j.PluginManager;
-import backend.model.GlobalPersistenceUnit;
 import backend.model.service.ServiceEntity;
 import backend.model.serviceprovider.GenericServiceProvider;
 import backend.model.serviceprovider.ServiceProviderRepository;
+import backend.system.GlobalPersistenceUnit;
 import backend.system.GlobalState;
 
 public class Backend {

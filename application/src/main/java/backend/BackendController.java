@@ -34,11 +34,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ro.fortsoft.pf4j.DefaultPluginManager;
 import ro.fortsoft.pf4j.PluginManager;
-import backend.model.GlobalPersistenceUnit;
 import backend.model.service.ServiceEntity;
 import backend.model.service.ServicePlugin;
 import backend.model.service.ServiceRepository;
 import backend.model.serviceprovider.GenericServiceProvider;
+import backend.system.GlobalPersistenceUnit;
 import backend.system.GlobalState;
 import backend.system.JoinClassLoader;
 import backend.system.PluginEntityManagerFactory;

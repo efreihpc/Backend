@@ -1,7 +1,7 @@
 package backend.model.SPHPC;
 
 import ro.fortsoft.pf4j.PluginWrapper;
-import backend.model.RegisteringPlugin;
+import backend.system.RegisteringPlugin;
 
 public class SPHPC extends RegisteringPlugin {
 	public SPHPC(PluginWrapper wrapper) {

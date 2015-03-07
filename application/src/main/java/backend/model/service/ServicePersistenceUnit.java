@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import backend.model.Describable;
 import backend.model.Descriptor;
-import backend.model.Pair;
-import backend.model.PluginPersistenceUnit;
+import backend.system.Pair;
+import backend.system.PluginPersistenceUnit;
 
 
 public class ServicePersistenceUnit extends PluginPersistenceUnit<ServiceEntity>{

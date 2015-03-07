@@ -32,7 +32,7 @@
         <property name="password" value="password" />
     </bean>
     
-<!--     <mongo:mongo host="localhost" port="27017"/>
+    <mongo:mongo host="localhost" port="27017"/>
  
 	<mongo:db-factory id="mongoDbFactory"
                   host="localhost"
@@ -43,7 +43,7 @@
                   
    	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
   		<constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
-	</bean> -->
+	</bean>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource" />

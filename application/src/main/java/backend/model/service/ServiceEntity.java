@@ -11,13 +11,13 @@ import javax.persistence.Transient;
 
 import backend.model.Describable;
 import backend.model.Descriptor;
-import backend.model.GlobalPersistenceUnit;
 import backend.model.job.JobEntity;
 import backend.model.job.JobExecutor;
 import backend.model.job.JobRepository;
 import backend.model.job.PersistJob;
 import backend.model.result.Result;
 import backend.model.serviceprovider.ServiceProviderRepository;
+import backend.system.GlobalPersistenceUnit;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

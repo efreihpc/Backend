@@ -3,11 +3,11 @@ package backend.model.serviceprovider;
 import java.util.HashMap;
 import java.util.List;
 
-import backend.model.GlobalPersistenceUnit;
 import backend.model.result.Result;
 import backend.model.service.ServiceEntity;
 import backend.model.service.Service;
 import backend.model.service.ServicePersistenceUnit;
+import backend.system.GlobalPersistenceUnit;
 
 public interface ServiceProvider {
 	

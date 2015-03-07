@@ -14,9 +14,9 @@ import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 
 import ro.fortsoft.pf4j.PluginManager;
-import backend.model.GlobalPersistenceUnit;
 import backend.model.result.Result;
 import backend.model.service.ServiceEntity;
+import backend.system.GlobalPersistenceUnit;
 import backend.system.GlobalState;
 
 

@@ -1,4 +1,4 @@
-package backend.model;
+package backend.system;
 
 import javax.persistence.EntityManager;
 

@@ -1,4 +1,4 @@
-package backend.model;
+package backend.system;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -13,7 +13,6 @@ import org.springframework.core.type.filter.TypeFilter;
 
 import backend.model.service.ServiceRepository;
 import backend.model.serviceprovider.GenericServiceProvider;
-import backend.system.GlobalState;
 import ro.fortsoft.pf4j.Plugin;
 import ro.fortsoft.pf4j.PluginWrapper;
 

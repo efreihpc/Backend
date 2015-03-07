@@ -17,13 +17,13 @@ import org.springframework.core.type.filter.TypeFilter;
 
 import ro.fortsoft.pf4j.ExtensionPoint;
 import backend.model.Descriptor;
-import backend.model.GlobalPersistenceUnit;
 import backend.model.job.JobExecutor;
 import backend.model.result.Result;
 import backend.model.service.Service;
 import backend.model.service.ServiceEntity;
 import backend.model.service.ServicePersistenceUnit;
 import backend.model.service.ServiceRepository;
+import backend.system.GlobalPersistenceUnit;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
