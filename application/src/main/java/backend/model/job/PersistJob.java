@@ -1,15 +1,12 @@
 package backend.model.job;
 
-import backend.model.result.Result;
-import backend.model.result.DictionaryResult;
-
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import backend.model.result.DictionaryResult;
 
 
 @Entity

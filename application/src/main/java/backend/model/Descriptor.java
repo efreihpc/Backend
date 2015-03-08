@@ -4,8 +4,6 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import backend.model.serviceprovider.GenericServiceProvider;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Descriptor<T> {
@@ -37,7 +35,6 @@ public class Descriptor<T> {
 			identifier(identifier);
 
 			pluginIdentifier(false);
-			
 		}
 		catch(NoSuchAlgorithmException e)
 		{

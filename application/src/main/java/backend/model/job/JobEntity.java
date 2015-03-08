@@ -13,15 +13,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.*;
-
 import backend.model.result.Result;
-import backend.model.service.ServiceEntity;
-import backend.model.service.ServiceEntity.ServiceDescriptor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @Entity
 @Inheritance
