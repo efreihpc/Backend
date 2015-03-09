@@ -41,8 +41,6 @@ public abstract class PluginPersistenceUnit<T extends Describable> implements Pe
 	{
 	    m_pluginClassLoader = new JoinClassLoader(m_pluginClassLoader, m_pluginClassLoader, loader);
 	    
-	    Thread.currentThread().setContextClassLoader(m_pluginClassLoader);
-	    
 	    PluginEntityManagerFactory factory = new PluginEntityManagerFactory(m_pluginClassLoader);
 	    EntityManager em = factory.createEntityManager();
 	    JpaRepositoryFactory repositoryFactory = new JpaRepositoryFactory(em);

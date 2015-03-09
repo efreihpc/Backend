@@ -15,6 +15,14 @@ jar {
 task plugin(type: Jar) {
   baseName = 'HPC-Plugin'
   version = '0.1.0'
+  
+	doFirst {
+		into('lib')
+	    for(file in configurations.bundle) {
+	        from file
+	    }		
+	}
+  
   into('classes')
   extension('zip')
   with jar
@@ -30,8 +38,15 @@ repositories {
 
 }
 
+configurations {
+    bundle {
+    	extendsFrom compile
+    }    
+}
+
 dependencies {
   compile project(':application')
+  bundle 'javax.ws.rs:jsr311-api:0.11'
   compile 'com.jimmoores:quandl:0.8.1'
   compile 'org.jocl:jocl:0.1.9'
   compile 'org.springframework.boot:spring-boot-starter-web'
