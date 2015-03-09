@@ -14,7 +14,7 @@ public class FinanceDataRetrievalService extends ServicePlugin<JsonResult> {
 		QuandlSession session = QuandlSession.create();
 		MetaDataResult metaData = session.getMetaData(MetaDataRequest.of("GOOG/SWX_VW"));
 		
-		result(new JsonResult());
+		result(new JsonResult(persistenceUnit()));
 		result().insert(metaData.toPrettyPrintedString());
 	}
 
