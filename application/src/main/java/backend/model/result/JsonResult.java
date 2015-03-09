@@ -1,55 +1,50 @@
 package backend.model.result;
 
+import java.net.UnknownHostException;
+
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.Transient;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.data.mongodb.MongoDbFactory;
+import org.bson.Document;
+
+import backend.system.MongoPersistenceUnit;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
+import static com.mongodb.client.model.Filters.*;
 
 @Entity
 @Inheritance                                                                                                                                                 
 @JsonTypeName("JsonResult")
 public class JsonResult extends Result {
-	
+		
 	@Transient
-	ApplicationContext m_context = new ClassPathXmlApplicationContext("Spring-Config.xml");
-	
-	@Transient
-	DB m_db;
-	
-	@Transient
-	DBCollection m_collection;
+	MongoCollection m_collection;
 
-	public JsonResult()
+	public JsonResult(MongoPersistenceUnit mongopersistence)
 	{
-		MongoDbFactory factory = (MongoDbFactory) m_context.getBean("mongoDbFactory");
-		m_db = factory.getDb();
-		m_collection = m_db.getCollection("Result");
+		m_collection = mongopersistence.getMongoDb().getCollection("JsonResult");
 	}
 
 	public void insert(String jsonObject)
 	{
-		BasicDBObject dbObject = new BasicDBObject("id", id());
-		dbObject.append("storage", (DBObject) JSON.parse(jsonObject));
-		m_collection.insert(dbObject);
+		Document insertDocument = new Document("id", id());
+		insertDocument.append("storage", (Document) JSON.parse(jsonObject));
+		m_collection.insertOne(insertDocument);
 	}
 	
-	public void find(String jsonRef, String jsonKeys)
+	public String find(String query)
 	{
-		DBObject objectRef = (DBObject) JSON.parse(jsonRef);
-		DBObject objectKeys = (DBObject) JSON.parse(jsonKeys);
-		
-		objectRef.put("id", id());
-		m_collection.find(objectRef, objectKeys);
+		Document queryDocument = (Document) JSON.parse(query);
+		return m_collection.find(and(eq("íd", id()), queryDocument)).first().toString();
 	}
 	
 }
