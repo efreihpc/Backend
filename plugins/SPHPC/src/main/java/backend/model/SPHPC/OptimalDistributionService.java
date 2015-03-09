@@ -5,6 +5,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToOne;
 
+import ro.fortsoft.pf4j.Extension;
 import backend.model.job.ChainJob;
 import backend.model.result.Result;
 import backend.model.result.DictionaryResult;
@@ -13,9 +14,9 @@ import backend.model.service.ServiceEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
+@Extension
 @Entity
-@Inheritance                                                                                                                                                 
-
+@Inheritance
 public class OptimalDistributionService extends ServiceEntity<DictionaryResult> {
 
 	@OneToOne(fetch = FetchType.EAGER)

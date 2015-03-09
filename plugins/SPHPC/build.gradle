@@ -6,7 +6,7 @@ jar {
   version = '0.1.0'
   manifest {
     attributes 'Plugin-Class' : 'backend.model.SPHPC.SPHPC',
-      'Plugin-Id' : 'PluginPrototype',
+      'Plugin-Id' : 'SPHPC',
       'Plugin-Version' : '1.0',
       'Plugin-Provider' : 'Yannick Bäumer'
   }

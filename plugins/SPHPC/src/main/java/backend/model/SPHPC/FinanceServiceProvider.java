@@ -1,9 +1,9 @@
 package backend.model.SPHPC;
 
-import com.fasterxml.jackson.annotation.JsonTypeName;
-
+import ro.fortsoft.pf4j.Extension;
 import backend.model.serviceprovider.GenericServiceProvider;
 
+@Extension
 public class FinanceServiceProvider extends GenericServiceProvider {
 	
 	public FinanceServiceProvider()
