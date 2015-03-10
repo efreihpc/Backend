@@ -21,6 +21,7 @@ task plugin(type: Jar) {
 	    for(file in configurations.bundle) {
 	        from file
 	    }		
+	
 	}
   
   into('classes')
