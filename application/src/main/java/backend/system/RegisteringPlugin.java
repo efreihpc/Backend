@@ -25,6 +25,8 @@ public class RegisteringPlugin extends Plugin {
 	@Override
 	public void start() 
 	{
+		System.out.println("Registering Plugin");
+		
 		GlobalPersistenceUnit globalPersistence = 	GlobalState.get("GlobalPersistenceUnit");
 		ClassLoader localPluginLoader = this.getClass().getClassLoader();
 				
