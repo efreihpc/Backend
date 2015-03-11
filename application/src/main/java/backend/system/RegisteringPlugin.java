@@ -1,8 +1,5 @@
 package backend.system;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Set;
 
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -11,21 +8,23 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 
-import backend.model.service.ServiceRepository;
-import backend.model.serviceprovider.GenericServiceProvider;
 import ro.fortsoft.pf4j.Plugin;
 import ro.fortsoft.pf4j.PluginWrapper;
+import backend.model.service.ServiceRepository;
+import backend.model.serviceprovider.GenericServiceProvider;
 
 public class RegisteringPlugin extends Plugin {
 	
 	
 	
-	 public RegisteringPlugin(PluginWrapper wrapper) {
+	public RegisteringPlugin(PluginWrapper wrapper)
+	{
 		super(wrapper);
 	}
 
 	@Override
-	 public void start() {
+	public void start() 
+	{
 		GlobalPersistenceUnit globalPersistence = 	GlobalState.get("GlobalPersistenceUnit");
 		ClassLoader localPluginLoader = this.getClass().getClassLoader();
 				
@@ -67,7 +66,7 @@ public class RegisteringPlugin extends Plugin {
 				e.printStackTrace();
 			}
 		
-	 }
+    	}
 	}
 
 }

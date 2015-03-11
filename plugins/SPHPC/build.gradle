@@ -5,11 +5,12 @@ jar {
   baseName = 'HPC-Plugin'
   version = '0.1.0'
   manifest {
-    attributes 'Plugin-Class' : 'backend.model.SPHPC.SPHPC',
-      'Plugin-Id' : 'SPHPC',
-      'Plugin-Version' : '1.0',
+    attributes 'Plugin-Class' : 'backend.model.SPHPC.Finance',
+      'Plugin-Id' : 'SPHPC-Finance-Plugin',
+      'Plugin-Version' : '0.1.0',
       'Plugin-Provider' : 'Yannick Bäumer'
   }
+    into('classes')
 }
 
 task plugin(type: Jar) {
@@ -17,14 +18,15 @@ task plugin(type: Jar) {
   version = '0.1.0'
   
 	doFirst {
-		into('lib')
 	    for(file in configurations.bundle) {
-	        from file
+	        from(file) {
+	        	into 'lib'
+	        }
+	        
 	    }		
 	
 	}
   
-  into('classes')
   extension('zip')
   with jar
 }
