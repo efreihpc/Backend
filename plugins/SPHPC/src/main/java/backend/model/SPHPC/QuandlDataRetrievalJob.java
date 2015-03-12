@@ -14,14 +14,14 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
 import ro.fortsoft.pf4j.Extension;
-import backend.model.job.JobEntity;
+import backend.model.job.JobPlugin;
 import backend.model.result.JsonResult;
 import backend.system.MongoPersistenceUnit;
 
 @Extension
 @Entity
 @Inheritance
-public class QuandlDataRetrievalJob extends JobEntity<JsonResult> {
+public class QuandlDataRetrievalJob extends JobPlugin<JsonResult> {
 
 	@Transient
 	HttpClient m_httpClient;

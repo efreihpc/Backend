@@ -15,7 +15,7 @@ import backend.model.result.DictionaryResult;
 public class PersistJob extends JobEntity<DictionaryResult> {
 
 	@Transient
-	JobRepository m_jobRepository;
+	JobPersistenceUnit m_jobPersistence;
 	
 	@OneToOne(fetch = FetchType.EAGER)
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
@@ -26,14 +26,14 @@ public class PersistJob extends JobEntity<DictionaryResult> {
 		commonName("PersistJob");
 	}
 	
-	public void jobRepository(JobRepository repository)
+	public void jobRepository(JobPersistenceUnit persistence)
 	{
-		m_jobRepository = repository;
+		m_jobPersistence = persistence;
 	}
 	
 	@Override
 	protected void execute() {
-		m_jobRepository.save(this.m_jobToPersist);	
+		m_jobPersistence.save(this.m_jobToPersist);	
 	}
 	
 	public void jobToPersist(JobEntity job)

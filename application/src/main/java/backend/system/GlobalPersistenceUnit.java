@@ -21,7 +21,6 @@ import backend.model.serviceprovider.ServiceProviderRepository;
 
 public class GlobalPersistenceUnit implements
 	ServiceProviderPersistenceUnit,
-	JobPersistenceUnit,
 	ResultPersistenceUnit,
 	MongoPersistenceUnit{
 	
@@ -29,7 +28,7 @@ public class GlobalPersistenceUnit implements
 	
 	ServiceProviderRepository m_serviceProviderRepository;
 	ServicePersistenceUnit m_servicePersistence;
-	JobRepository m_jobRepository;
+	JobPersistenceUnit m_jobPersistence;
 	ResultRepository m_resultRepository;
 	
 	MongoClient m_mongoClient;
@@ -40,7 +39,7 @@ public class GlobalPersistenceUnit implements
 		m_context = new ClassPathXmlApplicationContext("Spring-Config.xml");
 		m_serviceProviderRepository = new ServiceProviderRepository();
 		m_servicePersistence = new ServicePersistenceUnit();
-	    m_jobRepository = m_context.getBean(JobRepository.class);
+		m_jobPersistence = new JobPersistenceUnit();
 	    m_resultRepository = m_context.getBean(ResultRepository.class);  
 	    
 		m_mongoClient = new MongoClient( "localhost" , 27017 );
@@ -50,11 +49,6 @@ public class GlobalPersistenceUnit implements
 	protected void finalize()
 	{
 		m_mongoClient.close();
-	}
-
-	@Override
-	public JobRepository jobRepository() {
-		return m_jobRepository;
 	}
 
 	@Override
@@ -70,6 +64,11 @@ public class GlobalPersistenceUnit implements
 	public ServicePersistenceUnit servicePersistence()
 	{
 		return m_servicePersistence;
+	}
+	
+	public JobPersistenceUnit jobPersistence()
+	{
+		return m_jobPersistence;
 	}
 
 	@Override

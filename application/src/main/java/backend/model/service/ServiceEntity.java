@@ -13,6 +13,7 @@ import backend.model.Describable;
 import backend.model.Descriptor;
 import backend.model.job.JobEntity;
 import backend.model.job.JobExecutor;
+import backend.model.job.JobPersistenceUnit;
 import backend.model.job.JobRepository;
 import backend.model.job.PersistJob;
 import backend.model.result.Result;
@@ -77,7 +78,7 @@ public abstract class ServiceEntity<T extends Result> implements Service<T>, Des
     @Transient
     private GlobalPersistenceUnit m_globalPersistenceUnit;
     @Transient
-    private JobRepository m_jobRepository;
+    private JobPersistenceUnit m_jobPersistence;
     @Transient 
     private JobExecutor m_jobExecutor;
     
@@ -129,7 +130,7 @@ public abstract class ServiceEntity<T extends Result> implements Service<T>, Des
 	@Override
 	public void persistenceUnit(GlobalPersistenceUnit persistenceUnit) {
 		m_globalPersistenceUnit = persistenceUnit;
-		m_jobRepository = persistenceUnit.jobRepository();
+		m_jobPersistence = persistenceUnit.jobPersistence();
 	}
 	
 	@Override
@@ -177,12 +178,12 @@ public abstract class ServiceEntity<T extends Result> implements Service<T>, Des
 		job.executor(m_jobExecutor);
 		
 		PersistJob persist = new PersistJob();
-		persist.jobRepository(m_jobRepository);
+		persist.jobRepository(m_jobPersistence);
 		persist.jobToPersist(job);
 		job.addSecondaryJob(persist);
 		
-		if(m_jobRepository != null)
-			m_jobRepository.save(job);
+		if(m_jobPersistence != null)
+			m_jobPersistence.save(job);
 		
 		m_jobExecutor.execute(job);
 	}
