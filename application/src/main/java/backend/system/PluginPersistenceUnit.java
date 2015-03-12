@@ -1,4 +1,4 @@
-package backend.model;
+package backend.system;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -10,10 +10,8 @@ import javax.persistence.EntityManager;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 
+import backend.model.Describable;
 import backend.model.service.ServiceRepository;
-import backend.system.GlobalState;
-import backend.system.JoinClassLoader;
-import backend.system.PluginEntityManagerFactory;
 
 public abstract class PluginPersistenceUnit<T extends Describable> implements PersistenceUnit<T>{
 	
@@ -39,7 +37,7 @@ public abstract class PluginPersistenceUnit<T extends Describable> implements Pe
 	}
 	
 	@Override
-	public <U extends JpaRepository<T, Long>>void registerPluginClassLoader(ClassLoader loader, Class<U> repositoryType)
+	public <U extends JpaRepository<T, Long>>void registerPluginRepository(ClassLoader loader, Class<U> repositoryType)
 	{
 	    m_pluginClassLoader = new JoinClassLoader(m_pluginClassLoader, m_pluginClassLoader, loader);
 	    

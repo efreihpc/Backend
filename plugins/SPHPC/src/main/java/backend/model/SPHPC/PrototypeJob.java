@@ -38,13 +38,14 @@ import org.jocl.cl_mem;
 import org.jocl.cl_platform_id;
 import org.jocl.cl_program;
 
-import backend.model.job.JobEntity;
+import ro.fortsoft.pf4j.Extension;
+import backend.model.job.JobPlugin;
 import backend.model.result.DictionaryResult;
 
+@Extension
 @Entity
-@Inheritance 
-
-public class PrototypeJob extends JobEntity<DictionaryResult>{
+@Inheritance
+public class PrototypeJob extends JobPlugin<DictionaryResult>{
 	
     private static String programSource =
             "__kernel void "+

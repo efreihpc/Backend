@@ -2,13 +2,14 @@ package backend.model.job;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
 
-public interface JobRepository extends CrudRepository<JobEntity, Long> {
-	@Query("select j from JobEntity j where j.m_id = :id")
-	List<JobEntity> findById(@Param("id") long id);
+public interface JobRepository extends JpaRepository<JobEntity, Long> {
+	@Query("select s from JobEntity s where s.m_id = :id")
+	abstract List<JobEntity> findById(@Param("id") long id);
+	
+	@Query("select s from JobEntity s where s.m_classLoader = :cl")
+	abstract List<JobEntity> findByClassLoader(@Param("cl") String cl);
 }

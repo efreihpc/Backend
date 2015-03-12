@@ -9,7 +9,6 @@ import backend.model.result.Result;
 import backend.model.service.ServiceEntity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @Entity
 @Inheritance 

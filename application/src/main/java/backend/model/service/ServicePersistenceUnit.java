@@ -1,15 +1,9 @@
 package backend.model.service;
 
-import javax.persistence.EntityManager;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.data.jpa.repository.JpaRepository;
 
-import backend.model.Describable;
-import backend.model.Descriptor;
-import backend.model.Pair;
-import backend.model.PluginPersistenceUnit;
+import backend.system.PluginPersistenceUnit;
 
 
 public class ServicePersistenceUnit extends PluginPersistenceUnit<ServiceEntity>{

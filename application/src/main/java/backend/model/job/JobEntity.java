@@ -13,60 +13,29 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.*;
-
+import backend.model.Describable;
+import backend.model.Descriptor;
 import backend.model.result.Result;
-import backend.model.service.ServiceEntity;
-import backend.model.service.ServiceEntity.ServiceDescriptor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @Entity
 @Inheritance
 
 //T specifies the jobs result type
-public abstract class JobEntity<T extends Result> implements Job {
-	
-	public class JobDescriptor
-	{
-		private Class<JobEntity> m_classDescriptor;
-		
-		@JsonProperty("commonName")
-		private String m_commonName;
-		
-		public JobDescriptor(Class<JobEntity> clazz)
-		{
-			m_classDescriptor = clazz;
-		}
-		
-		public Class<JobEntity> classDescriptor()
-		{
-			return m_classDescriptor;
-		}	
-		
-		@JsonProperty("commonName")
-		public void commonName(String name)
-		{
-			m_commonName = name;
-		}
-		
-		@JsonProperty("commonName")
-		public String commonName()
-		{
-			return m_commonName;
-		}
-	}
+public abstract class JobEntity<T extends Result> implements Job<T>, Describable {
 	
 	@JsonIgnore
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long m_id;
 	
+	protected String m_classLoader;
+	
     @JsonProperty("descriptor")
     @Transient
-    private JobDescriptor m_descriptor;
+    private Descriptor m_descriptor;
     
     @JsonProperty("result")
     @OneToOne(fetch = FetchType.EAGER, targetEntity = Result.class)
@@ -83,12 +52,12 @@ public abstract class JobEntity<T extends Result> implements Job {
     
     public JobEntity()
     {
-    	m_descriptor = new JobDescriptor((Class<JobEntity>)this.getClass());
+    	m_descriptor = new Descriptor((Class<JobEntity>)this.getClass());
     	commonName(this.getClass().getName());
     }
     
     @JsonProperty("descriptor")
-    public JobDescriptor descriptor()
+    public Descriptor descriptor()
     {
     	return m_descriptor;
     }

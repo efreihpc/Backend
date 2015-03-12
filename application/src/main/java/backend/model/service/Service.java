@@ -2,9 +2,9 @@ package backend.model.service;
 
 import javax.persistence.Entity;
 
-import backend.model.GlobalPersistenceUnit;
 import backend.model.job.JobExecutor;
 import backend.model.job.JobPersistenceUnit;
+import backend.system.GlobalPersistenceUnit;
 
 // T defines the type of the returned result
 

@@ -5,17 +5,29 @@ jar {
   baseName = 'HPC-Plugin'
   version = '0.1.0'
   manifest {
-    attributes 'Plugin-Class' : 'backend.model.SPHPC.SPHPC',
-      'Plugin-Id' : 'PluginPrototype',
-      'Plugin-Version' : '1.0',
+    attributes 'Plugin-Class' : 'backend.model.SPHPC.Finance',
+      'Plugin-Id' : 'SPHPC-Finance-Plugin',
+      'Plugin-Version' : '0.1.0',
       'Plugin-Provider' : 'Yannick Bäumer'
   }
+    into('classes')
 }
 
 task plugin(type: Jar) {
   baseName = 'HPC-Plugin'
   version = '0.1.0'
-  into('classes')
+  
+	doFirst {
+	    for(file in configurations.bundle) {
+	    	println file
+	        from(file) {
+	        	into 'lib'
+	        }
+	        
+	    }		
+	
+	}
+  
   extension('zip')
   with jar
 }
@@ -30,9 +42,16 @@ repositories {
 
 }
 
+configurations {
+    bundle {
+    	//extendsFrom compile
+    }    
+}
+
 dependencies {
   compile project(':application')
-  compile 'com.jimmoores:quandl:0.8.1'
+  compile 'org.apache.httpcomponents:httpclient:4.4'
+  bundle 'org.apache.httpcomponents:httpclient:4.4'
   compile 'org.jocl:jocl:0.1.9'
   compile 'org.springframework.boot:spring-boot-starter-web'
   compile 'org.springframework.boot:spring-boot-starter-data-jpa'
