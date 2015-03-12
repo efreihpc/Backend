@@ -30,7 +30,7 @@ public class RegisteringPlugin extends Plugin {
 		GlobalPersistenceUnit globalPersistence = 	GlobalState.get("GlobalPersistenceUnit");
 		ClassLoader localPluginLoader = this.getClass().getClassLoader();
 				
-		globalPersistence.servicePersistence().registerPluginClassLoader(localPluginLoader, ServiceRepository.class);
+		globalPersistence.servicePersistence().registerPluginRepository(localPluginLoader, ServiceRepository.class);
 
     	// create scanner and disable default filters (that is the 'false' argument)
     	final ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);

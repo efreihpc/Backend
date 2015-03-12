@@ -37,7 +37,7 @@ public abstract class PluginPersistenceUnit<T extends Describable> implements Pe
 	}
 	
 	@Override
-	public <U extends JpaRepository<T, Long>>void registerPluginClassLoader(ClassLoader loader, Class<U> repositoryType)
+	public <U extends JpaRepository<T, Long>>void registerPluginRepository(ClassLoader loader, Class<U> repositoryType)
 	{
 	    m_pluginClassLoader = new JoinClassLoader(m_pluginClassLoader, m_pluginClassLoader, loader);
 	    

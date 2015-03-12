@@ -37,13 +37,13 @@ public class JsonResult extends Result {
 	public void insert(String jsonObject)
 	{
 		Document insertDocument = new Document("id", id());
-		insertDocument.append("storage", (Document) JSON.parse(jsonObject));
+		insertDocument.append("storage", Document.valueOf(jsonObject));
 		m_collection.insertOne(insertDocument);
 	}
 	
 	public String find(String query)
 	{
-		Document queryDocument = (Document) JSON.parse(query);
+		Document queryDocument = Document.valueOf(query);
 		return m_collection.find(and(eq("íd", id()), queryDocument)).first().toString();
 	}
 	

@@ -18,7 +18,7 @@ task plugin(type: Jar) {
   version = '0.1.0'
   
 	doFirst {
-	    for(file in configurations.runtime) {
+	    for(file in configurations.bundle) {
 	        from(file) {
 	        	into 'lib'
 	        }
@@ -43,15 +43,14 @@ repositories {
 
 configurations {
     bundle {
-    	extendsFrom compile
+    	//extendsFrom compile
     }    
 }
 
 dependencies {
   compile project(':application')
-  runtime 'javax.ws.rs:jsr311-api:0.11'
-  runtime 'com.jimmoores:quandl:0.8.1'
-  runtime 'com.sun.jersey:jersey-client:1.9.1'
+  compile 'org.apache.httpcomponents:httpclient:4.4'
+  bundle 'org.apache.httpcomponents:httpclient:4.4'
   compile 'org.jocl:jocl:0.1.9'
   compile 'org.springframework.boot:spring-boot-starter-web'
   compile 'org.springframework.boot:spring-boot-starter-data-jpa'
