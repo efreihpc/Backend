@@ -19,6 +19,7 @@ task plugin(type: Jar) {
   
 	doFirst {
 	    for(file in configurations.bundle) {
+	    	println file
 	        from(file) {
 	        	into 'lib'
 	        }

@@ -17,14 +17,15 @@ public class Backend {
 
 	public Backend()
 	{
-    m_pluginManager = new DefaultPluginManager(new File("3rd_party"));
-
-    GlobalState.set("PluginManager", m_pluginManager);
+	    m_pluginManager = new DefaultPluginManager(new File("3rd_party"));
+	
+	    GlobalState.set("PluginManager", m_pluginManager);
 
 		GlobalPersistenceUnit persistence = new GlobalPersistenceUnit();
 		GlobalState.set("GlobalPersistenceUnit", persistence);
 
 		m_providerRepository = persistence.serviceProviderRepository();
+		updatePlugins();
 	}
 
 	public void schedule(ServiceEntity.ServiceDescriptor descriptor)
