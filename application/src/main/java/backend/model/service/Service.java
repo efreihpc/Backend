@@ -18,4 +18,6 @@ public interface Service<T> {
 	
 	public void execute();
 	public T result();
+	
+	public void configure(ServiceConfiguration config);
 }
