@@ -10,8 +10,10 @@ jar {
       'Plugin-Version' : '0.1.0',
       'Plugin-Provider' : 'Yannick Bäumer'
   }
-    into('classes')
+  into('classes')
 }
+
+
 
 task plugin(type: Jar) {
   baseName = 'HPC-Plugin'
@@ -52,6 +54,7 @@ dependencies {
   compile project(':application')
   compile 'org.apache.httpcomponents:httpclient:4.4'
   bundle 'org.apache.httpcomponents:httpclient:4.4'
+  bundle 'org.jocl:jocl:0.1.9'
   compile 'org.jocl:jocl:0.1.9'
   compile 'org.springframework.boot:spring-boot-starter-web'
   compile 'org.springframework.boot:spring-boot-starter-data-jpa'

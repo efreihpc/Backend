@@ -16,11 +16,9 @@ import static org.jocl.CL.clEnqueueNDRangeKernel;
 import static org.jocl.CL.clEnqueueReadBuffer;
 import static org.jocl.CL.clGetDeviceIDs;
 import static org.jocl.CL.clGetPlatformIDs;
-import static org.jocl.CL.clReleaseCommandQueue;
 import static org.jocl.CL.clReleaseContext;
 import static org.jocl.CL.clReleaseKernel;
 import static org.jocl.CL.clReleaseMemObject;
-import static org.jocl.CL.clReleaseProgram;
 import static org.jocl.CL.clSetKernelArg;
 
 import java.io.BufferedReader;
@@ -28,6 +26,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
 import javax.persistence.Transient;
 
 import org.jocl.CL;
@@ -42,10 +42,14 @@ import org.jocl.cl_mem;
 import org.jocl.cl_platform_id;
 import org.jocl.cl_program;
 
+import ro.fortsoft.pf4j.Extension;
 import backend.model.job.JobPlugin;
 import backend.model.result.JsonResult;
 import backend.system.MongoPersistenceUnit;
 
+@Extension
+@Entity
+@Inheritance
 public class MonteCarloJob extends JobPlugin<JsonResult> {
 	
 	@Transient
@@ -61,21 +65,24 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
 	private cl_mem m_memObjects[];
 	
     //input- and output data 
+	@Transient
     float m_srcArrayA[];
+	@Transient
     float m_srcArrayB[];
+	@Transient
     float m_dstArray[];
 	
 	@Transient
 	private Pointer m_resultArray;
 	
 	@Transient
-	private int m_n;
+	private int m_n = 10;
 
 	@Override
 	protected void execute() {
 		initializePlatform();
 		
-		cl_kernel kernel = createKernel("PrototypeKernel.cl");
+		cl_kernel kernel = createKernel("3rd_party/HPC-Plugin-0.1.0/classes/kernel/PrototypeKernel.cl");
 		prepareKernel(kernel);
 		runKernel(kernel);
 		release(kernel);
@@ -122,11 +129,11 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
         // Obtain a device ID 
         cl_device_id devices[] = new cl_device_id[numDevices];
         clGetDeviceIDs(platform, deviceType, numDevices, devices, null);
-        cl_device_id device = devices[deviceIndex];
+        m_device = devices[deviceIndex];
 
         // Create a context for the selected device
         m_context = clCreateContext(
-            contextProperties, 1, new cl_device_id[]{device}, 
+            contextProperties, 1, new cl_device_id[]{m_device}, 
             null, null, null);
 	}
 	
@@ -142,7 +149,7 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
         clBuildProgram(program, 0, null, null, null, null);
         
         // Create the kernel
-        return clCreateKernel(program, "MCKernel", null);
+        return clCreateKernel(program, "PrototypeKernel", null);
 	}
 	
 	private cl_kernel prepareKernel(cl_kernel kernel)
@@ -233,7 +240,7 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
         if (m_n <= 10)
         {
         	result().insert("{	'state':'" + (passed?"PASSED":"FAILED") + "'," + 
-        					"	'result':" + java.util.Arrays.toString(m_dstArray));
+        					"	'result':" + java.util.Arrays.toString(m_dstArray) + "}");
         }
 	}
 	
@@ -241,6 +248,8 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
     {
         try
         {
+        	 String current = new java.io.File( "." ).getCanonicalPath();
+             System.out.println("Current dir:"+current);
             BufferedReader br = new BufferedReader(
                 new InputStreamReader(new FileInputStream(fileName)));
             StringBuffer sb = new StringBuffer();
