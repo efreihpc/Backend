@@ -66,23 +66,29 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
 	
     //input- and output data 
 	@Transient
-    float m_srcArrayA[];
+    float m_stockPrice[];
 	@Transient
-    float m_srcArrayB[];
+    float m_strikePrice[];
 	@Transient
-    float m_dstArray[];
+    float m_time[];
+	@Transient
+    float m_optionCall[];
+	@Transient
+    float m_optionPut[];
 	
 	@Transient
-	private Pointer m_resultArray;
+	private Pointer m_resultCall;
+	@Transient
+	private Pointer m_resultPut;
 	
 	@Transient
-	private int m_n = 10;
+	private int m_globalSize = 65536;
 
 	@Override
 	protected void execute() {
 		initializePlatform();
 		
-		cl_kernel kernel = createKernel("3rd_party/HPC-Plugin-0.1.0/classes/kernel/PrototypeKernel.cl");
+		cl_kernel kernel = createKernel("3rd_party/HPC-Plugin-0.1.0/classes/kernel/MonteCarloKernel.cl");
 		prepareKernel(kernel);
 		runKernel(kernel);
 		release(kernel);
@@ -146,37 +152,47 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
             1, new String[]{source}, null, null);
         
         // Build the program
-        clBuildProgram(program, 0, null, null, null, null);
+        clBuildProgram(program, 0, null, "-cl-denorms-are-zero -cl-fast-relaxed-math -cl-single-precision-constant -DNSAMP=262144", null, null);
         
         // Create the kernel
-        return clCreateKernel(program, "PrototypeKernel", null);
+        return clCreateKernel(program, "MonteCarloKernel", null);
 	}
 	
 	private cl_kernel prepareKernel(cl_kernel kernel)
 	{
         // Create input- and output data 
-        m_srcArrayA = new float[m_n];
-        m_srcArrayB = new float[m_n];
-        m_dstArray = new float[m_n];
-        for (int i = 0; i < m_n; i++)
+        m_stockPrice = new float[m_globalSize];
+        m_strikePrice = new float[m_globalSize];
+        m_time = new float[m_globalSize];
+        m_optionPut = new float[m_globalSize];
+        m_optionCall = new float[m_globalSize];
+        for (int i = 0; i < m_globalSize; i++)
         {
-            m_srcArrayA[i] = i;
-            m_srcArrayB[i] = i;
+            m_stockPrice[i] = i;
+            m_strikePrice[i] = i;
         }
-        Pointer srcA = Pointer.to(m_srcArrayA);
-        Pointer srcB = Pointer.to(m_srcArrayB);
-        m_resultArray = Pointer.to(m_dstArray);
+        Pointer srcA = Pointer.to(m_stockPrice);
+        Pointer srcB = Pointer.to(m_strikePrice);
+        Pointer srcC = Pointer.to(m_time);
+        m_resultCall = Pointer.to(m_optionPut);
+        m_resultPut = Pointer.to(m_optionPut);
 		
-        m_memObjects = new cl_mem[3];
+        m_memObjects = new cl_mem[5];
         m_memObjects[0] = clCreateBuffer(m_context, 
             CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-            Sizeof.cl_float * m_n, srcA, null);
+            Sizeof.cl_float * m_globalSize, srcA, null);
         m_memObjects[1] = clCreateBuffer(m_context, 
             CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-            Sizeof.cl_float * m_n, srcB, null);
+            Sizeof.cl_float * m_globalSize, srcB, null);
         m_memObjects[2] = clCreateBuffer(m_context, 
+                CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+                Sizeof.cl_float * m_globalSize, srcC, null);
+        m_memObjects[3] = clCreateBuffer(m_context, 
             CL_MEM_READ_WRITE, 
-            Sizeof.cl_float * m_n, null, null);
+            Sizeof.cl_float * m_globalSize, null, null);
+        m_memObjects[4] = clCreateBuffer(m_context, 
+                CL_MEM_READ_WRITE, 
+                Sizeof.cl_float * m_globalSize, null, null);
         
         // Set the arguments for the kernel
         clSetKernelArg(kernel, 0, 
@@ -185,6 +201,10 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
             Sizeof.cl_mem, Pointer.to(m_memObjects[1]));
         clSetKernelArg(kernel, 2, 
             Sizeof.cl_mem, Pointer.to(m_memObjects[2]));
+        clSetKernelArg(kernel, 2, 
+            Sizeof.cl_mem, Pointer.to(m_memObjects[3]));
+        clSetKernelArg(kernel, 2, 
+            Sizeof.cl_mem, Pointer.to(m_memObjects[4]));
 		
 		return kernel;
 	}
@@ -196,7 +216,7 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
             clCreateCommandQueue(m_context, m_device, 0, null);
         
         // Set the work-item dimensions
-        long global_work_size[] = new long[]{m_n};
+        long global_work_size[] = new long[]{m_globalSize};
         long local_work_size[] = new long[]{1};
         
         // Execute the kernel
@@ -205,7 +225,7 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
         
         // Read the output data
         clEnqueueReadBuffer(commandQueue, m_memObjects[2], CL_TRUE, 0,
-            m_n * Sizeof.cl_float, m_resultArray, 0, null, null);
+        		m_globalSize * Sizeof.cl_float, m_resultCall, 0, null, null);
 	}
 	
 	private void release(cl_kernel kernel)
@@ -214,6 +234,8 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
         clReleaseMemObject(m_memObjects[0]);
         clReleaseMemObject(m_memObjects[1]);
         clReleaseMemObject(m_memObjects[2]);
+        clReleaseMemObject(m_memObjects[3]);
+        clReleaseMemObject(m_memObjects[4]);
         clReleaseKernel(kernel);
 //        clReleaseProgram(program);
 //        clReleaseCommandQueue(queue);
@@ -222,26 +244,10 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
 	
 	private void validate()
 	{
-	       // Verify the result
         boolean passed = true;
-        final float epsilon = 1e-7f;
-        for (int i = 0; i < m_n; i++)
-        {
-            float x = m_dstArray[i];
-            float y = m_srcArrayA[i] * m_srcArrayB[i];
-            boolean epsilonEqual = Math.abs(x - y) <= epsilon * Math.abs(x);
-            if (!epsilonEqual)
-            {
-                passed = false;
-                break;
-            }
-        }
 
-        if (m_n <= 10)
-        {
-        	result().insert("{	'state':'" + (passed?"PASSED":"FAILED") + "'," + 
-        					"	'result':" + java.util.Arrays.toString(m_dstArray) + "}");
-        }
+    	result().insert("{	'state':'" + (passed?"PASSED":"FAILED") + "'," + 
+    					"	'result':" + java.util.Arrays.toString(m_optionPut) + "}");
 	}
 	
     private String readFile(String fileName)
