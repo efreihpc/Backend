@@ -92,7 +92,7 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
 	
 	@Transient
 //	private int m_globalSize = 65536;
-	private int m_globalSize = 10;
+	private int m_globalSize = 1000;
 
 	@Override
 	protected void execute() {
@@ -178,13 +178,21 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
         m_randomSeedY = new int[m_globalSize];
         m_optionPut = new float[m_globalSize];
         m_optionCall = new float[m_globalSize];
+        
+        float min1 = 10;
+        float max1 = 50;
+        float min2 = (float) 0.2;
+        float max2 = 2;
+        
         for (int i = 0; i < m_globalSize; i++)
         {
-            m_stockPrice[i] = i;
-            m_strikePrice[i] = i;
-            m_time[i] = i;
-            m_randomSeedX[i] = i;
-            m_randomSeedY[i] = i;
+            m_stockPrice[i] = m_stockPrice[i]*(max1-min1)+min1;
+            m_strikePrice[i] = m_strikePrice[i]*(max1-min1)+min1;
+            m_time[i] = m_time[i]*(max1-min1)+min1;
+            m_optionPut[i] = 0;
+            m_optionCall[i] = 0;
+            m_randomSeedX[i] = i%(i + 1);
+            m_randomSeedY[i] = i%(i + 2);
         }
         Pointer srcA = Pointer.to(m_stockPrice);
         Pointer srcB = Pointer.to(m_strikePrice);
@@ -295,6 +303,10 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
         boolean passed = true;
         
         System.out.println("MonteCarloJob: Persisting Results!!");
+        System.out.println("{	'state':'" + (passed?"PASSED":"FAILED") + "'," + 
+				"	'result_put':" + java.util.Arrays.toString(m_optionPut) + 
+				"	'result_call':" + java.util.Arrays.toString(m_optionCall) + 
+				"}");
 
     	result().insert("{	'state':'" + (passed?"PASSED":"FAILED") + "'," + 
     					"	'result_put':" + java.util.Arrays.toString(m_optionPut) + 
