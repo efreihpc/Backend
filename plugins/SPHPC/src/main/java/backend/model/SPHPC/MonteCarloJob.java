@@ -91,7 +91,8 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
 	private Pointer m_resultPut;
 	
 	@Transient
-	private int m_globalSize = 65536;
+//	private int m_globalSize = 65536;
+	private int m_globalSize = 10;
 
 	@Override
 	protected void execute() {
@@ -257,16 +258,18 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
         long global_work_size[] = new long[]{m_globalSize};
         long local_work_size[] = new long[]{1};
         
+        System.out.println("MonteCarloJob: Running Kernel");
         // Execute the kernel
         clEnqueueNDRangeKernel(commandQueue, kernel, 1, null,
             global_work_size, local_work_size, 0, null, null);
         
+        System.out.println("MonteCarloJob: Fetching Data From Kernel");
         // Read the output data
         clEnqueueReadBuffer(commandQueue, m_memObjects[4], CL_TRUE, 0,
         		m_globalSize * Sizeof.cl_float, m_resultCall, 0, null, null);
         // Read the output data
         clEnqueueReadBuffer(commandQueue, m_memObjects[5], CL_TRUE, 0,
-        		m_globalSize * Sizeof.cl_float, m_resultCall, 0, null, null);
+        		m_globalSize * Sizeof.cl_float, m_resultPut, 0, null, null);
 	}
 	
 	private void release(cl_kernel kernel)
@@ -290,9 +293,13 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
 	private void validate()
 	{
         boolean passed = true;
+        
+        System.out.println("MonteCarloJob: Persisting Results!!");
 
     	result().insert("{	'state':'" + (passed?"PASSED":"FAILED") + "'," + 
-    					"	'result':" + java.util.Arrays.toString(m_optionPut) + "}");
+    					"	'result_put':" + java.util.Arrays.toString(m_optionPut) + 
+    					"	'result_call':" + java.util.Arrays.toString(m_optionCall) + 
+    					"}");
 	}
 	
     private String readFile(String fileName)
