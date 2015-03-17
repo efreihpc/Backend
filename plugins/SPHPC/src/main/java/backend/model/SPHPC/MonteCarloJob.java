@@ -75,7 +75,9 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
 	@Transient
     float m_strikePrice[];
 	@Transient
-    int m_randomSeed[];
+    int m_randomSeedX[];
+	@Transient
+    int m_randomSeedY[];
 	@Transient
     float m_time[];
 	@Transient
@@ -171,7 +173,8 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
         m_stockPrice = new float[m_globalSize];
         m_strikePrice = new float[m_globalSize];
         m_time = new float[m_globalSize];
-        m_randomSeed = new int[m_globalSize];
+        m_randomSeedX = new int[m_globalSize];
+        m_randomSeedY = new int[m_globalSize];
         m_optionPut = new float[m_globalSize];
         m_optionCall = new float[m_globalSize];
         for (int i = 0; i < m_globalSize; i++)
@@ -179,18 +182,20 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
             m_stockPrice[i] = i;
             m_strikePrice[i] = i;
             m_time[i] = i;
-            m_randomSeed[i] = i;
+            m_randomSeedX[i] = i;
+            m_randomSeedY[i] = i;
         }
         Pointer srcA = Pointer.to(m_stockPrice);
         Pointer srcB = Pointer.to(m_strikePrice);
         Pointer srcC = Pointer.to(m_time);
-        Pointer srcD = Pointer.to(m_randomSeed);
+        Pointer srcD = Pointer.to(m_randomSeedX);
         Pointer srcE = Pointer.to(m_riskFree);
         Pointer srcF = Pointer.to(m_sigma);
+        Pointer srcG = Pointer.to(m_randomSeedY);
         m_resultCall = Pointer.to(m_optionCall);
         m_resultPut = Pointer.to(m_optionPut);
 		
-        m_memObjects = new cl_mem[8];
+        m_memObjects = new cl_mem[9];
         m_memObjects[0] = clCreateBuffer(m_context, 
             CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
             Sizeof.cl_float * m_globalSize, srcA, null);
@@ -215,18 +220,23 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
         m_memObjects[7] = clCreateBuffer(m_context, 
             CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
             Sizeof.cl_float, srcF, null);
+        m_memObjects[8] = clCreateBuffer(m_context, 
+            CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+            Sizeof.cl_int * m_globalSize, srcG, null);
         
         // Set the arguments for the kernel
-        clSetKernelArg(kernel, 1, 
+        clSetKernelArg(kernel, 0, 
             Sizeof.cl_mem, Pointer.to(m_memObjects[4]));
-        clSetKernelArg(kernel, 2, 
+        clSetKernelArg(kernel, 1, 
             Sizeof.cl_mem, Pointer.to(m_memObjects[5]));
-        clSetKernelArg(kernel, 3, 
+        clSetKernelArg(kernel, 2, 
             Sizeof.cl_mem, Pointer.to(m_memObjects[3]));
+        clSetKernelArg(kernel, 3, 
+            Sizeof.cl_mem, Pointer.to(m_memObjects[8]));
         clSetKernelArg(kernel, 4, 
-            Sizeof.cl_mem, Pointer.to(m_memObjects[6]));
+            Sizeof.cl_float, Pointer.to(m_riskFree));
         clSetKernelArg(kernel, 5, 
-            Sizeof.cl_mem, Pointer.to(m_memObjects[7]));
+            Sizeof.cl_float, Pointer.to(m_sigma));
         clSetKernelArg(kernel, 6, 
             Sizeof.cl_mem, Pointer.to(m_memObjects[0]));
         clSetKernelArg(kernel, 7, 
@@ -268,6 +278,9 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
         clReleaseMemObject(m_memObjects[3]);
         clReleaseMemObject(m_memObjects[4]);
         clReleaseMemObject(m_memObjects[5]);
+        clReleaseMemObject(m_memObjects[6]);
+        clReleaseMemObject(m_memObjects[7]);
+        clReleaseMemObject(m_memObjects[8]);
         clReleaseKernel(kernel);
 //        clReleaseProgram(program);
 //        clReleaseCommandQueue(queue);

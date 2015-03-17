@@ -6,7 +6,8 @@ kernel
     void MonteCarloKernel(
     global float * restrict vcall, // option call value (OUT)
     global float * restrict vput, // option put value (OUT)
-    global const uint2 *randomseed,
+    global const uint *randomseedX,
+    global const uint *randomseedY,
     float r, // risk free (IN)
     float sigma, // volatility (IN)
     global const float *s_price, // current stock price (IN)
@@ -27,14 +28,14 @@ kernel
 
     for (int iSample = 0; iSample < NSAMP; iSample = iSample + 2)
     {
-        uint seed = randomseed[tid].x + iSample % tid;
+        uint seed = randomseedX[tid] + iSample % tid;
         uint t = seed ^ (seed << 11);
-        uint rnd_src = randomseed[tid].y ^ (randomseed[tid].y >> 19) ^ (t ^ (t >> 8));
+        uint rnd_src = randomseedY[tid] ^ (randomseedY[tid] >> 19) ^ (t ^ (t >> 8));
         float rnd_num = rnd_src*cos(2.0*M_PI*rnd_src);
 
-        seed = randomseed[tid].x + tid % iSample;
+        seed = randomseedX[tid] + tid % iSample;
         t = seed ^ (seed << 11);
-        rnd_src = randomseed[tid].y ^ (randomseed[tid].y >> 19) ^ (t ^ (t >> 8));
+        rnd_src = randomseedY[tid] ^ (randomseedY[tid] >> 19) ^ (t ^ (t >> 8));
         float rnd_num1 = rnd_src*sin(2.0*M_PI*rnd_src);
 
         float tmp_bs3 = rnd_num*tmp_bs2 + tmp_bs1;
