@@ -1,12 +1,12 @@
-package backend.system;
+package backend.model.service;
 
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.Transient;
 
 import backend.model.Descriptor;
+import backend.model.dependency.Dependency;
 import backend.model.result.Result;
-import backend.model.service.ServiceEntity;
 
 @Entity
 @Inheritance
