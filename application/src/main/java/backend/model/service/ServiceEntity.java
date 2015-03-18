@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Inheritance
-public abstract class ServiceEntity<T extends Result> implements Service<T>, Describable {
+public abstract class ServiceEntity<T extends Result> implements Service<T>{
 	
 	public static class ServiceDescriptor extends Descriptor<ServiceEntity>
 	{

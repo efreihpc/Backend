@@ -41,7 +41,7 @@ public class QuandlDataRetrievalJob extends JobPlugin<JsonResult> {
 	}
 	
 	@Override
-	protected void execute() {	
+	public void execute() {	
 		if(m_mongoPersistence == null)
 		{
 			System.out.println("QuandlDataRetrievalJob: No Mongopersistence Set!");

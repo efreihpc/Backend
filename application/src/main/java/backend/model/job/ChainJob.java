@@ -25,7 +25,7 @@ public class ChainJob<T extends Result> extends JobEntity<T> {
 		commonName("ChainJob");
 	}
 	
-	protected void execute() {
+	public void execute() {
 
 	}
 	

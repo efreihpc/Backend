@@ -95,7 +95,7 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
 	private int m_globalSize = 1000;
 
 	@Override
-	protected void execute() {
+	public void execute() {
 		initializePlatform();
 		
 		cl_kernel kernel = createKernel("3rd_party/HPC-Plugin-0.1.0/classes/kernel/MonteCarloKernel.cl");

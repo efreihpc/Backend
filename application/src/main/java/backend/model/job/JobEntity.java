@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Inheritance
 
 //T specifies the jobs result type
-public abstract class JobEntity<T extends Result> implements Job<T>, Describable {
+public abstract class JobEntity<T extends Result> implements Job<T>{
 	
 	@JsonIgnore
     @Id
@@ -134,6 +134,4 @@ public abstract class JobEntity<T extends Result> implements Job<T>, Describable
 		execute();
 		runSecondaryJobs();
 	}
-	
-	protected abstract void execute();
 }

@@ -32,7 +32,7 @@ public class PersistJob extends JobEntity<DictionaryResult> {
 	}
 	
 	@Override
-	protected void execute() {
+	public void execute() {
 		m_jobPersistence.save(this.m_jobToPersist);	
 	}
 	
