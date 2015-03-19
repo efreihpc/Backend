@@ -1,5 +1,7 @@
 package backend.model.service;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -9,12 +11,11 @@ import javax.persistence.Inheritance;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
-import backend.model.Describable;
 import backend.model.Descriptor;
+import backend.model.dependency.ServiceDependency;
 import backend.model.job.JobEntity;
 import backend.model.job.JobExecutor;
 import backend.model.job.JobPersistenceUnit;
-import backend.model.job.JobRepository;
 import backend.model.job.PersistJob;
 import backend.model.result.Result;
 import backend.model.serviceprovider.ServiceProviderRepository;
@@ -74,6 +75,8 @@ public abstract class ServiceEntity<T extends Result> implements Service<T>{
     private T m_result;
     
 	protected String m_classLoader;
+	
+	protected List<ServiceDependency> m_dependencies;
     
     @Transient
     private GlobalPersistenceUnit m_globalPersistenceUnit;
@@ -81,6 +84,7 @@ public abstract class ServiceEntity<T extends Result> implements Service<T>{
     private JobPersistenceUnit m_jobPersistence;
     @Transient 
     private JobExecutor m_jobExecutor;
+    
     
     public ServiceEntity()
     {
@@ -145,15 +149,14 @@ public abstract class ServiceEntity<T extends Result> implements Service<T>{
     }
 	
 	@JsonProperty("dataSource")
-	public void dataSource(ServiceEntity<T> dataSource)
+	public List<ServiceDependency> dependencies()
 	{
-		m_dataSource = dataSource;
+		return m_dependencies;
 	}
 	
-	@JsonProperty("dataSource")
-	public ServiceEntity<T> dataSource()
+	protected void addDependency(ServiceDescriptor descriptor)
 	{
-		return m_dataSource;
+		m_dependencies.add(new ServiceDependency(descriptor));
 	}
 	
 	protected T data()

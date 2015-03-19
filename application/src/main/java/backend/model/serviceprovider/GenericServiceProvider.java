@@ -17,6 +17,7 @@ import org.springframework.core.type.filter.TypeFilter;
 
 import ro.fortsoft.pf4j.ExtensionPoint;
 import backend.model.Descriptor;
+import backend.model.dependency.ServiceDependency;
 import backend.model.job.JobExecutor;
 import backend.model.result.Result;
 import backend.model.service.Service;
@@ -45,6 +46,7 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     
     private GlobalPersistenceUnit m_globalPersistenceUnit;
     private ServicePersistenceUnit m_servicePersistenceUnit;
+    private ServiceProviderRepository m_serviceProviderRepository;
     JobExecutor m_jobExecutor;
     
     public GenericServiceProvider()
@@ -99,14 +101,28 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     	if(m_servicePersistenceUnit != null)
     		m_servicePersistenceUnit.save(newService);
     	
-    	newService.providerIdentifier(m_descriptor.identifier());
-    	
+    	newService.providerIdentifier(m_descriptor.identifier());    	
     	return newService;
     }
     
     @Override
-    public <T extends Result> T executeService(Service<T> serviceToExecute)
+    public <T extends Result> T executeService(ServiceEntity<T> serviceToExecute)
     {
+    	for(ServiceDependency dependency: serviceToExecute.dependencies())
+    	{
+			GenericServiceProvider provider;
+			try 
+			{
+				provider = m_serviceProviderRepository.serviceProvider(dependency.descriptor().providerIdentifier());
+				ServiceEntity service = provider.service(dependency.descriptor().identifier());
+				dependency.task(service);
+				service.execute();
+			} 
+			catch (InstantiationException | IllegalAccessException e) 
+			{
+				e.printStackTrace();
+			}
+    	}
     	serviceToExecute.execute();
     	return serviceToExecute.result();
     }
@@ -159,6 +175,7 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
 	public void persistenceUnit(GlobalPersistenceUnit persistenceUnit) {
 		m_globalPersistenceUnit = persistenceUnit;
 		m_servicePersistenceUnit = persistenceUnit.servicePersistence();
+		m_serviceProviderRepository = persistenceUnit.serviceProviderRepository();
 	}
 	
 	@Override
