@@ -13,7 +13,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
-import backend.model.Describable;
 import backend.model.Descriptor;
 import backend.model.result.Result;
 

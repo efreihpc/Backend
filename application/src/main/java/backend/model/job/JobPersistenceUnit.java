@@ -3,8 +3,6 @@ package backend.model.job;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import backend.model.service.ServiceEntity;
-import backend.model.service.ServiceRepository;
 import backend.system.PluginPersistenceUnit;
 
 

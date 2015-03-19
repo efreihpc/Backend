@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import backend.model.service.ServiceEntity;
 import backend.system.GlobalPersistenceUnit;
 import backend.system.GlobalState;
 

@@ -1,17 +1,11 @@
 package backend.system;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-
 import javax.persistence.EntityManager;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 
 import backend.model.Describable;
-import backend.model.service.ServiceRepository;
 
 public abstract class PluginPersistenceUnit<T extends Describable> implements PersistenceUnit<T>{
 	

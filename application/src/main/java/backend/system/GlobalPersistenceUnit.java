@@ -1,23 +1,17 @@
 package backend.system;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Transient;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoDatabase;
-
 import backend.model.job.JobPersistenceUnit;
-import backend.model.job.JobRepository;
 import backend.model.result.ResultPersistenceUnit;
 import backend.model.result.ResultRepository;
-import backend.model.service.ServiceEntity;
 import backend.model.service.ServicePersistenceUnit;
-import backend.model.service.ServiceRepository;
 import backend.model.serviceprovider.ServiceProviderPersistenceUnit;
 import backend.model.serviceprovider.ServiceProviderRepository;
+
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoDatabase;
 
 public class GlobalPersistenceUnit implements
 	ServiceProviderPersistenceUnit,

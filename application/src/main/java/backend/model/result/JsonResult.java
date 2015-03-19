@@ -1,6 +1,7 @@
 package backend.model.result;
 
-import java.net.UnknownHostException;
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
 
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -11,15 +12,7 @@ import org.bson.Document;
 import backend.system.MongoPersistenceUnit;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.util.JSON;
-import static com.mongodb.client.model.Filters.*;
 
 @Entity
 @Inheritance                                                                                                                                                 

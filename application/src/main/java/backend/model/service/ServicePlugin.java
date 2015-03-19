@@ -1,9 +1,5 @@
 package backend.model.service;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 

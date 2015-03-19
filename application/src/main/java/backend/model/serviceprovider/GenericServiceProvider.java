@@ -1,16 +1,10 @@
 package backend.model.serviceprovider;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
@@ -20,10 +14,8 @@ import backend.model.Descriptor;
 import backend.model.dependency.ServiceDependency;
 import backend.model.job.JobExecutor;
 import backend.model.result.Result;
-import backend.model.service.Service;
 import backend.model.service.ServiceEntity;
 import backend.model.service.ServicePersistenceUnit;
-import backend.model.service.ServiceRepository;
 import backend.system.GlobalPersistenceUnit;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

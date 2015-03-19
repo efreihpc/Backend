@@ -1,11 +1,7 @@
 package backend.model.serviceprovider;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -13,9 +9,6 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 
-import ro.fortsoft.pf4j.PluginManager;
-import backend.model.result.Result;
-import backend.model.service.ServiceEntity;
 import backend.system.GlobalPersistenceUnit;
 import backend.system.GlobalState;
 
