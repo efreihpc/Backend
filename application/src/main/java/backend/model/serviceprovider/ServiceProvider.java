@@ -20,6 +20,6 @@ public interface ServiceProvider {
 	// returns the service identified by its Classname
 	public <T extends Result> Service<T> service(String serviceName) throws InstantiationException, IllegalAccessException;
 	
-	public <T extends Result> T executeService(ServiceEntity<T> serviceToExecute);
+	public <T extends Result> void executeService(ServiceEntity<T> serviceToExecute);
 
 }

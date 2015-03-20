@@ -14,22 +14,21 @@ import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import backend.model.dependency.ServiceDependency;
-import backend.model.descriptor.Descriptor;
 import backend.model.descriptor.ServiceDescriptor;
 import backend.model.job.JobEntity;
-import backend.model.job.JobExecutor;
 import backend.model.job.JobPersistenceUnit;
 import backend.model.job.PersistJob;
 import backend.model.result.Result;
 import backend.model.serviceprovider.ServiceProviderRepository;
 import backend.system.GlobalPersistenceUnit;
+import backend.system.execution.ThreadPoolExecutor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Inheritance
-public abstract class ServiceEntity<T extends Result> implements Service<T>{
+public abstract class ServiceEntity<T extends Result> extends Service<T>{
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -60,7 +59,7 @@ public abstract class ServiceEntity<T extends Result> implements Service<T>{
     @Transient
     private JobPersistenceUnit m_jobPersistence;
     @Transient 
-    private JobExecutor m_jobExecutor;
+    private ThreadPoolExecutor m_jobExecutor;
     
     
     public ServiceEntity()
@@ -151,13 +150,13 @@ public abstract class ServiceEntity<T extends Result> implements Service<T>{
 	}
 	
 	@Override
-	public void jobExecutor(JobExecutor jobExecutor)
+	public void jobExecutor(ThreadPoolExecutor jobExecutor)
 	{
 		m_jobExecutor = jobExecutor;
 	}
 	
 	@Override
-	public JobExecutor jobExecutor()
+	public ThreadPoolExecutor jobExecutor()
 	{
 		return m_jobExecutor;
 	}

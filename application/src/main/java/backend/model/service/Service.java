@@ -1,17 +1,17 @@
 package backend.model.service;
 
-import backend.model.Task;
-import backend.model.job.JobExecutor;
 import backend.model.result.Result;
 import backend.system.GlobalPersistenceUnit;
+import backend.system.execution.ThreadPoolExecutor;
+import backend.system.execution.Task;
 
 // T defines the type of the returned result
 
-public interface Service<T extends Result> extends Task<T> {
+public abstract class Service<T extends Result> extends Task<T> {
 	
-	void persistenceUnit(GlobalPersistenceUnit persistenceUnit);
-	GlobalPersistenceUnit persistenceUnit();
+	public abstract void persistenceUnit(GlobalPersistenceUnit persistenceUnit);
+	public abstract GlobalPersistenceUnit persistenceUnit();
 	
-	void jobExecutor(JobExecutor jobExecutor);
-	JobExecutor jobExecutor();
+	public abstract void jobExecutor(ThreadPoolExecutor jobExecutor);
+	public abstract ThreadPoolExecutor jobExecutor();
 }

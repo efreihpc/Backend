@@ -1,24 +1,26 @@
-package backend.model.job;
+package backend.system.execution;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-public class JobExecutor {
+import backend.model.job.Job;
+
+public class ThreadPoolExecutor implements Executor{
 	
 	private TaskExecutor m_taskExecutor;
 	private ApplicationContext m_context;
 	
-	public JobExecutor()
+	public ThreadPoolExecutor(String beanName)
 	{
 		m_context = new ClassPathXmlApplicationContext("Spring-Config.xml");
-	    m_taskExecutor = (ThreadPoolTaskExecutor) m_context.getBean("taskExecutor");
+	    m_taskExecutor = (ThreadPoolTaskExecutor) m_context.getBean(beanName);
 	}
-	
-	public void execute(Job job)
-	{
-		m_taskExecutor.execute(job);
+
+	@Override
+	public void execute(Task task) {
+		m_taskExecutor.execute(task);
 	}
 
 }

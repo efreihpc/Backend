@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 
 import backend.model.descriptor.Descriptor;
 import backend.model.result.Result;
+import backend.system.execution.ThreadPoolExecutor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Inheritance
 
 //T specifies the jobs result type
-public abstract class JobEntity<T extends Result> implements Job<T>{
+public abstract class JobEntity<T extends Result> extends Job<T>{
 	
 	@JsonIgnore
     @Id
@@ -47,7 +48,7 @@ public abstract class JobEntity<T extends Result> implements Job<T>{
     private List<JobEntity> m_secondaryJobs = new Vector<JobEntity>();
 	
     @Transient
-    private JobExecutor m_executor;
+    private ThreadPoolExecutor m_executor;
     
     public JobEntity()
     {
@@ -101,7 +102,7 @@ public abstract class JobEntity<T extends Result> implements Job<T>{
     	return m_secondaryJobs;
     }
     
-    public void executor(JobExecutor executor)
+    public void executor(ThreadPoolExecutor executor)
     {
     	m_executor = executor;
     	for (JobEntity job : m_secondaryJobs) {
@@ -109,12 +110,12 @@ public abstract class JobEntity<T extends Result> implements Job<T>{
     	}
     }
     
-    public JobExecutor executor()
+    public ThreadPoolExecutor executor()
     {
     	return m_executor;
     }
     
-    public JobExecutor taskExecutor()
+    public ThreadPoolExecutor taskExecutor()
     {
     	return m_executor;
     }

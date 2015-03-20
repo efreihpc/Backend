@@ -13,14 +13,16 @@ import ro.fortsoft.pf4j.ExtensionPoint;
 import backend.model.dependency.ServiceDependency;
 import backend.model.descriptor.Descriptor;
 import backend.model.descriptor.ServiceDescriptor;
-import backend.model.job.JobExecutor;
 import backend.model.result.Result;
 import backend.model.service.ServiceEntity;
 import backend.model.service.ServicePersistenceUnit;
 import backend.system.GlobalPersistenceUnit;
+import backend.system.execution.TaskQueue;
+import backend.system.execution.ThreadPoolExecutor;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+//TODO: move execution to a new Class
 public abstract class GenericServiceProvider implements ExtensionPoint, ServiceProvider{
 	
 	public static class ServiceProviderDescriptor extends Descriptor<GenericServiceProvider>
@@ -40,14 +42,17 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     private GlobalPersistenceUnit m_globalPersistenceUnit;
     private ServicePersistenceUnit m_servicePersistenceUnit;
     private ServiceProviderRepository m_serviceProviderRepository;
-    JobExecutor m_jobExecutor;
+    
+    ThreadPoolExecutor m_jobExecutor;
+    ThreadPoolExecutor m_serviceExecutor;
     
     public GenericServiceProvider()
     {
 	    	m_descriptor = new ServiceProviderDescriptor((Class<GenericServiceProvider>)this.getClass());
 	    	m_descriptor.commonName(this.getClass().getName());
 	    	m_registeredServices = new HashMap<String, ServiceDescriptor>();
-	    	m_jobExecutor = new JobExecutor();
+	    	m_jobExecutor = new ThreadPoolExecutor("jobExecutor");
+	    	m_serviceExecutor = new ThreadPoolExecutor("serviceExecutor");
 	    	registerServices();
     }
     
@@ -99,8 +104,20 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     }
     
     @Override
-    public <T extends Result> T executeService(ServiceEntity<T> serviceToExecute)
+    public <T extends Result> void executeService(ServiceEntity<T> serviceToExecute)
     {
+    	executeServiceQueue(serviceExecutionQueue(serviceToExecute));
+    }
+    
+    public <T extends Result> void executeServiceQueue(TaskQueue queueToExecute)
+    {
+    	m_serviceExecutor.execute(queueToExecute);
+    }    
+    
+    public <T extends Result> TaskQueue serviceExecutionQueue(ServiceEntity<T> serviceToExecute)
+    {
+    	TaskQueue queue = new TaskQueue();
+    	
     	for(ServiceDependency dependency: serviceToExecute.dependencies())
     	{
     		System.out.println("GenericServiceProvider> Dependency found: " + dependency.descriptor().identifier());
@@ -111,15 +128,16 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
 				ServiceEntity service = provider.service(dependency.descriptor().identifier());
 				System.out.println("GenericServiceProvider> Dependency instantiated: " + service.descriptor().commonName());
 				dependency.task(service);
-				provider.executeService(service);
+				queue.enqueue(provider.serviceExecutionQueue(service));
 			} 
 			catch (InstantiationException | IllegalAccessException e) 
 			{
 				e.printStackTrace();
 			}
     	}
-    	serviceToExecute.execute();
-    	return serviceToExecute.result();
+    	
+    	queue.enqueue(serviceToExecute);
+    	return queue;
     }
     
     private void registerServices()
