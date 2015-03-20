@@ -1,6 +1,7 @@
 package backend.model.service;
 
 import java.util.List;
+import java.util.Vector;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,11 +9,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
-import backend.model.Descriptor;
 import backend.model.dependency.ServiceDependency;
+import backend.model.descriptor.Descriptor;
+import backend.model.descriptor.ServiceDescriptor;
 import backend.model.job.JobEntity;
 import backend.model.job.JobExecutor;
 import backend.model.job.JobPersistenceUnit;
@@ -27,34 +30,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Entity
 @Inheritance
 public abstract class ServiceEntity<T extends Result> implements Service<T>{
-	
-	public static class ServiceDescriptor extends Descriptor<ServiceEntity>
-	{
-		@JsonProperty("providerIdentifier")
-		private String m_providerIdentifier;
-		
-		public ServiceDescriptor()
-		{
-			super();	
-		}
-		
-		public ServiceDescriptor(Class<ServiceEntity> clazz)
-		{
-			super(clazz);
-		}
-		
-		@JsonProperty("providerIdentifier")
-		public void providerIdentifier(String name)
-		{
-			m_providerIdentifier = name;
-		}
-		
-		@JsonProperty("providerIdentifier")
-		public String providerIdentifier()
-		{
-			return m_providerIdentifier;
-		}
-	}
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -76,6 +51,8 @@ public abstract class ServiceEntity<T extends Result> implements Service<T>{
     
 	protected String m_classLoader;
 	
+    @OneToMany(targetEntity=ServiceDependency.class, fetch = FetchType.EAGER)
+	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
 	protected List<ServiceDependency> m_dependencies;
     
     @Transient
@@ -88,6 +65,7 @@ public abstract class ServiceEntity<T extends Result> implements Service<T>{
     
     public ServiceEntity()
     {
+    	m_dependencies = new Vector<ServiceDependency>();
     	m_descriptor = new ServiceDescriptor((Class<ServiceEntity>)this.getClass());
     	m_descriptor.commonName(this.getClass().getName());
     	m_classLoader = "Default";
@@ -152,6 +130,14 @@ public abstract class ServiceEntity<T extends Result> implements Service<T>{
 	public List<ServiceDependency> dependencies()
 	{
 		return m_dependencies;
+	}
+	
+	protected void addDependency(String serviceIdentifier, String serviceProviderIdentifier)
+	{
+		ServiceDescriptor descriptor = new ServiceDescriptor();
+		descriptor.identifier(serviceIdentifier);
+		descriptor.providerIdentifier(serviceProviderIdentifier);
+		addDependency(descriptor);
 	}
 	
 	protected void addDependency(ServiceDescriptor descriptor)

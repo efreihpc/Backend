@@ -13,7 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
-import backend.model.Descriptor;
+import backend.model.descriptor.Descriptor;
 import backend.model.result.Result;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

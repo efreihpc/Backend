@@ -10,8 +10,9 @@ import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 
 import ro.fortsoft.pf4j.ExtensionPoint;
-import backend.model.Descriptor;
 import backend.model.dependency.ServiceDependency;
+import backend.model.descriptor.Descriptor;
+import backend.model.descriptor.ServiceDescriptor;
 import backend.model.job.JobExecutor;
 import backend.model.result.Result;
 import backend.model.service.ServiceEntity;
@@ -34,7 +35,7 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     private ServiceProviderDescriptor m_descriptor;
     
 	@JsonProperty("services")
-    private HashMap<String, ServiceEntity.ServiceDescriptor> m_registeredServices;
+    private HashMap<String, ServiceDescriptor> m_registeredServices;
     
     private GlobalPersistenceUnit m_globalPersistenceUnit;
     private ServicePersistenceUnit m_servicePersistenceUnit;
@@ -45,7 +46,7 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     {
 	    	m_descriptor = new ServiceProviderDescriptor((Class<GenericServiceProvider>)this.getClass());
 	    	m_descriptor.commonName(this.getClass().getName());
-	    	m_registeredServices = new HashMap<String, ServiceEntity.ServiceDescriptor>();
+	    	m_registeredServices = new HashMap<String, ServiceDescriptor>();
 	    	m_jobExecutor = new JobExecutor();
 	    	registerServices();
     }
@@ -67,14 +68,14 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     }
     
     @Override
-    public ServiceEntity.ServiceDescriptor serviceDescriptor(String serviceIdentifier)
+    public ServiceDescriptor serviceDescriptor(String serviceIdentifier)
     {
     	return m_registeredServices.get(serviceIdentifier);
     }
     
     @JsonProperty("services")
     @Override
-    public HashMap<String, ServiceEntity.ServiceDescriptor> services()
+    public HashMap<String, ServiceDescriptor> services()
     {
     	return m_registeredServices;
     }
@@ -102,13 +103,15 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     {
     	for(ServiceDependency dependency: serviceToExecute.dependencies())
     	{
+    		System.out.println("GenericServiceProvider> Dependency found: " + dependency.descriptor().identifier());
 			GenericServiceProvider provider;
 			try 
 			{
 				provider = m_serviceProviderRepository.serviceProvider(dependency.descriptor().providerIdentifier());
 				ServiceEntity service = provider.service(dependency.descriptor().identifier());
+				System.out.println("GenericServiceProvider> Dependency instantiated: " + service.descriptor().commonName());
 				dependency.task(service);
-				service.execute();
+				provider.executeService(service);
 			} 
 			catch (InstantiationException | IllegalAccessException e) 
 			{

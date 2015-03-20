@@ -4,6 +4,7 @@ import java.io.File;
 
 import ro.fortsoft.pf4j.DefaultPluginManager;
 import ro.fortsoft.pf4j.PluginManager;
+import backend.model.descriptor.ServiceDescriptor;
 import backend.model.service.ServiceEntity;
 import backend.model.serviceprovider.GenericServiceProvider;
 import backend.model.serviceprovider.ServiceProviderRepository;
@@ -28,7 +29,7 @@ public class Backend {
 		updatePlugins();
 	}
 
-	public void schedule(ServiceEntity.ServiceDescriptor descriptor)
+	public void schedule(ServiceDescriptor descriptor)
 	{
 		try
 		{

@@ -5,7 +5,7 @@ import javax.persistence.EntityManager;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 
-import backend.model.Describable;
+import backend.model.descriptor.Describable;
 
 public abstract class PluginPersistenceUnit<T extends Describable> implements PersistenceUnit<T>{
 	

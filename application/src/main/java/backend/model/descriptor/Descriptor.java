@@ -1,12 +1,27 @@
-package backend.model;
+package backend.model.descriptor;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.Transient;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@Entity
+@Inheritance
 public class Descriptor<T> {
+	
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+	private long m_id;
+	
+	@Transient
 	private Class<T> m_classDescriptor;
 	
 	@JsonProperty("commonName")

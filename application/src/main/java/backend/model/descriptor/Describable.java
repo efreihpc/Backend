@@ -1,4 +1,5 @@
-package backend.model;
+package backend.model.descriptor;
+
 
 public interface Describable 
 {
