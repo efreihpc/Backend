@@ -53,6 +53,7 @@ public class QuandlDataRetrievalJob extends JobPlugin<JsonResult> {
 		{
 			HttpResponse response = m_httpClient.execute(request);
 			result().insert(EntityUtils.toString(response.getEntity()));
+			System.out.println("QuandlDataRetrievalJob: Added information to result!");
 		} 
 		catch (ParseException | IOException e) 
 		{
