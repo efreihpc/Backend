@@ -13,6 +13,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import reactor.core.Reactor;
+import reactor.event.Event;
 import backend.model.descriptor.Descriptor;
 import backend.model.result.Result;
 import backend.system.execution.ThreadPoolExecutor;
@@ -24,13 +28,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Inheritance
 
 //T specifies the jobs result type
-public abstract class JobEntity<T extends Result> extends Job<T>{
-	
-	@JsonIgnore
-    @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private long m_id;
-	
+public abstract class JobEntity<T extends Result> extends Job<T>
+{
+
 	protected String m_classLoader;
 	
     @JsonProperty("descriptor")
@@ -46,6 +46,9 @@ public abstract class JobEntity<T extends Result> extends Job<T>{
     @OneToMany(fetch = FetchType.EAGER)
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<JobEntity> m_secondaryJobs = new Vector<JobEntity>();
+    @Transient
+    @Autowired
+    Reactor m_reactor;
 	
     @Transient
     private ThreadPoolExecutor m_executor;
@@ -60,12 +63,6 @@ public abstract class JobEntity<T extends Result> extends Job<T>{
     public Descriptor descriptor()
     {
     	return m_descriptor;
-    }
-    
-    @JsonIgnore
-    public long id()
-    {
-    	return m_id;
     }
     
     public void commonName(String name)
@@ -133,5 +130,6 @@ public abstract class JobEntity<T extends Result> extends Job<T>{
 	{
 		execute();
 		runSecondaryJobs();
+		m_reactor.notify("on_job_finish", Event.wrap(id()));
 	}
 }

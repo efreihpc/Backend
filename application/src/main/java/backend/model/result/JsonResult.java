@@ -1,6 +1,5 @@
 package backend.model.result;
 
-import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
 import javax.persistence.Entity;
