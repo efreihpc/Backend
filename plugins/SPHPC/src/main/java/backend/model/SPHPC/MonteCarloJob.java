@@ -92,7 +92,7 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
 	
 	@Transient
 //	private int m_globalSize = 65536;
-	private int m_globalSize = 1000;
+	private int m_globalSize = 10;
 
 	@Override
 	public void execute() {

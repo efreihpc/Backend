@@ -75,7 +75,7 @@ public abstract class ServiceEntity<T extends Result> extends Service<T> impleme
     	m_descriptor.commonName(this.getClass().getName());
     	m_waitingForJobs = new HashSet<Long>();
     	m_classLoader = "Default";
-		m_reactor.on($("on_job_finish"), this);
+//		m_reactor.on($("on_job_finish"), this);
     }    
     
     @JsonProperty("descriptor")
@@ -182,6 +182,7 @@ public abstract class ServiceEntity<T extends Result> extends Service<T> impleme
 			m_jobPersistence.save(job);
 		
 		m_waitingForJobs.add(job.id());
+		m_reactor.on($("job_finish" + job.id()), this);
 		m_jobExecutor.execute(job);
 	}
 	
@@ -189,11 +190,7 @@ public abstract class ServiceEntity<T extends Result> extends Service<T> impleme
 		m_waitingForJobs.remove(ev.getData());
 		
 		if(m_waitingForJobs.size() == 0)
-		{
-			System.out.println("ServiceEntity: Service finished!");
-			m_reactor.notify("on_service_finish", Event.wrap(id()));
-		}
-		else
-			System.out.println("still waiting for " + m_waitingForJobs.size() + "jobs!");
+			m_reactor.notify("service_finish" + id(), Event.wrap(id()));
+
     }
 }

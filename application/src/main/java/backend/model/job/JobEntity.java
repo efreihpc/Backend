@@ -127,7 +127,6 @@ public abstract class JobEntity<T extends Result> extends Job<T>
 	{
 		execute();
 		runSecondaryJobs();
-		System.out.println("JobEntity; notifying event!");
-		m_reactor.notify("on_job_finish", Event.wrap(id()));
+		m_reactor.notify("job_finish" + id(), Event.wrap(id()));
 	}
 }

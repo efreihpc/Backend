@@ -37,7 +37,7 @@ public class JsonResult extends Result {
 	{
 //		Document queryDocument = Document.valueOf(query);
 //		return m_collection.find(and(eq("íd", id()), queryDocument)).first().toString();
-		Object result = m_collection.find(eq("íd", id())).first();
+		Object result = m_collection.find(eq("id", id())).first();
 		if(result == null)
 		{
 			System.out.println("couldn't find entry for this Result id");

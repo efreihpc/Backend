@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import reactor.core.Reactor;
 import reactor.event.Event;
+import reactor.event.selector.Selectors;
 import reactor.function.Consumer;
 import backend.model.descriptor.Descriptor;
 import backend.model.result.Result;
@@ -38,7 +39,6 @@ public class TaskQueue extends Task implements Consumer<Event<Long>>{
 		m_tasks = new LinkedBlockingQueue<Task>();
 		m_executor = new SyncTaskExecutor();
 		m_reactor = GlobalState.get("eventReactor");
-		m_reactor.on($("on_service_finish"), this);
 	}
 	
 	@Override
@@ -64,7 +64,10 @@ public class TaskQueue extends Task implements Consumer<Event<Long>>{
 		m_currentTask = m_tasks.poll();
 		
 		if(m_currentTask != null)
+		{
+			m_reactor.on($("service_finish" + m_currentTask.id()), this);
 			m_executor.execute(m_currentTask);
+		}
 	}
 	
 	protected void nextTask()
@@ -77,7 +80,14 @@ public class TaskQueue extends Task implements Consumer<Event<Long>>{
 		m_currentTask = m_tasks.poll();
 		
 		if(m_currentTask != null)
+		{
+			m_reactor.on($("service_finish" + m_currentTask.id()), this);
 			m_executor.execute(m_currentTask);
+		}
+		else
+		{
+			m_reactor.notify("service_finish" + id(), Event.wrap(id()));
+		}
 	}
 	
 	public void enqueue(Task task)
@@ -92,7 +102,6 @@ public class TaskQueue extends Task implements Consumer<Event<Long>>{
 		
 		if(ev.getData() == m_currentTask.id())
 		{
-			System.out.println("Task finished: " + ev.getData());
 			nextTask();
 		}
 	}
