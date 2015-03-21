@@ -5,28 +5,25 @@ import java.util.Vector;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import reactor.core.Reactor;
 import reactor.event.Event;
 import backend.model.descriptor.Descriptor;
 import backend.model.result.Result;
+import backend.system.GlobalState;
 import backend.system.execution.ThreadPoolExecutor;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Inheritance
-
+@org.springframework.stereotype.Service
 //T specifies the jobs result type
 public abstract class JobEntity<T extends Result> extends Job<T>
 {
@@ -47,7 +44,6 @@ public abstract class JobEntity<T extends Result> extends Job<T>
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<JobEntity> m_secondaryJobs = new Vector<JobEntity>();
     @Transient
-    @Autowired
     Reactor m_reactor;
 	
     @Transient
@@ -55,6 +51,7 @@ public abstract class JobEntity<T extends Result> extends Job<T>
     
     public JobEntity()
     {
+    	m_reactor = GlobalState.get("eventReactor");
     	m_descriptor = new Descriptor((Class<JobEntity>)this.getClass());
     	commonName(this.getClass().getName());
     }
@@ -130,6 +127,7 @@ public abstract class JobEntity<T extends Result> extends Job<T>
 	{
 		execute();
 		runSecondaryJobs();
+		System.out.println("JobEntity; notifying event!");
 		m_reactor.notify("on_job_finish", Event.wrap(id()));
 	}
 }

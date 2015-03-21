@@ -17,6 +17,12 @@
     http://www.springframework.org/schema/data/mongo
 	http://www.springframework.org/schema/data/mongo/spring-mongo-1.1.xsd">
  
+	<bean id="eventReactor" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="staticMethod" value="reactor.core.spec.Reactors.reactor"/>
+		<property name="targetMethod" value="env" />
+		<property name="arguments" ref="reactorEnvironment" />
+	</bean>
+	<bean id="reactorEnvironment" class="reactor.core.Environment" />
  
 	<bean id="jobExecutor"
 		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
@@ -38,19 +44,6 @@
         <property name="username" value="test" />
         <property name="password" value="password" />
     </bean>
-    
-<!--     <mongo:mongo host="localhost" port="27017"/>
- 
-	<mongo:db-factory id="mongoDbFactory"
-                  host="localhost"
-                  port="27017"
-                  dbname="test"
-                  username="test"
-                  password="password"/>
-                  
-   	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
-  		<constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
-	</bean> -->
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource" />

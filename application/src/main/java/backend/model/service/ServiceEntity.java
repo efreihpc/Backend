@@ -1,20 +1,17 @@
 package backend.model.service;
 
+import static reactor.event.selector.Selectors.$;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 import reactor.core.Reactor;
 import reactor.event.Event;
@@ -27,15 +24,15 @@ import backend.model.job.PersistJob;
 import backend.model.result.Result;
 import backend.model.serviceprovider.ServiceProviderRepository;
 import backend.system.GlobalPersistenceUnit;
+import backend.system.GlobalState;
 import backend.system.execution.ThreadPoolExecutor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import static reactor.event.selector.Selectors.$;
-
 @Entity
 @Inheritance
+@org.springframework.stereotype.Service
 public abstract class ServiceEntity<T extends Result> extends Service<T> implements Consumer<Event<Long>>
 {    
     @JsonProperty("descriptor")
@@ -67,17 +64,18 @@ public abstract class ServiceEntity<T extends Result> extends Service<T> impleme
     @Transient
     private HashSet<Long> m_waitingForJobs;
     @Transient
-    @Autowired
     Reactor m_reactor;
     
     
     public ServiceEntity()
     {
+    	m_reactor = GlobalState.get("eventReactor");
     	m_dependencies = new Vector<ServiceDependency>();
     	m_descriptor = new ServiceDescriptor((Class<ServiceEntity>)this.getClass());
     	m_descriptor.commonName(this.getClass().getName());
     	m_waitingForJobs = new HashSet<Long>();
     	m_classLoader = "Default";
+		m_reactor.on($("on_job_finish"), this);
     }    
     
     @JsonProperty("descriptor")
@@ -183,7 +181,6 @@ public abstract class ServiceEntity<T extends Result> extends Service<T> impleme
 		if(m_jobPersistence != null)
 			m_jobPersistence.save(job);
 		
-		m_reactor.on($("on_job_finish"), this);
 		m_waitingForJobs.add(job.id());
 		m_jobExecutor.execute(job);
 	}
@@ -192,6 +189,11 @@ public abstract class ServiceEntity<T extends Result> extends Service<T> impleme
 		m_waitingForJobs.remove(ev.getData());
 		
 		if(m_waitingForJobs.size() == 0)
+		{
+			System.out.println("ServiceEntity: Service finished!");
 			m_reactor.notify("on_service_finish", Event.wrap(id()));
+		}
+		else
+			System.out.println("still waiting for " + m_waitingForJobs.size() + "jobs!");
     }
 }
