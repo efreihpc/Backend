@@ -98,7 +98,7 @@ public class BlackScholesJob extends JobPlugin<JsonResult> {
 	public void execute() {
 		initializePlatform();
 		
-		cl_kernel kernel = createKernel("3rd_party/HPC-Plugin-0.1.0/classes/kernel/BlackScholes.cl");
+		cl_kernel kernel = createKernel("3rd_party/HPC-Plugin-0.1.0/classes/kernel/BlackScholesKernel.cl");
 		kernel = prepareKernel(kernel);
 		runKernel(kernel);
 		release(kernel);
@@ -165,7 +165,7 @@ public class BlackScholesJob extends JobPlugin<JsonResult> {
         clBuildProgram(program, 0, null, "-cl-denorms-are-zero -cl-fast-relaxed-math -cl-single-precision-constant -DNSAMP=262144", null, null);
         
         // Create the kernel
-        return clCreateKernel(program, "MonteCarloKernel", null);
+        return clCreateKernel(program, "BlackScholesKernel", null);
 	}
 	
 	private cl_kernel prepareKernel(cl_kernel kernel)
