@@ -8,7 +8,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.Transient;
 
 import backend.model.result.Result;
-import backend.system.execution.Task;
+import backend.model.task.Task;
 
 @Entity
 @Inheritance

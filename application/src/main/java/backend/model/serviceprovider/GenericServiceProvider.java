@@ -16,8 +16,9 @@ import backend.model.descriptor.ServiceDescriptor;
 import backend.model.result.Result;
 import backend.model.service.ServiceEntity;
 import backend.model.service.ServicePersistenceUnit;
+import backend.model.task.TaskQueue;
+import backend.model.task.TaskRepository;
 import backend.system.GlobalPersistenceUnit;
-import backend.system.execution.TaskQueue;
 import backend.system.execution.ThreadPoolExecutor;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -42,6 +43,7 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     private GlobalPersistenceUnit m_globalPersistenceUnit;
     private ServicePersistenceUnit m_servicePersistenceUnit;
     private ServiceProviderRepository m_serviceProviderRepository;
+    private TaskRepository m_taskRepository;
     
     ThreadPoolExecutor m_jobExecutor;
     ThreadPoolExecutor m_serviceExecutor;
@@ -117,6 +119,7 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     public <T extends Result> TaskQueue serviceExecutionQueue(ServiceEntity<T> serviceToExecute)
     {
     	TaskQueue queue = new TaskQueue();
+    	m_taskRepository.save(queue);
     	
     	for(ServiceDependency dependency: serviceToExecute.dependencies())
     	{
@@ -189,6 +192,7 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
 		m_globalPersistenceUnit = persistenceUnit;
 		m_servicePersistenceUnit = persistenceUnit.servicePersistence();
 		m_serviceProviderRepository = persistenceUnit.serviceProviderRepository();
+		m_taskRepository = persistenceUnit.taskRepository();
 	}
 	
 	@Override

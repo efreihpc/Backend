@@ -24,6 +24,7 @@ public class MonteCarloService extends ServicePlugin<JsonResult> {
 
 	@Override
 	public void execute() {
+		
 		System.out.println("Preparing data for MonteCarlo Job");
 		JsonResult deprep = (JsonResult) dependencies().get(0).result();
 		Document stockData = deprep.find("");

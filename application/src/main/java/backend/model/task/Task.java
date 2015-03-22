@@ -1,4 +1,4 @@
-package backend.system.execution;
+package backend.model.task;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

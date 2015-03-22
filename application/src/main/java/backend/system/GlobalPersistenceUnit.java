@@ -9,6 +9,7 @@ import backend.model.result.ResultRepository;
 import backend.model.service.ServicePersistenceUnit;
 import backend.model.serviceprovider.ServiceProviderPersistenceUnit;
 import backend.model.serviceprovider.ServiceProviderRepository;
+import backend.model.task.TaskRepository;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -24,6 +25,7 @@ public class GlobalPersistenceUnit implements
 	ServicePersistenceUnit m_servicePersistence;
 	JobPersistenceUnit m_jobPersistence;
 	ResultRepository m_resultRepository;
+	TaskRepository m_taskRepository;
 	
 	MongoClient m_mongoClient;
 	MongoDatabase m_mongoDb;
@@ -35,6 +37,7 @@ public class GlobalPersistenceUnit implements
 		m_servicePersistence = new ServicePersistenceUnit();
 		m_jobPersistence = new JobPersistenceUnit();
 	    m_resultRepository = m_context.getBean(ResultRepository.class);  
+	    m_taskRepository = m_context.getBean(TaskRepository.class);  
 	    
 		m_mongoClient = new MongoClient( "localhost" , 27017 );
 		m_mongoDb = m_mongoClient.getDatabase("test");
@@ -53,6 +56,10 @@ public class GlobalPersistenceUnit implements
 	@Override
 	public ResultRepository resultRepository() {
 		return m_resultRepository;
+	}
+	
+	public TaskRepository taskRepository() {
+		return m_taskRepository;
 	}
 	
 	public ServicePersistenceUnit servicePersistence()

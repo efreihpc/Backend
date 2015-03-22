@@ -1,9 +1,9 @@
 package backend.model.service;
 
 import backend.model.result.Result;
+import backend.model.task.Task;
 import backend.system.GlobalPersistenceUnit;
 import backend.system.execution.ThreadPoolExecutor;
-import backend.system.execution.Task;
 
 // T defines the type of the returned result
 

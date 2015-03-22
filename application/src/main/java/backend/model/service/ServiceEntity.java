@@ -190,7 +190,10 @@ public abstract class ServiceEntity<T extends Result> extends Service<T> impleme
 		m_waitingForJobs.remove(ev.getData());
 		
 		if(m_waitingForJobs.size() == 0)
+		{
+			System.out.println("ServiceEntity> Notifying Service finished: " + descriptor().commonName() + id());
 			m_reactor.notify("service_finish" + id(), Event.wrap(id()));
+		}
 
     }
 }

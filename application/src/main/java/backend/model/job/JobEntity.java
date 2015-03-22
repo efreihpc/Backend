@@ -127,6 +127,7 @@ public abstract class JobEntity<T extends Result> extends Job<T>
 	{
 		execute();
 		runSecondaryJobs();
+		System.out.println("JobEntity> Notifying job finish: " + descriptor().commonName() + id());
 		m_reactor.notify("job_finish" + id(), Event.wrap(id()));
 	}
 }

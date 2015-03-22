@@ -6,6 +6,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import backend.model.job.Job;
+import backend.model.task.Task;
 
 public class ThreadPoolExecutor implements Executor{
 	

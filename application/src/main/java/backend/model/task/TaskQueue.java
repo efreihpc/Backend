@@ -1,4 +1,4 @@
-package backend.system.execution;
+package backend.model.task;
 
 import static reactor.event.selector.Selectors.$;
 
@@ -18,6 +18,7 @@ import reactor.event.selector.Selectors;
 import reactor.function.Consumer;
 import backend.model.descriptor.Descriptor;
 import backend.model.result.Result;
+import backend.model.service.ServiceEntity;
 import backend.system.GlobalState;
 
 @Entity
@@ -56,6 +57,7 @@ public class TaskQueue extends Task implements Consumer<Event<Long>>{
 	@Override
 	public void execute() 
 	{
+		System.out.println("TaskQueue> Number of Tasks in Queue: " + m_tasks.size());
 		if(m_currentTask != null)
 		{
 			System.out.println("TaskQueue: cannot execute Queue, allready running");
@@ -65,6 +67,7 @@ public class TaskQueue extends Task implements Consumer<Event<Long>>{
 		
 		if(m_currentTask != null)
 		{
+			System.out.println("TaskQueue> subscribing for event: service_finish" + m_currentTask.id());
 			m_reactor.on($("service_finish" + m_currentTask.id()), this);
 			m_executor.execute(m_currentTask);
 		}
@@ -81,17 +84,26 @@ public class TaskQueue extends Task implements Consumer<Event<Long>>{
 		
 		if(m_currentTask != null)
 		{
+			System.out.println("TaskQueue> subscribing for event: service_finish" + m_currentTask.id());
 			m_reactor.on($("service_finish" + m_currentTask.id()), this);
 			m_executor.execute(m_currentTask);
 		}
 		else
 		{
+			System.out.println("TaskQueue> Notifying Task finished: " + id());
 			m_reactor.notify("service_finish" + id(), Event.wrap(id()));
 		}
 	}
 	
 	public void enqueue(Task task)
 	{
+		try{
+		System.out.println("TaskQueue> enqueueing Task: " + ((ServiceEntity) task).commonName() + ":" + task.id());
+		}
+		catch(java.lang.ClassCastException e)
+		{
+			
+		}
 		m_tasks.add(task);
 	}
 
