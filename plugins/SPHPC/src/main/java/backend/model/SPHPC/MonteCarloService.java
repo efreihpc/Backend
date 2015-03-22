@@ -5,8 +5,7 @@ import java.util.Arrays;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.bson.Document;
 
 import ro.fortsoft.pf4j.Extension;
 import backend.model.result.JsonResult;
@@ -25,18 +24,20 @@ public class MonteCarloService extends ServicePlugin<JsonResult> {
 
 	@Override
 	public void execute() {
-		
+		System.out.println("Preparing data for MonteCarlo Job");
 		JsonResult deprep = (JsonResult) dependencies().get(0).result();
-		JSONObject jsonString = deprep.find("");
+		Document stockData = deprep.find("");
+		stockData = (Document) stockData.get("storage");
+		stockData = (Document) stockData.get("data");
 		
-		JSONArray stockData = (JSONArray) jsonString.get("data");
 		
 		double formerClose = 0;
-		double[] logReturn = new double[stockData.length() - 1];
+		double[] logReturn = new double[stockData.size() - 1];
 		
-		for(int i=0;i<stockData.length();i++)
+		for(int i=0;i<stockData.size();i++)
 		{
-			JSONArray day = stockData.getJSONArray(i);
+			System.out.print("*");
+			Document day = (Document) stockData.get(i);
 			double close =  day.getDouble(4);
 			
 			if(i != 0)
@@ -54,7 +55,7 @@ public class MonteCarloService extends ServicePlugin<JsonResult> {
 	    double deviation = getStdDev(logReturn);
 	    double drift = average - (variance/2);
 				
-		BlackScholesJob job = new BlackScholesJob();
+		MonteCarloJob job = new MonteCarloJob();
 		job.setMongoPersistence(persistenceUnit());
 		result(job.result());
 		

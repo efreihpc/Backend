@@ -7,7 +7,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.Transient;
 
 import org.bson.Document;
-import org.json.JSONObject;
 
 import backend.system.MongoPersistenceUnit;
 
@@ -30,22 +29,21 @@ public class JsonResult extends Result {
 	public void insert(String jsonObject)
 	{
 		Document insertDocument = new Document("id", id());
-		insertDocument.append("storage", Document.valueOf(jsonObject));
+		insertDocument.append("storage", Document.parse(jsonObject));
 		m_collection.insertOne(insertDocument);
 	}
 	
-	public JSONObject find(String query)
+	public Document find(String query)
 	{
 //		Document queryDocument = Document.valueOf(query);
 //		return m_collection.find(and(eq("íd", id()), queryDocument)).first().toString();
-		Object result = m_collection.find(eq("id", id())).first();
+		Document result = (Document) m_collection.find(eq("id", id())).first();
 		if(result == null)
 		{
 			System.out.println("couldn't find entry for this Result id");
 			return null;
 		}
-		
-		return new JSONObject(result.toString());
+		return result;
 	}
 	
 }
