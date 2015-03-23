@@ -15,6 +15,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import reactor.core.Reactor;
 import reactor.event.Event;
 import backend.model.descriptor.Descriptor;
+import backend.model.result.DictionaryResult;
 import backend.model.result.Result;
 import backend.model.result.ResultRepository;
 import backend.system.GlobalState;
@@ -39,6 +40,11 @@ public abstract class JobEntity<T extends Result> extends Job<T>
     @OneToOne(fetch = FetchType.EAGER, targetEntity = Result.class)
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
     private T m_result;
+    
+    @JsonProperty("configuration")
+    @OneToOne(fetch = FetchType.EAGER, targetEntity = DictionaryResult.class)
+	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private DictionaryResult m_configuration;
 
     @JsonProperty("secondaryJobs")
     @OneToMany(fetch = FetchType.EAGER)
@@ -75,6 +81,18 @@ public abstract class JobEntity<T extends Result> extends Job<T>
     {
     	return m_descriptor.commonName();
     }
+    
+    @JsonProperty("configuration")
+    protected DictionaryResult configuration()
+    {
+    	return m_configuration;
+    }
+    
+    @JsonProperty("configuration")
+    public void configuration(DictionaryResult configuration)
+    {
+    	m_configuration = configuration;
+    }    
     
     @JsonProperty("result")
     public T result()

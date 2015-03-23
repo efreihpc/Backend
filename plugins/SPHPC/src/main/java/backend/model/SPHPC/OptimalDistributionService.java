@@ -4,9 +4,11 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 import ro.fortsoft.pf4j.Extension;
 import backend.model.result.DictionaryResult;
+import backend.model.result.Result;
 import backend.model.service.ServicePlugin;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,9 +18,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Inheritance
 public class OptimalDistributionService extends ServicePlugin<DictionaryResult> {
 
-	@OneToOne(fetch = FetchType.EAGER)
-	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
-	private PrototypeJob m_job;
+	@Transient
+	public PrototypeJob m_job;
 	
 	public OptimalDistributionService()
 	{

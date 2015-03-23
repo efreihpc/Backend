@@ -2,11 +2,25 @@
 #define M_PI 3.14159265358979
 #endif
 
-float2 boxMuller(float2 uniform)
+double2 boxMuller(double2 uniform)
 {
     double r = sqrt(-2 * log(uniform.x));
     double theta = 2 * M_PI * uniform.y;
-    return (float2)(r * sin(theta), r * cos(theta));
+    return r * sin(theta), r * cos(theta);
+}
+
+uint2 randomNumber(uint2 randmonSeed)
+{
+  uint2 result;
+  uint seed = randmonSeed.x + get_global_id(0);
+  uint t = seed ^ (seed << 11);
+  result.x = randmonSeed.y ^ (randmonSeed.y >> 19) ^ (t ^ (t >> 8));
+
+  seed = randmonSeed.x + get_global_id(1);
+  t = seed ^ (seed << 11);
+  result.y = randmonSeed.y ^ (randmonSeed.y >> 19) ^ (t ^ (t >> 8));
+
+  return result;
 }
 
 kernel void
@@ -24,26 +38,20 @@ kernel void
 
     for (int day = 0; day < numberOfDays; day = day + 2)
     {
-        uint seed = randomseedX[tid] + day % tid;
-        uint t = seed ^ (seed << 11);
-        uint rnd_src = randomseedY[tid] ^ (randomseedY[tid] >> 19) ^ (t ^ (t >> 8));
-        double rnd_num = rnd_src*cos(2.0*M_PI*rnd_src);
-
-        seed = randomseedX[tid] + tid % day;
-        t = seed ^ (seed << 11);
-        rnd_src = randomseedY[tid] ^ (randomseedY[tid] >> 19) ^ (t ^ (t >> 8));
-        double rnd_num1 = rnd_src*sin(2.0*M_PI*rnd_src);
-
-        float2 random = boxMuller((float2)(rnd_num, rnd_num1));
+        uint2 rnd;
+        rnd = randomNumber((randomseedX[tid], randomseedY[tid]));
+        double2 normalizedRandom = boxMuller(((double)rnd.x, (double)rnd.y));
 
         double last;
         if(day == 0)
           last = begin;
         else
-          last = result[day -1];
+          last = result[day - 1];
 
-        result[day] = last*exp(drift+deviation*random.x);
-        result[day + 1] = result[day]*exp(drift+deviation*random.y);
+        // result[day] = last*exp(drift+deviation*normalizedRandom.x);
+        // result[day + 1] = result[day]*exp(drift+deviation*normalizedRandom.y);
+        result[day] = drift+deviation*normalizedRandom.x;
+        result[day + 1] = normalizedRandom.x;
 
     }
   }

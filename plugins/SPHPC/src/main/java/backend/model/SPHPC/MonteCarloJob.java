@@ -25,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Random;
 
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -44,6 +45,7 @@ import org.jocl.cl_program;
 
 import ro.fortsoft.pf4j.Extension;
 import backend.model.job.JobPlugin;
+import backend.model.result.DictionaryResult;
 import backend.model.result.JsonResult;
 import backend.system.MongoPersistenceUnit;
 
@@ -86,8 +88,13 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
 //	private int m_globalSize = 65536;
 	private int m_globalSize = 1;
 	
+	public void MonteCarloJob()
+	{
+		result(new JsonResult());
+	}
+	
 	@Override
-	public void execute() {
+	public void execute() {		
 		initializePlatform();
 		
 		cl_kernel kernel = createKernel("3rd_party/HPC-Plugin-0.1.0/classes/kernel/MonteCarloKernel.cl");
@@ -153,7 +160,7 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
             1, new String[]{source}, null, null);
         
         // Build the program
-        clBuildProgram(program, 0, null, "-cl-denorms-are-zero -cl-fast-relaxed-math -cl-single-precision-constant -DNSAMP=262144", null, null);
+        clBuildProgram(program, 0, null, "-cl-denorms-are-zero -cl-fast-relaxed-math -DNSAMP=262144", null, null);
         
         // Create the kernel
         return clCreateKernel(program, "MonteCarloKernel", null);
@@ -161,19 +168,25 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
 	
 	private cl_kernel prepareKernel(cl_kernel kernel)
 	{
+		Random randomGenerator = new Random();
+		
+		DictionaryResult configuration = configuration();
+		
         // Create input- and output data 
 		m_numberOfDays = new int[]{100};
         m_randomSeedX = new int[m_globalSize];
         m_randomSeedY = new int[m_globalSize];
         m_close = new double[m_numberOfDays[0]];
-        m_drift = new double[]{0.8};
-        m_deviation = new double[]{0.5};
-        m_begin = new double[]{200.1};
+        m_drift = new double[]{configuration.doubleValue("drift")};
+        m_deviation = new double[]{configuration.doubleValue("deviation")};
+        m_begin = new double[]{configuration.doubleValue("lastClose")};
         
         for (int i = 0; i < m_globalSize; i++)
         {
-            m_randomSeedX[i] = (int) Math.random();
-            m_randomSeedY[i] = (int) Math.random();
+            m_randomSeedX[i] = randomGenerator.nextInt(10000);
+            System.out.println("RandomX: " + m_randomSeedX[i]);
+            m_randomSeedY[i] = randomGenerator.nextInt(10000);
+            System.out.println("RandomY: " + m_randomSeedY[i]);
         }
         
         for (int i = 0; i < m_numberOfDays[0]; i++)
