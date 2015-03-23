@@ -195,7 +195,7 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
                 Sizeof.cl_int * m_globalSize, srcB, null);
         m_memObjects[2] = clCreateBuffer(m_context, 
             CL_MEM_READ_WRITE, 
-            Sizeof.cl_float * m_globalSize, null, null);
+            Sizeof.cl_double * m_numberOfDays[0], null, null);
         
         // Set the arguments for the kernel
         clSetKernelArg(kernel, 0, 
@@ -233,8 +233,8 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
         
         System.out.println("MonteCarloJob: Fetching Data From Kernel");
         // Read the output data
-        clEnqueueReadBuffer(commandQueue, m_memObjects[4], CL_TRUE, 0,
-        		m_globalSize * Sizeof.cl_float, m_resultClose, 0, null, null);
+        clEnqueueReadBuffer(commandQueue, m_memObjects[2], CL_TRUE, 0,
+        		m_numberOfDays[0] * Sizeof.cl_double, m_resultClose, 0, null, null);
 	}
 	
 	private void release(cl_kernel kernel)

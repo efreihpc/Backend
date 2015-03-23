@@ -20,6 +20,16 @@ public class JsonResult extends Result {
 		
 	@Transient
 	MongoCollection m_collection;
+	
+	public JsonResult()
+	{
+		super();
+	}
+	
+	public void mongoPersistenceUnit(MongoPersistenceUnit mongopersistence)
+	{
+		m_collection = mongopersistence.getMongoDb().getCollection("JsonResult");
+	}
 
 	public JsonResult(MongoPersistenceUnit mongopersistence)
 	{

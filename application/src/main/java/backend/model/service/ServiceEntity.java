@@ -38,12 +38,7 @@ public abstract class ServiceEntity<T extends Result> extends Service<T> impleme
     @JsonProperty("descriptor")
     @Transient
     private ServiceDescriptor m_descriptor;
-       
-    @JsonIgnore
-    @OneToOne(fetch = FetchType.EAGER, targetEntity = ServiceEntity.class)
-	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private ServiceEntity<T> m_dataSource;
-    
+         
     @JsonProperty("result")
     @OneToOne(fetch = FetchType.EAGER, targetEntity = Result.class)
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
@@ -152,11 +147,6 @@ public abstract class ServiceEntity<T extends Result> extends Service<T> impleme
 		m_dependencies.add(new ServiceDependency(descriptor));
 	}
 	
-	protected T data()
-	{
-		return m_dataSource.result();
-	}
-	
 	@Override
 	public void jobExecutor(ThreadPoolExecutor jobExecutor)
 	{
@@ -172,6 +162,7 @@ public abstract class ServiceEntity<T extends Result> extends Service<T> impleme
 	protected void executeJob(JobEntity job)
 	{
 		job.executor(m_jobExecutor);
+		job.resultRepository(m_globalPersistenceUnit.resultRepository());
 		
 		PersistJob persist = new PersistJob();
 		persist.jobRepository(m_jobPersistence);

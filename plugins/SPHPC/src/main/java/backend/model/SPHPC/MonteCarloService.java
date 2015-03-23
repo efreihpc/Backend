@@ -25,37 +25,38 @@ public class MonteCarloService extends ServicePlugin<JsonResult> {
 	@Override
 	public void execute() {
 		
-		System.out.println("Preparing data for MonteCarlo Job");
-		JsonResult deprep = (JsonResult) dependencies().get(0).result();
-		Document stockData = deprep.find("");
-		stockData = (Document) stockData.get("storage");
-		stockData = (Document) stockData.get("data");
-		
-		
-		double formerClose = 0;
-		double[] logReturn = new double[stockData.size() - 1];
-		
-		for(int i=0;i<stockData.size();i++)
-		{
-			System.out.print("*");
-			Document day = (Document) stockData.get(i);
-			double close =  day.getDouble(4);
-			
-			if(i != 0)
-				logReturn[i] = Math.log(formerClose/close);
-			formerClose = close;
-		}
-		
-	    double total = 0;
-	    for (double element : logReturn) {
-	        total += element;
-	    }
-	    
-	    double average = total / logReturn.length;
-	    double variance = getVariance(logReturn);
-	    double deviation = getStdDev(logReturn);
-	    double drift = average - (variance/2);
+		System.out.println("MonteCarloService> Preparing data for MonteCarlo Job");
+//		JsonResult deprep = (JsonResult) dependencies().get(0).result();
+//		Document stockData = deprep.find("");
+//		stockData = (Document) stockData.get("storage");
+//		stockData = (Document) stockData.get("data");
+//		
+//		
+//		double formerClose = 0;
+//		double[] logReturn = new double[stockData.size() - 1];
+//		
+//		for(int i=0;i<stockData.size();i++)
+//		{
+//			System.out.print("*");
+//			Document day = (Document) stockData.get(i);
+//			double close =  day.getDouble(4);
+//			
+//			if(i != 0)
+//				logReturn[i] = Math.log(formerClose/close);
+//			formerClose = close;
+//		}
+//		
+//	    double total = 0;
+//	    for (double element : logReturn) {
+//	        total += element;
+//	    }
+//	    
+//	    double average = total / logReturn.length;
+//	    double variance = getVariance(logReturn);
+//	    double deviation = getStdDev(logReturn);
+//	    double drift = average - (variance/2);
 				
+	    System.out.println("MonteCarloService> Starting Job");
 		MonteCarloJob job = new MonteCarloJob();
 		job.setMongoPersistence(persistenceUnit());
 		result(job.result());
