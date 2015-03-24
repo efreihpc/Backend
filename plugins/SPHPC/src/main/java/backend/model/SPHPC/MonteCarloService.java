@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
+import javax.persistence.Transient;
 
 import org.bson.Document;
 
@@ -17,6 +18,9 @@ import backend.model.service.ServicePlugin;
 @Entity
 @Inheritance
 public class MonteCarloService extends ServicePlugin<JsonResult> {
+	
+	@Transient
+	MonteCarloJob m_job;
 	
 	public MonteCarloService()
 	{
@@ -41,7 +45,6 @@ public class MonteCarloService extends ServicePlugin<JsonResult> {
 		int i = 0;
 		for(ArrayList subList: stockData)
 		{
-			System.out.print("*");
 			double close =  (double) subList.get(4);
 			
 			if(i != 0)
@@ -75,12 +78,12 @@ public class MonteCarloService extends ServicePlugin<JsonResult> {
 	    jobConfiguration.value("lastClose", (double) (stockData.get(stockData.size() - 1).get(4)));
 				
 	    System.out.println("MonteCarloService> Starting Job");
-		MonteCarloJob job = new MonteCarloJob();
-		job.setMongoPersistence(persistenceUnit());
-		job.configuration(jobConfiguration);
-		result(job.result());
+		MonteCarloJob m_job = new MonteCarloJob();
+	    m_job.setMongoPersistence(persistenceUnit());
+		m_job.configuration(jobConfiguration);
+		result(m_job.result());
 		
-		executeJob(job);
+		executeJob(m_job);
 	}
 	
 

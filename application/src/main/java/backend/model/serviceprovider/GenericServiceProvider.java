@@ -93,10 +93,14 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     	Class<ServiceEntity> serviceClass = m_registeredServices.get(serviceIdentifier).classDescriptor();
     	ServiceEntity<E> newService = (ServiceEntity<E>) serviceClass.newInstance();
     	
+    	System.out.println("GenericServiceProvider> creating Service: " + newService.commonName());
+    	
     	newService.jobExecutor(m_jobExecutor);
     	
     	if(m_globalPersistenceUnit != null)
     		newService.persistenceUnit(m_globalPersistenceUnit);
+    	
+    	System.out.println("GenericServiceProvider> Result of new Service:" + newService.result() );
     	
     	if(m_servicePersistenceUnit != null)
     		m_servicePersistenceUnit.save(newService);

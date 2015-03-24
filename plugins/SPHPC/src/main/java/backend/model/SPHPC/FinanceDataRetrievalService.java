@@ -14,7 +14,6 @@ public class FinanceDataRetrievalService extends ServicePlugin<JsonResult> {
 
 	public FinanceDataRetrievalService()
 	{
-		super();
 		commonName("Finance Data Retrieval Service");
 	}
 	

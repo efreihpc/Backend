@@ -88,8 +88,9 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
 //	private int m_globalSize = 65536;
 	private int m_globalSize = 1;
 	
-	public void MonteCarloJob()
+	public MonteCarloJob()
 	{
+		System.out.println("MonteCarloJob> created!");
 		result(new JsonResult());
 	}
 	

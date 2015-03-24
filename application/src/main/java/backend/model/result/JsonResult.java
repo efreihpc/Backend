@@ -23,7 +23,6 @@ public class JsonResult extends Result {
 	
 	public JsonResult()
 	{
-		super();
 	}
 	
 	public void mongoPersistenceUnit(MongoPersistenceUnit mongopersistence)

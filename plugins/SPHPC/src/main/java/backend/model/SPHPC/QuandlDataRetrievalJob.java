@@ -47,7 +47,7 @@ public class QuandlDataRetrievalJob extends JobPlugin<JsonResult> {
 			System.out.println("QuandlDataRetrievalJob: No Mongopersistence Set!");
 		}
 		
-		HttpGet request = new HttpGet("http://www.quandl.com/api/v1/datasets/GOOG/SWX_VW.json");
+		HttpGet request = new HttpGet("http://www.quandl.com/api/v1/datasets/GOOG/SWX_VW.json?sort_order=asc");
 		
 		try 
 		{

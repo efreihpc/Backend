@@ -27,7 +27,6 @@ import backend.system.GlobalPersistenceUnit;
 import backend.system.GlobalState;
 import backend.system.execution.ThreadPoolExecutor;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
@@ -41,7 +40,7 @@ public abstract class ServiceEntity<T extends Result> extends Service<T> impleme
          
     @JsonProperty("result")
     @OneToOne(fetch = FetchType.EAGER, targetEntity = Result.class)
-	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.MERGE)
     private T m_result;
     
 	protected String m_classLoader;
@@ -70,7 +69,6 @@ public abstract class ServiceEntity<T extends Result> extends Service<T> impleme
     	m_descriptor.commonName(this.getClass().getName());
     	m_waitingForJobs = new HashSet<Long>();
     	m_classLoader = "Default";
-//		m_reactor.on($("on_job_finish"), this);
     }    
     
     @JsonProperty("descriptor")
