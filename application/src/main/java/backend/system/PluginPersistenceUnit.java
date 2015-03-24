@@ -73,7 +73,10 @@ public abstract class PluginPersistenceUnit<T extends Describable> implements Pe
 		// Default Repository
 		if(!instance.descriptor().pluginIdentifier())
 		{
-			m_localRepository.save(instance);
+			synchronized(m_transactionMutex)
+			{
+				m_localRepository.save(instance);
+			}
 			return;
 		}
 		
