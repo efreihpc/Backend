@@ -1,32 +1,29 @@
 package backend.model.serviceprovider;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 
 import ro.fortsoft.pf4j.ExtensionPoint;
-import backend.model.Descriptor;
-import backend.model.job.JobExecutor;
+import backend.model.dependency.ServiceDependency;
+import backend.model.descriptor.Descriptor;
+import backend.model.descriptor.ServiceDescriptor;
 import backend.model.result.Result;
-import backend.model.service.Service;
 import backend.model.service.ServiceEntity;
 import backend.model.service.ServicePersistenceUnit;
-import backend.model.service.ServiceRepository;
+import backend.model.task.TaskQueue;
+import backend.model.task.TaskRepository;
 import backend.system.GlobalPersistenceUnit;
+import backend.system.execution.ThreadPoolExecutor;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+//TODO: move execution to a new Class
 public abstract class GenericServiceProvider implements ExtensionPoint, ServiceProvider{
 	
 	public static class ServiceProviderDescriptor extends Descriptor<GenericServiceProvider>
@@ -41,18 +38,23 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     private ServiceProviderDescriptor m_descriptor;
     
 	@JsonProperty("services")
-    private HashMap<String, ServiceEntity.ServiceDescriptor> m_registeredServices;
+    private HashMap<String, ServiceDescriptor> m_registeredServices;
     
     private GlobalPersistenceUnit m_globalPersistenceUnit;
     private ServicePersistenceUnit m_servicePersistenceUnit;
-    JobExecutor m_jobExecutor;
+    private ServiceProviderRepository m_serviceProviderRepository;
+    private TaskRepository m_taskRepository;
+    
+    ThreadPoolExecutor m_jobExecutor;
+    ThreadPoolExecutor m_serviceExecutor;
     
     public GenericServiceProvider()
     {
 	    	m_descriptor = new ServiceProviderDescriptor((Class<GenericServiceProvider>)this.getClass());
 	    	m_descriptor.commonName(this.getClass().getName());
-	    	m_registeredServices = new HashMap<String, ServiceEntity.ServiceDescriptor>();
-	    	m_jobExecutor = new JobExecutor();
+	    	m_registeredServices = new HashMap<String, ServiceDescriptor>();
+	    	m_jobExecutor = new ThreadPoolExecutor("jobExecutor");
+	    	m_serviceExecutor = new ThreadPoolExecutor("serviceExecutor");
 	    	registerServices();
     }
     
@@ -73,14 +75,14 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     }
     
     @Override
-    public ServiceEntity.ServiceDescriptor serviceDescriptor(String serviceIdentifier)
+    public ServiceDescriptor serviceDescriptor(String serviceIdentifier)
     {
     	return m_registeredServices.get(serviceIdentifier);
     }
     
     @JsonProperty("services")
     @Override
-    public HashMap<String, ServiceEntity.ServiceDescriptor> services()
+    public HashMap<String, ServiceDescriptor> services()
     {
     	return m_registeredServices;
     }
@@ -91,24 +93,58 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     	Class<ServiceEntity> serviceClass = m_registeredServices.get(serviceIdentifier).classDescriptor();
     	ServiceEntity<E> newService = (ServiceEntity<E>) serviceClass.newInstance();
     	
+    	System.out.println("GenericServiceProvider> creating Service: " + newService.commonName());
+    	
     	newService.jobExecutor(m_jobExecutor);
     	
     	if(m_globalPersistenceUnit != null)
     		newService.persistenceUnit(m_globalPersistenceUnit);
     	
+    	System.out.println("GenericServiceProvider> Result of new Service:" + newService.result() );
+    	
     	if(m_servicePersistenceUnit != null)
     		m_servicePersistenceUnit.save(newService);
     	
-    	newService.providerIdentifier(m_descriptor.identifier());
-    	
+    	newService.providerIdentifier(m_descriptor.identifier());    	
     	return newService;
     }
     
     @Override
-    public <T extends Result> T executeService(Service<T> serviceToExecute)
+    public <T extends Result> void executeService(ServiceEntity<T> serviceToExecute)
     {
-    	serviceToExecute.execute();
-    	return serviceToExecute.result();
+    	executeServiceQueue(serviceExecutionQueue(serviceToExecute));
+    }
+    
+    public <T extends Result> void executeServiceQueue(TaskQueue queueToExecute)
+    {
+    	m_serviceExecutor.execute(queueToExecute);
+    }    
+    
+    public <T extends Result> TaskQueue serviceExecutionQueue(ServiceEntity<T> serviceToExecute)
+    {
+    	TaskQueue queue = new TaskQueue();
+    	m_taskRepository.save(queue);
+    	
+    	for(ServiceDependency dependency: serviceToExecute.dependencies())
+    	{
+    		System.out.println("GenericServiceProvider> Dependency found: " + dependency.descriptor().identifier());
+			GenericServiceProvider provider;
+			try 
+			{
+				provider = m_serviceProviderRepository.serviceProvider(dependency.descriptor().providerIdentifier());
+				ServiceEntity service = provider.service(dependency.descriptor().identifier());
+				System.out.println("GenericServiceProvider> Dependency instantiated: " + service.descriptor().commonName());
+				dependency.task(service);
+				queue.enqueue(provider.serviceExecutionQueue(service));
+			} 
+			catch (InstantiationException | IllegalAccessException e) 
+			{
+				e.printStackTrace();
+			}
+    	}
+    	
+    	queue.enqueue(serviceToExecute);
+    	return queue;
     }
     
     private void registerServices()
@@ -159,6 +195,8 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
 	public void persistenceUnit(GlobalPersistenceUnit persistenceUnit) {
 		m_globalPersistenceUnit = persistenceUnit;
 		m_servicePersistenceUnit = persistenceUnit.servicePersistence();
+		m_serviceProviderRepository = persistenceUnit.serviceProviderRepository();
+		m_taskRepository = persistenceUnit.taskRepository();
 	}
 	
 	@Override

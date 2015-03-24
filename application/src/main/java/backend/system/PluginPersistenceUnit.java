@@ -1,28 +1,29 @@
 package backend.system;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-
 import javax.persistence.EntityManager;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 
-import backend.model.Describable;
-import backend.model.service.ServiceRepository;
+import backend.model.descriptor.Describable;
 
 public abstract class PluginPersistenceUnit<T extends Describable> implements PersistenceUnit<T>{
 	
 	private JpaRepository<T, Long> m_pluginRepository;
+	
+	//TODO: EntityManagers are lightweight entities and should be created and destroyed often, so:
+	//TODO: create strategy to bundle database-transactions belonging to logical units
+	//TODO: source: https://docs.jboss.org/hibernate/entitymanager/3.5/reference/en/html/transactions.html
 	private EntityManager m_pluginEntityManager;
 	private JpaRepository<T, Long> m_localRepository;
 	private ClassLoader m_pluginClassLoader;
 	
+	private Object m_transactionMutex;
+	
 	public PluginPersistenceUnit()
 	{
 		m_pluginClassLoader = this.getClass().getClassLoader();
+		m_transactionMutex = new Object();
 	}
 	
 	protected void localRepository(JpaRepository<T, Long> repository)
@@ -72,13 +73,19 @@ public abstract class PluginPersistenceUnit<T extends Describable> implements Pe
 		// Default Repository
 		if(!instance.descriptor().pluginIdentifier())
 		{
-			m_localRepository.save(instance);
+			synchronized(m_transactionMutex)
+			{
+				m_localRepository.save(instance);
+			}
 			return;
 		}
 		
-		m_pluginEntityManager.getTransaction().begin();
-		m_pluginRepository.save(instance);
-		m_pluginEntityManager.getTransaction().commit();
+		synchronized(m_transactionMutex)
+		{
+			m_pluginEntityManager.getTransaction().begin();
+			m_pluginRepository.save(instance);
+			m_pluginEntityManager.getTransaction().commit();
+		}
 	}
 	
 	public void delete(T instance)

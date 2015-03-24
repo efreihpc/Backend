@@ -32,8 +32,9 @@ public class PersistJob extends JobEntity<DictionaryResult> {
 	}
 	
 	@Override
-	protected void execute() {
-		m_jobPersistence.save(this.m_jobToPersist);	
+	public void execute() {
+		m_jobPersistence.save(m_jobToPersist);	
+		System.out.println("PersistJob: Persisted Job: " + m_jobToPersist.descriptor().commonName() + ":" + m_jobToPersist.id());
 	}
 	
 	public void jobToPersist(JobEntity job)

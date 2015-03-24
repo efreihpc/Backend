@@ -1,93 +1,75 @@
 package backend.model.service;
 
+import static reactor.event.selector.Selectors.$;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Vector;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Inheritance;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
-import backend.model.Describable;
-import backend.model.Descriptor;
+import reactor.core.Reactor;
+import reactor.event.Event;
+import reactor.function.Consumer;
+import backend.model.dependency.ServiceDependency;
+import backend.model.descriptor.ServiceDescriptor;
 import backend.model.job.JobEntity;
-import backend.model.job.JobExecutor;
 import backend.model.job.JobPersistenceUnit;
-import backend.model.job.JobRepository;
 import backend.model.job.PersistJob;
 import backend.model.result.Result;
 import backend.model.serviceprovider.ServiceProviderRepository;
 import backend.system.GlobalPersistenceUnit;
+import backend.system.GlobalState;
+import backend.system.execution.ThreadPoolExecutor;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Inheritance
-public abstract class ServiceEntity<T extends Result> implements Service<T>, Describable {
-	
-	public static class ServiceDescriptor extends Descriptor<ServiceEntity>
-	{
-		@JsonProperty("providerIdentifier")
-		private String m_providerIdentifier;
-		
-		public ServiceDescriptor()
-		{
-			super();	
-		}
-		
-		public ServiceDescriptor(Class<ServiceEntity> clazz)
-		{
-			super(clazz);
-		}
-		
-		@JsonProperty("providerIdentifier")
-		public void providerIdentifier(String name)
-		{
-			m_providerIdentifier = name;
-		}
-		
-		@JsonProperty("providerIdentifier")
-		public String providerIdentifier()
-		{
-			return m_providerIdentifier;
-		}
-	}
-
-    @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-	private long m_id;
-    
+@org.springframework.stereotype.Service
+public abstract class ServiceEntity<T extends Result> extends Service<T> implements Consumer<Event<Long>>
+{    
     @JsonProperty("descriptor")
     @Transient
     private ServiceDescriptor m_descriptor;
-       
-    @JsonIgnore
-    @OneToOne(fetch = FetchType.EAGER, targetEntity = ServiceEntity.class)
-	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private ServiceEntity<T> m_dataSource;
-    
+         
     @JsonProperty("result")
     @OneToOne(fetch = FetchType.EAGER, targetEntity = Result.class)
-	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.MERGE)
     private T m_result;
     
 	protected String m_classLoader;
+	
+    @OneToMany(targetEntity=ServiceDependency.class, fetch = FetchType.EAGER)
+	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
+	protected List<ServiceDependency> m_dependencies;
     
     @Transient
     private GlobalPersistenceUnit m_globalPersistenceUnit;
     @Transient
     private JobPersistenceUnit m_jobPersistence;
     @Transient 
-    private JobExecutor m_jobExecutor;
+    private ThreadPoolExecutor m_jobExecutor;
+    @Transient
+    private HashSet<Long> m_waitingForJobs;
+    @Transient
+    Reactor m_reactor;
+    
     
     public ServiceEntity()
     {
+    	m_reactor = GlobalState.get("eventReactor");
+    	m_dependencies = new Vector<ServiceDependency>();
     	m_descriptor = new ServiceDescriptor((Class<ServiceEntity>)this.getClass());
     	m_descriptor.commonName(this.getClass().getName());
+    	m_waitingForJobs = new HashSet<Long>();
     	m_classLoader = "Default";
-    }
+    }    
     
     @JsonProperty("descriptor")
     public ServiceDescriptor descriptor()
@@ -145,30 +127,32 @@ public abstract class ServiceEntity<T extends Result> implements Service<T>, Des
     }
 	
 	@JsonProperty("dataSource")
-	public void dataSource(ServiceEntity<T> dataSource)
+	public List<ServiceDependency> dependencies()
 	{
-		m_dataSource = dataSource;
+		return m_dependencies;
 	}
 	
-	@JsonProperty("dataSource")
-	public ServiceEntity<T> dataSource()
+	protected void addDependency(String serviceIdentifier, String serviceProviderIdentifier)
 	{
-		return m_dataSource;
+		ServiceDescriptor descriptor = new ServiceDescriptor();
+		descriptor.identifier(serviceIdentifier);
+		descriptor.providerIdentifier(serviceProviderIdentifier);
+		addDependency(descriptor);
 	}
 	
-	protected T data()
+	protected void addDependency(ServiceDescriptor descriptor)
 	{
-		return m_dataSource.result();
+		m_dependencies.add(new ServiceDependency(descriptor));
 	}
 	
 	@Override
-	public void jobExecutor(JobExecutor jobExecutor)
+	public void jobExecutor(ThreadPoolExecutor jobExecutor)
 	{
 		m_jobExecutor = jobExecutor;
 	}
 	
 	@Override
-	public JobExecutor jobExecutor()
+	public ThreadPoolExecutor jobExecutor()
 	{
 		return m_jobExecutor;
 	}
@@ -176,6 +160,7 @@ public abstract class ServiceEntity<T extends Result> implements Service<T>, Des
 	protected void executeJob(JobEntity job)
 	{
 		job.executor(m_jobExecutor);
+		job.resultRepository(m_globalPersistenceUnit.resultRepository());
 		
 		PersistJob persist = new PersistJob();
 		persist.jobRepository(m_jobPersistence);
@@ -185,6 +170,19 @@ public abstract class ServiceEntity<T extends Result> implements Service<T>, Des
 		if(m_jobPersistence != null)
 			m_jobPersistence.save(job);
 		
+		m_waitingForJobs.add(job.id());
+		m_reactor.on($("job_finish" + job.id()), this);
 		m_jobExecutor.execute(job);
 	}
+	
+    public void accept(Event<Long> ev) {
+		m_waitingForJobs.remove(ev.getData());
+		
+		if(m_waitingForJobs.size() == 0)
+		{
+			System.out.println("ServiceEntity> Notifying Service finished: " + descriptor().commonName() + id());
+			m_reactor.notify("service_finish" + id(), Event.wrap(id()));
+		}
+
+    }
 }

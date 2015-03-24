@@ -1,6 +1,6 @@
 package backend.model.result;
 
-import java.net.UnknownHostException;
+import static com.mongodb.client.model.Filters.eq;
 
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -11,15 +11,7 @@ import org.bson.Document;
 import backend.system.MongoPersistenceUnit;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.util.JSON;
-import static com.mongodb.client.model.Filters.*;
 
 @Entity
 @Inheritance                                                                                                                                                 
@@ -28,6 +20,15 @@ public class JsonResult extends Result {
 		
 	@Transient
 	MongoCollection m_collection;
+	
+	public JsonResult()
+	{
+	}
+	
+	public void mongoPersistenceUnit(MongoPersistenceUnit mongopersistence)
+	{
+		m_collection = mongopersistence.getMongoDb().getCollection("JsonResult");
+	}
 
 	public JsonResult(MongoPersistenceUnit mongopersistence)
 	{
@@ -37,14 +38,21 @@ public class JsonResult extends Result {
 	public void insert(String jsonObject)
 	{
 		Document insertDocument = new Document("id", id());
-		insertDocument.append("storage", Document.valueOf(jsonObject));
+		insertDocument.append("storage", Document.parse(jsonObject));
 		m_collection.insertOne(insertDocument);
 	}
 	
-	public String find(String query)
+	public Document find(String query)
 	{
-		Document queryDocument = Document.valueOf(query);
-		return m_collection.find(and(eq("íd", id()), queryDocument)).first().toString();
+//		Document queryDocument = Document.valueOf(query);
+//		return m_collection.find(and(eq("íd", id()), queryDocument)).first().toString();
+		Document result = (Document) m_collection.find(eq("id", id())).first();
+		if(result == null)
+		{
+			System.out.println("couldn't find entry for this Result id");
+			return null;
+		}
+		return result;
 	}
 	
 }

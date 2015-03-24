@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import backend.model.descriptor.ServiceDescriptor;
 import backend.model.service.ServiceEntity;
 import backend.system.GlobalState;
 
@@ -19,7 +20,7 @@ public class BackendController{
 	private Backend m_backend =  GlobalState.get("Backend");
 
     @RequestMapping(value = "/schedule", method = RequestMethod.POST)
-    public boolean schedule(@RequestBody ServiceEntity.ServiceDescriptor descriptor) {
+    public boolean schedule(@RequestBody ServiceDescriptor descriptor) {
     	m_backend.schedule(descriptor);
     	return true;
     }

@@ -2,7 +2,6 @@ package backend.system;
 
 import java.util.Properties;
 
-import javax.activation.DataSource;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -10,9 +9,7 @@ import org.hibernate.ejb.HibernatePersistence;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.data.repository.core.support.RepositoryProxyPostProcessor;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;

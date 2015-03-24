@@ -2,8 +2,13 @@ package backend;
 
 import java.io.File;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import reactor.core.Reactor;
 import ro.fortsoft.pf4j.DefaultPluginManager;
 import ro.fortsoft.pf4j.PluginManager;
+import backend.model.descriptor.ServiceDescriptor;
 import backend.model.service.ServiceEntity;
 import backend.model.serviceprovider.GenericServiceProvider;
 import backend.model.serviceprovider.ServiceProviderRepository;
@@ -17,6 +22,8 @@ public class Backend {
 
 	public Backend()
 	{
+    	ApplicationContext context = new ClassPathXmlApplicationContext("Spring-Config.xml");
+    	GlobalState.set("eventReactor", (Reactor) context.getBean("eventReactor"));
 	    m_pluginManager = new DefaultPluginManager(new File("3rd_party"));
 	
 	    GlobalState.set("PluginManager", m_pluginManager);
@@ -28,7 +35,7 @@ public class Backend {
 		updatePlugins();
 	}
 
-	public void schedule(ServiceEntity.ServiceDescriptor descriptor)
+	public void schedule(ServiceDescriptor descriptor)
 	{
 		try
 		{

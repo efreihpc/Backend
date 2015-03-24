@@ -4,7 +4,7 @@ import javax.persistence.EntityManager;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import backend.model.Describable;
+import backend.model.descriptor.Describable;
 
 public interface PersistenceUnit<T extends Describable> {
 	public void addPluginRepository(JpaRepository<T, Long> repository, EntityManager em);

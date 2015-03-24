@@ -41,18 +41,19 @@ public class QuandlDataRetrievalJob extends JobPlugin<JsonResult> {
 	}
 	
 	@Override
-	protected void execute() {	
+	public void execute() {	
 		if(m_mongoPersistence == null)
 		{
 			System.out.println("QuandlDataRetrievalJob: No Mongopersistence Set!");
 		}
 		
-		HttpGet request = new HttpGet("http://www.quandl.com/api/v1/datasets/GOOG/SWX_VW.json");
+		HttpGet request = new HttpGet("http://www.quandl.com/api/v1/datasets/GOOG/SWX_VW.json?sort_order=asc");
 		
 		try 
 		{
 			HttpResponse response = m_httpClient.execute(request);
 			result().insert(EntityUtils.toString(response.getEntity()));
+			System.out.println("QuandlDataRetrievalJob: Added information to result!");
 		} 
 		catch (ParseException | IOException e) 
 		{

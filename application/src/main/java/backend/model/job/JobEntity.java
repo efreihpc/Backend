@@ -5,32 +5,31 @@ import java.util.Vector;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
-import backend.model.Describable;
-import backend.model.Descriptor;
-import backend.model.result.Result;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import reactor.core.Reactor;
+import reactor.event.Event;
+import backend.model.descriptor.Descriptor;
+import backend.model.result.DictionaryResult;
+import backend.model.result.Result;
+import backend.model.result.ResultRepository;
+import backend.system.GlobalState;
+import backend.system.execution.ThreadPoolExecutor;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Inheritance
-
+@org.springframework.stereotype.Service
 //T specifies the jobs result type
-public abstract class JobEntity<T extends Result> implements Job<T>, Describable {
-	
-	@JsonIgnore
-    @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private long m_id;
-	
+public abstract class JobEntity<T extends Result> extends Job<T>
+{
+
 	protected String m_classLoader;
 	
     @JsonProperty("descriptor")
@@ -41,17 +40,28 @@ public abstract class JobEntity<T extends Result> implements Job<T>, Describable
     @OneToOne(fetch = FetchType.EAGER, targetEntity = Result.class)
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
     private T m_result;
+    
+    @JsonProperty("configuration")
+    @OneToOne(fetch = FetchType.EAGER, targetEntity = DictionaryResult.class)
+	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private DictionaryResult m_configuration;
 
     @JsonProperty("secondaryJobs")
     @OneToMany(fetch = FetchType.EAGER)
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<JobEntity> m_secondaryJobs = new Vector<JobEntity>();
+    @Transient
+    Reactor m_reactor;
 	
     @Transient
-    private JobExecutor m_executor;
+    private ThreadPoolExecutor m_executor;
+    
+    @Transient
+    private ResultRepository m_resultRepository;
     
     public JobEntity()
     {
+    	m_reactor = GlobalState.get("eventReactor");
     	m_descriptor = new Descriptor((Class<JobEntity>)this.getClass());
     	commonName(this.getClass().getName());
     }
@@ -60,12 +70,6 @@ public abstract class JobEntity<T extends Result> implements Job<T>, Describable
     public Descriptor descriptor()
     {
     	return m_descriptor;
-    }
-    
-    @JsonIgnore
-    public long id()
-    {
-    	return m_id;
     }
     
     public void commonName(String name)
@@ -77,6 +81,18 @@ public abstract class JobEntity<T extends Result> implements Job<T>, Describable
     {
     	return m_descriptor.commonName();
     }
+    
+    @JsonProperty("configuration")
+    protected DictionaryResult configuration()
+    {
+    	return m_configuration;
+    }
+    
+    @JsonProperty("configuration")
+    public void configuration(DictionaryResult configuration)
+    {
+    	m_configuration = configuration;
+    }    
     
     @JsonProperty("result")
     public T result()
@@ -102,7 +118,12 @@ public abstract class JobEntity<T extends Result> implements Job<T>, Describable
     	return m_secondaryJobs;
     }
     
-    public void executor(JobExecutor executor)
+    public void resultRepository(ResultRepository resultRepository)
+    {
+    	m_resultRepository = resultRepository;
+    }
+    
+    public void executor(ThreadPoolExecutor executor)
     {
     	m_executor = executor;
     	for (JobEntity job : m_secondaryJobs) {
@@ -110,12 +131,12 @@ public abstract class JobEntity<T extends Result> implements Job<T>, Describable
     	}
     }
     
-    public JobExecutor executor()
+    public ThreadPoolExecutor executor()
     {
     	return m_executor;
     }
     
-    public JobExecutor taskExecutor()
+    public ThreadPoolExecutor taskExecutor()
     {
     	return m_executor;
     }
@@ -133,7 +154,9 @@ public abstract class JobEntity<T extends Result> implements Job<T>, Describable
 	{
 		execute();
 		runSecondaryJobs();
+		if(m_result != null)
+			m_resultRepository.save(result());
+		System.out.println("JobEntity> Notifying job finish: " + descriptor().commonName() + id());
+		m_reactor.notify("job_finish" + id(), Event.wrap(id()));
 	}
-	
-	protected abstract void execute();
 }
