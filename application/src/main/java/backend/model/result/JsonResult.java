@@ -42,7 +42,7 @@ public class JsonResult extends Result {
 		m_collection.insertOne(insertDocument);
 	}
 	
-	public Document find(String query)
+	public Document find(String query, String selection)
 	{
 //		Document queryDocument = Document.valueOf(query);
 //		return m_collection.find(and(eq("íd", id()), queryDocument)).first().toString();
@@ -53,6 +53,27 @@ public class JsonResult extends Result {
 			return null;
 		}
 		return result;
+	}
+	
+	public Document find(String query)
+	{
+		return(find(query, "{}"));
+	}
+	
+	public void value(String key, String value) {
+		insert("{" + key + ":" + value + "}");	
+	}
+	
+	public void value(String key, double value) {
+		insert("{" + key + ":" + value + "}");	
+	}
+
+	public String stringValue(String key) {
+		return find("{}", "{" + key + ":1}").getString(key);
+	}
+	
+	public double doubleValue(String key) {
+		return find("{}", "{" + key + ":1}").getDouble(key);
 	}
 	
 }

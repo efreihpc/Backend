@@ -24,6 +24,8 @@ public abstract class Result implements ExtensionPoint {
 		return m_id;
 	}
 		
-//	public abstract void value(String key, T value);
-//	public abstract T value(String key);
+	public abstract void value(String key, String value);
+	public abstract String stringValue(String key);
+	public abstract void value(String key, double value);
+	public abstract double doubleValue(String key);
 }

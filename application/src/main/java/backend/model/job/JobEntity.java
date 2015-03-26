@@ -42,9 +42,9 @@ public abstract class JobEntity<T extends Result> extends Job<T>
     private T m_result;
     
     @JsonProperty("configuration")
-    @OneToOne(fetch = FetchType.EAGER, targetEntity = DictionaryResult.class)
+    @OneToOne(fetch = FetchType.EAGER, targetEntity = Result.class)
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private DictionaryResult m_configuration;
+    private Result m_configuration;
 
     @JsonProperty("secondaryJobs")
     @OneToMany(fetch = FetchType.EAGER)
@@ -83,13 +83,13 @@ public abstract class JobEntity<T extends Result> extends Job<T>
     }
     
     @JsonProperty("configuration")
-    protected DictionaryResult configuration()
+    protected Result configuration()
     {
     	return m_configuration;
     }
     
     @JsonProperty("configuration")
-    public void configuration(DictionaryResult configuration)
+    public void configuration(Result configuration)
     {
     	m_configuration = configuration;
     }    

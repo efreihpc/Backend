@@ -45,8 +45,8 @@ import org.jocl.cl_program;
 
 import ro.fortsoft.pf4j.Extension;
 import backend.model.job.JobPlugin;
-import backend.model.result.DictionaryResult;
 import backend.model.result.JsonResult;
+import backend.model.result.Result;
 import backend.system.MongoPersistenceUnit;
 
 @Extension
@@ -171,7 +171,7 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
 	{
 		Random randomGenerator = new Random();
 		
-		DictionaryResult configuration = configuration();
+		Result configuration = configuration();
 		
         // Create input- and output data 
 		m_numberOfDays = new int[]{100};
