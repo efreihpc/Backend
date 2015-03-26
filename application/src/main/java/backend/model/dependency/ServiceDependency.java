@@ -5,8 +5,6 @@ import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToOne;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import backend.model.descriptor.ServiceDescriptor;
 import backend.model.result.Result;
 import backend.model.service.ServiceEntity;
@@ -18,8 +16,20 @@ public class ServiceDependency<T extends Result> extends Dependency<ServiceEntit
     @OneToOne(fetch = FetchType.EAGER, targetEntity = ServiceDescriptor.class)
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
 	ServiceDescriptor m_serviceDescriptor;
+    
+    public ServiceDependency()
+    {
+    }
+    
+    public static ServiceDependency create(ServiceDescriptor descriptor, Result configuration)
+    {
+    	ServiceDependency newDep = new ServiceDependency();
+    	newDep.descriptor(descriptor);
+    	newDep.configuration(configuration);
+    	return newDep;
+    }
 	
-	public ServiceDependency(ServiceDescriptor descriptor)
+	public void descriptor(ServiceDescriptor descriptor)
 	{
 		m_serviceDescriptor = descriptor;
 	}

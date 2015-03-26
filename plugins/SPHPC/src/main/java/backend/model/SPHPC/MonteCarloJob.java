@@ -85,13 +85,10 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
 	private Pointer m_resultClose;
 	
 	@Transient
-//	private int m_globalSize = 65536;
 	private int m_globalSize = 1;
 	
 	public MonteCarloJob()
 	{
-		System.out.println("MonteCarloJob> created!");
-		result(new JsonResult());
 	}
 	
 	@Override
@@ -305,5 +302,11 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
             return null;
         }
     }
+
+	@Override
+	protected void configured() {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

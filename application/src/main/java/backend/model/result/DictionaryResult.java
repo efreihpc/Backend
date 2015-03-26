@@ -22,6 +22,13 @@ public class DictionaryResult extends Result{
 	@JsonProperty("doubleStorage")
 	@ElementCollection(targetClass = Double.class)
 	Map<String, Double> m_dStorage = new HashMap<String, Double>();
+	
+	public static DictionaryResult fromStringMap(HashMap<String, String> map)
+	{
+		DictionaryResult newResult = new DictionaryResult();
+		newResult.stringStorage(map);
+		return newResult;
+	}
 
 	public void value(String key, String value) {
 		m_sStorage.put(key, value)	;	
@@ -44,10 +51,22 @@ public class DictionaryResult extends Result{
 	{
 		return m_sStorage;
 	}
+	
+	@JsonProperty("stringStorage")
+	public void stringStorage(HashMap<String, String> storage)
+	{
+		m_sStorage = storage;
+	}
 
 	@JsonProperty("doubleStorage")
 	public Map<String, Double> doubleStorage()
 	{
 		return m_dStorage;
+	}
+	
+	@JsonProperty("doubleStorage")
+	public void doubleStorage(HashMap<String, Double> storage)
+	{
+		m_dStorage = storage;
 	}
 }

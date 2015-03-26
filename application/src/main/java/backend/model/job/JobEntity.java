@@ -51,9 +51,6 @@ public abstract class JobEntity<T extends Result> extends Job<T>
     @Transient
     private ThreadPoolExecutor m_executor;
     
-    @Transient
-    private ResultRepository m_resultRepository;
-    
     public JobEntity()
     {
     	m_reactor = GlobalState.get("eventReactor");
@@ -101,11 +98,6 @@ public abstract class JobEntity<T extends Result> extends Job<T>
     	return m_secondaryJobs;
     }
     
-    public void resultRepository(ResultRepository resultRepository)
-    {
-    	m_resultRepository = resultRepository;
-    }
-    
     public void executor(ThreadPoolExecutor executor)
     {
     	m_executor = executor;
@@ -138,7 +130,7 @@ public abstract class JobEntity<T extends Result> extends Job<T>
 		execute();
 		runSecondaryJobs();
 		if(m_result != null)
-			m_resultRepository.save(result());
+			resultRepository().save(result());
 		System.out.println("JobEntity> Notifying job finish: " + descriptor().commonName() + id());
 		m_reactor.notify("job_finish" + id(), Event.wrap(id()));
 	}

@@ -9,6 +9,7 @@ import reactor.core.Reactor;
 import ro.fortsoft.pf4j.DefaultPluginManager;
 import ro.fortsoft.pf4j.PluginManager;
 import backend.model.descriptor.ServiceDescriptor;
+import backend.model.result.Result;
 import backend.model.service.ServiceEntity;
 import backend.model.serviceprovider.GenericServiceProvider;
 import backend.model.serviceprovider.ServiceProviderRepository;
@@ -35,12 +36,12 @@ public class Backend {
 		updatePlugins();
 	}
 
-	public void schedule(ServiceDescriptor descriptor)
+	public void schedule(ServiceDescriptor descriptor, Result configuration)
 	{
 		try
 		{
 			GenericServiceProvider provider = m_providerRepository.serviceProvider(descriptor.providerIdentifier());
-			ServiceEntity service = provider.service(descriptor.identifier());
+			ServiceEntity service = provider.service(descriptor.identifier(), configuration);
 			provider.executeService(service);
 		}
 		catch (InstantiationException | IllegalAccessException e) {

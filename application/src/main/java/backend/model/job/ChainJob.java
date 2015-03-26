@@ -43,5 +43,11 @@ public class ChainJob<T extends Result> extends JobEntity<T> {
 		}
 	}
 
+	@Override
+	protected void configured() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
 

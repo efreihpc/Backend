@@ -12,6 +12,7 @@ import org.bson.Document;
 import ro.fortsoft.pf4j.Extension;
 import backend.model.result.DictionaryResult;
 import backend.model.result.JsonResult;
+import backend.model.result.Result;
 import backend.model.service.ServicePlugin;
 
 @Extension
@@ -25,12 +26,18 @@ public class MonteCarloService extends ServicePlugin<JsonResult> {
 	public MonteCarloService()
 	{
 		commonName("Monto Carlo Service");
+	}
+	
+	@Override
+	protected void configured() {
+		Result configuration = configuration();
+		String stockId = configuration.stringValue("stockId");
+		System.out.println("MonteCarloService> I got the following stockId: " + stockId);
 		addDependency("ad42c7ece9fd7f97a3b7daf3b55460a72c25f98a", "b80b17302e4da7adc8599b9fb302a3b48cbee13e");
 	}
 
 	@Override
-	public void execute() {
-		
+	public void execute() {		
 		System.out.println("MonteCarloService> Preparing data for MonteCarlo Job");
 		JsonResult deprep = (JsonResult) dependencies().get(0).result();
 		Document stockDataDocument = deprep.find("");

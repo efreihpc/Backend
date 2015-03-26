@@ -18,7 +18,7 @@ public interface ServiceProvider {
 	ServiceDescriptor serviceDescriptor(String serviceIdentifier);
 	
 	// returns the service identified by its Classname
-	public <T extends Result> Service<T> service(String serviceName) throws InstantiationException, IllegalAccessException;
+	public <T extends Result> Service<T> service(String serviceName, Result configuration) throws InstantiationException, IllegalAccessException;
 	
 	public <T extends Result> void executeService(ServiceEntity<T> serviceToExecute);
 

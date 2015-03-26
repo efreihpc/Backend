@@ -22,6 +22,7 @@ import backend.model.job.JobEntity;
 import backend.model.job.JobPersistenceUnit;
 import backend.model.job.PersistJob;
 import backend.model.result.Result;
+import backend.model.result.ResultRepository;
 import backend.model.serviceprovider.ServiceProviderRepository;
 import backend.system.GlobalPersistenceUnit;
 import backend.system.GlobalState;
@@ -134,15 +135,20 @@ public abstract class ServiceEntity<T extends Result> extends Service<T> impleme
 	
 	protected void addDependency(String serviceIdentifier, String serviceProviderIdentifier)
 	{
+		addDependency(serviceIdentifier, serviceProviderIdentifier, configuration());
+	}
+	
+	protected void addDependency(String serviceIdentifier, String serviceProviderIdentifier, Result configuration)
+	{
 		ServiceDescriptor descriptor = new ServiceDescriptor();
 		descriptor.identifier(serviceIdentifier);
 		descriptor.providerIdentifier(serviceProviderIdentifier);
-		addDependency(descriptor);
+		addDependency(descriptor, configuration);
 	}
 	
-	protected void addDependency(ServiceDescriptor descriptor)
+	protected void addDependency(ServiceDescriptor descriptor, Result configuration)
 	{
-		m_dependencies.add(new ServiceDependency(descriptor));
+		m_dependencies.add(ServiceDependency.create(descriptor, configuration));
 	}
 	
 	@Override
@@ -158,9 +164,12 @@ public abstract class ServiceEntity<T extends Result> extends Service<T> impleme
 	}
 	
 	protected void executeJob(JobEntity job)
-	{
+	{		
 		job.executor(m_jobExecutor);
 		job.resultRepository(m_globalPersistenceUnit.resultRepository());
+		
+		if(job.configuration() == null)
+			job.configuration(configuration());
 		
 		PersistJob persist = new PersistJob();
 		persist.jobRepository(m_jobPersistence);

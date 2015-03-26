@@ -117,4 +117,10 @@ public class TaskQueue extends Task implements Consumer<Event<Long>>{
 			nextTask();
 		}
 	}
+
+	@Override
+	protected void configured() {
+		// TODO Auto-generated method stub
+		
+	}
 }

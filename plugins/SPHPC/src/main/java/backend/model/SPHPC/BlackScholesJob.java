@@ -343,4 +343,10 @@ public class BlackScholesJob extends JobPlugin<JsonResult> {
         }
     }
 
+	@Override
+	protected void configured() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

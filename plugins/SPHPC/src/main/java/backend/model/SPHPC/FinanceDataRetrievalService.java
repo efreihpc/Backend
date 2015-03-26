@@ -26,4 +26,10 @@ public class FinanceDataRetrievalService extends ServicePlugin<JsonResult> {
 		executeJob(job);
 	}
 
+	@Override
+	protected void configured() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

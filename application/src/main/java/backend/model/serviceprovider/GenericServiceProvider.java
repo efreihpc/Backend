@@ -88,7 +88,7 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     }
     
     @Override
-    public <E extends Result> ServiceEntity<E> service(String serviceIdentifier) throws InstantiationException, IllegalAccessException
+    public <E extends Result> ServiceEntity<E> service(String serviceIdentifier, Result configuration) throws InstantiationException, IllegalAccessException
     {
     	Class<ServiceEntity> serviceClass = m_registeredServices.get(serviceIdentifier).classDescriptor();
     	ServiceEntity<E> newService = (ServiceEntity<E>) serviceClass.newInstance();
@@ -99,6 +99,8 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     	
     	if(m_globalPersistenceUnit != null)
     		newService.persistenceUnit(m_globalPersistenceUnit);
+    	
+    	newService.configuration(configuration);
     	
     	System.out.println("GenericServiceProvider> Result of new Service:" + newService.result() );
     	
@@ -132,7 +134,8 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
 			try 
 			{
 				provider = m_serviceProviderRepository.serviceProvider(dependency.descriptor().providerIdentifier());
-				ServiceEntity service = provider.service(dependency.descriptor().identifier());
+				ServiceEntity service = provider.service(dependency.descriptor().identifier(), null);
+				service.configuration(dependency.configuration());
 				System.out.println("GenericServiceProvider> Dependency instantiated: " + service.descriptor().commonName());
 				dependency.task(service);
 				queue.enqueue(provider.serviceExecutionQueue(service));

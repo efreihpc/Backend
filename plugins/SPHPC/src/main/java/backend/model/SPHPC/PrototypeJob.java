@@ -195,4 +195,10 @@ public class PrototypeJob extends JobPlugin<DictionaryResult>{
         
 	}
 
+	@Override
+	protected void configured() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

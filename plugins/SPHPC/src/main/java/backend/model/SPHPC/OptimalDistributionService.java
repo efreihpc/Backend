@@ -38,4 +38,10 @@ public class OptimalDistributionService extends ServicePlugin<DictionaryResult> 
 	public DictionaryResult result() {
 		return m_job.result();
 	}
+
+	@Override
+	protected void configured() {
+		// TODO Auto-generated method stub
+		
+	}
 }

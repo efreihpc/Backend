@@ -41,4 +41,10 @@ public class PersistJob extends JobEntity<DictionaryResult> {
 	{
 		m_jobToPersist = job;
 	}
+
+	@Override
+	protected void configured() {
+		// TODO Auto-generated method stub
+		
+	}
 }

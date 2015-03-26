@@ -9,9 +9,11 @@ import backend.system.execution.ThreadPoolExecutor;
 
 public abstract class Service<T extends Result> extends Task<T> {
 	
-	public abstract void persistenceUnit(GlobalPersistenceUnit persistenceUnit);
 	public abstract GlobalPersistenceUnit persistenceUnit();
 	
 	public abstract void jobExecutor(ThreadPoolExecutor jobExecutor);
 	public abstract ThreadPoolExecutor jobExecutor();
+
+	public abstract void persistenceUnit(GlobalPersistenceUnit persistenceUnit);
+	
 }

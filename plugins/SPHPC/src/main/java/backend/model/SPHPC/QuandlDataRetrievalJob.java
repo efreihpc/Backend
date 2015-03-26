@@ -16,6 +16,7 @@ import org.apache.http.util.EntityUtils;
 import ro.fortsoft.pf4j.Extension;
 import backend.model.job.JobPlugin;
 import backend.model.result.JsonResult;
+import backend.model.result.Result;
 import backend.system.MongoPersistenceUnit;
 
 @Extension
@@ -47,7 +48,10 @@ public class QuandlDataRetrievalJob extends JobPlugin<JsonResult> {
 			System.out.println("QuandlDataRetrievalJob: No Mongopersistence Set!");
 		}
 		
-		HttpGet request = new HttpGet("http://www.quandl.com/api/v1/datasets/GOOG/SWX_VW.json?sort_order=asc");
+		Result configuration = configuration();
+		String stockId = configuration.stringValue("stockId");
+		String authToken = configuration.stringValue("OauthToken");
+		HttpGet request = new HttpGet("http://www.quandl.com/api/v1/datasets/" + stockId + ".json?sort_order=asc?auth_token=" + authToken);
 		
 		try 
 		{
@@ -59,6 +63,12 @@ public class QuandlDataRetrievalJob extends JobPlugin<JsonResult> {
 		{
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	protected void configured() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
