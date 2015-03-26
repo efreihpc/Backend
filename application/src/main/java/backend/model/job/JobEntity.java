@@ -40,11 +40,6 @@ public abstract class JobEntity<T extends Result> extends Job<T>
     @OneToOne(fetch = FetchType.EAGER, targetEntity = Result.class)
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
     private T m_result;
-    
-    @JsonProperty("configuration")
-    @OneToOne(fetch = FetchType.EAGER, targetEntity = Result.class)
-	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private Result m_configuration;
 
     @JsonProperty("secondaryJobs")
     @OneToMany(fetch = FetchType.EAGER)
@@ -80,19 +75,7 @@ public abstract class JobEntity<T extends Result> extends Job<T>
     protected String commonName()
     {
     	return m_descriptor.commonName();
-    }
-    
-    @JsonProperty("configuration")
-    protected Result configuration()
-    {
-    	return m_configuration;
-    }
-    
-    @JsonProperty("configuration")
-    public void configuration(Result configuration)
-    {
-    	m_configuration = configuration;
-    }    
+    }  
     
     @JsonProperty("result")
     public T result()
