@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import org.bson.Document;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 
 import ro.fortsoft.pf4j.ExtensionPoint;
 
@@ -34,6 +35,7 @@ public abstract class Result implements ExtensionPoint {
 	public abstract double doubleValue(String key);
 	
 	@JsonProperty("storage")
+	@JsonRawValue
 	public abstract String allJson();
 	
 	@JsonProperty("storage")
