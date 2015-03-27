@@ -16,6 +16,7 @@ import backend.model.descriptor.ServiceDescriptor;
 import backend.model.result.Result;
 import backend.model.service.ServiceEntity;
 import backend.model.service.ServicePersistenceUnit;
+import backend.model.task.ConfigurationFailedException;
 import backend.model.task.TaskQueue;
 import backend.model.task.TaskRepository;
 import backend.system.GlobalPersistenceUnit;
@@ -100,7 +101,16 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     	if(m_globalPersistenceUnit != null)
     		newService.persistenceUnit(m_globalPersistenceUnit);
     	
-    	newService.configuration(configuration);
+		try 
+		{
+	    	newService.configuration(configuration);
+		} 
+		catch (ConfigurationFailedException e) 
+		{
+			System.out.println("ServiceEntity> Configuration Error: ");
+			System.out.println("\t" + e.getMessage());
+			e.printStackTrace();
+		}
     	
     	System.out.println("GenericServiceProvider> Result of new Service:" + newService.result() );
     	
@@ -135,7 +145,18 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
 			{
 				provider = m_serviceProviderRepository.serviceProvider(dependency.descriptor().providerIdentifier());
 				ServiceEntity service = provider.service(dependency.descriptor().identifier(), null);
-				service.configuration(dependency.configuration());
+				
+				try 
+				{
+					service.configuration(dependency.configuration());
+				} 
+				catch (ConfigurationFailedException e) 
+				{
+					System.out.println("ServiceEntity> Configuration Error: ");
+					System.out.println("\t" + e.getMessage());
+					e.printStackTrace();
+				}
+				
 				System.out.println("GenericServiceProvider> Dependency instantiated: " + service.descriptor().commonName());
 				dependency.task(service);
 				queue.enqueue(provider.serviceExecutionQueue(service));

@@ -24,6 +24,7 @@ import backend.model.job.PersistJob;
 import backend.model.result.Result;
 import backend.model.result.ResultRepository;
 import backend.model.serviceprovider.ServiceProviderRepository;
+import backend.model.task.ConfigurationFailedException;
 import backend.system.GlobalPersistenceUnit;
 import backend.system.GlobalState;
 import backend.system.execution.ThreadPoolExecutor;
@@ -169,7 +170,16 @@ public abstract class ServiceEntity<T extends Result> extends Service<T> impleme
 		job.resultRepository(m_globalPersistenceUnit.resultRepository());
 		
 		if(job.configuration() == null)
-			job.configuration(configuration());
+			try 
+			{
+				job.configuration(configuration());
+			} 
+			catch (ConfigurationFailedException e) 
+			{
+				System.out.println("ServiceEntity> Configuration Error: ");
+				System.out.println("\t" + e.getMessage());
+				e.printStackTrace();
+			}
 		
 		PersistJob persist = new PersistJob();
 		persist.jobRepository(m_jobPersistence);

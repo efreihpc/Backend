@@ -2,6 +2,8 @@ package backend.model.task;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,7 +19,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import backend.model.descriptor.Describable;
 import backend.model.result.Result;
 import backend.model.result.ResultRepository;
-import backend.system.Configurable;
 import backend.system.GlobalPersistenceUnit;
 import backend.system.GlobalState;
 
@@ -40,6 +41,7 @@ public abstract class Task <T extends Result> implements Runnable, Describable, 
     private Result m_configuration;
     
     @Transient protected ResultRepository m_resultRepository;
+    @Transient List<String> m_requirements;
 	
 	public abstract T result();
 	public abstract void execute();
@@ -89,9 +91,10 @@ public abstract class Task <T extends Result> implements Runnable, Describable, 
     }
     
     @JsonProperty("configuration")
-    public void configuration(Result configuration)
+    public void configuration(Result configuration) throws ConfigurationFailedException
     {
     	m_configuration = configuration;
+    	checkConfiguration(configuration);
     	configured();
     	
     	if(m_resultRepository == null)
@@ -112,5 +115,26 @@ public abstract class Task <T extends Result> implements Runnable, Describable, 
     public ResultRepository resultRepository()
     {
     	return m_resultRepository;
+    }
+    
+    public void requireConfiguration(String requirement)
+    {
+    	lazyInitializeRequirements();
+    	m_requirements.add(requirement);
+    }
+    
+    private void checkConfiguration(Result configuration) throws ConfigurationFailedException
+    {
+    	for(String requirement: m_requirements)
+    	{
+    		if(configuration().stringValue(requirement) == null)
+    			throw new ConfigurationFailedException(requirement);
+    	}
+    }
+    
+    private void lazyInitializeRequirements()
+    {
+    	if(m_requirements == null)
+    		m_requirements = new ArrayList<String>();
     }
 }

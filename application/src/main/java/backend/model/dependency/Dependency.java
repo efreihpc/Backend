@@ -12,6 +12,7 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import backend.model.result.Result;
+import backend.model.task.ConfigurationFailedException;
 import backend.model.task.Task;
 
 @Entity
@@ -35,7 +36,16 @@ public abstract class Dependency<T extends Task<U>, U extends Result>  implement
 	{
 		m_task = task;
 		if(m_configuration != null)
-			m_task.configuration(m_configuration);
+			try 
+			{
+				m_task.configuration(m_configuration);
+			} 
+			catch (ConfigurationFailedException e) 
+			{
+				System.out.println("ServiceEntity> Configuration Error: ");
+				System.out.println("\t" + e.getMessage());
+				e.printStackTrace();
+			}
 	}
 
 	@Override
@@ -54,7 +64,16 @@ public abstract class Dependency<T extends Task<U>, U extends Result>  implement
 		m_configuration = configuration;
 		
 		if(m_task != null)
-			m_task.configuration(configuration);
+			try 
+			{
+				m_task.configuration(configuration);
+			} 
+			catch (ConfigurationFailedException e) 
+			{
+				System.out.println("ServiceEntity> Configuration Error: ");
+				System.out.println("\t" + e.getMessage());
+				e.printStackTrace();
+			}
 	}
 	
 	public Result configuration()
