@@ -29,6 +29,7 @@ public class QuandlDataRetrievalJob extends JobPlugin<JsonResult> {
 	
 	public QuandlDataRetrievalJob()
 	{
+		commonName("Quandl Data Retrieval Job");
 		m_httpClient = HttpClientBuilder.create().build();
 		result(new JsonResult());
 	}

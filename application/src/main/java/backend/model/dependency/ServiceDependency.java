@@ -41,6 +41,8 @@ public class ServiceDependency<T extends Result> extends Dependency<ServiceEntit
     @JsonProperty("descriptor")
 	public ServiceDescriptor descriptor()
 	{
+    	if(m_task != null)
+    		return m_task.descriptor();
 		return m_serviceDescriptor;
 	}
 }

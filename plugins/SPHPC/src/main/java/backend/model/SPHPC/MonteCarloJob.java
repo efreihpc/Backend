@@ -85,6 +85,7 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
 	
 	public MonteCarloJob()
 	{
+		commonName("Monte Carlo Job");
 		result(new JsonResult());
 	}
 	
