@@ -1,5 +1,8 @@
 package backend.model.task;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -23,6 +26,7 @@ import backend.system.GlobalState;
 @Inheritance
 public abstract class Task <T extends Result> implements Runnable, Describable, Configurable{
 	
+	@JsonProperty("Id")
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
 	private long m_id;
@@ -46,9 +50,16 @@ public abstract class Task <T extends Result> implements Runnable, Describable, 
 		execute();
 	}
 	
+	@JsonProperty("Id")
 	public long id()
 	{
 		return m_id;
+	}
+	
+	@JsonProperty("Id")
+	public void id(long id)
+	{
+		m_id = id;
 	}
 	
 	protected abstract void configured();

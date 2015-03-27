@@ -22,9 +22,8 @@ public class BackendController{
 	private Backend m_backend =  GlobalState.get("Backend");
 
     @RequestMapping(value = "/schedule", method = RequestMethod.POST)
-    public boolean schedule(@RequestBody ServiceTransfer service) {
-    	m_backend.schedule(service.descriptor(), DictionaryResult.fromStringMap(service.configuration()));
-    	return true;
+    public ServiceEntity schedule(@RequestBody ServiceTransfer service) {
+    	return m_backend.schedule(service.descriptor(), DictionaryResult.fromStringMap(service.configuration()));
     }
 
     @RequestMapping(value = "/plugins", method = RequestMethod.GET)

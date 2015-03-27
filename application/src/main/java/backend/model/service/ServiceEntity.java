@@ -127,7 +127,7 @@ public abstract class ServiceEntity<T extends Result> extends Service<T> impleme
     	return m_globalPersistenceUnit.serviceProviderRepository();
     }
 	
-	@JsonProperty("dataSource")
+	@JsonProperty("dependencies")
 	public List<ServiceDependency> dependencies()
 	{
 		return m_dependencies;

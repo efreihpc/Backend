@@ -36,17 +36,20 @@ public class Backend {
 		updatePlugins();
 	}
 
-	public void schedule(ServiceDescriptor descriptor, Result configuration)
+	public ServiceEntity schedule(ServiceDescriptor descriptor, Result configuration)
 	{
+		ServiceEntity service = null;
 		try
 		{
 			GenericServiceProvider provider = m_providerRepository.serviceProvider(descriptor.providerIdentifier());
-			ServiceEntity service = provider.service(descriptor.identifier(), configuration);
+			service = provider.service(descriptor.identifier(), configuration);
 			provider.executeService(service);
 		}
 		catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
+		
+		return service;
 	}
 
 	public void updatePlugins()
