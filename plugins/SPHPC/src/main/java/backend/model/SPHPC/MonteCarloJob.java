@@ -182,9 +182,7 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
         for (int i = 0; i < m_globalSize; i++)
         {
             m_randomSeedX[i] = randomGenerator.nextInt(10000);
-            System.out.println("RandomX: " + m_randomSeedX[i]);
             m_randomSeedY[i] = randomGenerator.nextInt(10000);
-            System.out.println("RandomY: " + m_randomSeedY[i]);
         }
         
         for (int i = 0; i < m_numberOfDays[0]; i++)
@@ -237,12 +235,10 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
         long global_work_size[] = new long[]{m_globalSize};
         long local_work_size[] = new long[]{1};
         
-        System.out.println("MonteCarloJob: Running Kernel");
         // Execute the kernel
         clEnqueueNDRangeKernel(commandQueue, kernel, 1, null,
             global_work_size, local_work_size, 0, null, null);
         
-        System.out.println("MonteCarloJob: Fetching Data From Kernel");
         // Read the output data
         clEnqueueReadBuffer(commandQueue, m_memObjects[2], CL_TRUE, 0,
         		m_numberOfDays[0] * Sizeof.cl_double, m_resultClose, 0, null, null);
@@ -263,11 +259,6 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
 	private void validate()
 	{
         boolean passed = true;
-        
-        System.out.println("MonteCarloJob: Persisting Results!!");
-        System.out.println("{	'state':'" + (passed?"PASSED":"FAILED") + "'," + 
-				"	'result_put':" + java.util.Arrays.toString(m_close) + 
-				"}");
 
     	result().insert("{	'state':'" + (passed?"PASSED":"FAILED") + "'," + 
     					"	'result_put':" + java.util.Arrays.toString(m_close) +  

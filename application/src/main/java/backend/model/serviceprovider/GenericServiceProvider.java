@@ -150,6 +150,11 @@ public abstract class GenericServiceProvider implements ExtensionPoint, ServiceP
     	return queue;
     }
     
+    public boolean hasService(String identifier)
+    {
+    	return m_registeredServices.containsKey(identifier);	
+    }
+    
     private void registerServices()
     {    	
     	// create scanner and disable default filters (that is the 'false' argument)

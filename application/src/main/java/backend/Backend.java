@@ -41,7 +41,7 @@ public class Backend {
 		ServiceEntity service = null;
 		try
 		{
-			GenericServiceProvider provider = m_providerRepository.serviceProvider(descriptor.providerIdentifier());
+			GenericServiceProvider provider = m_providerRepository.findByServiceIdentifier(descriptor.identifier());
 			service = provider.service(descriptor.identifier(), configuration);
 			provider.executeService(service);
 		}

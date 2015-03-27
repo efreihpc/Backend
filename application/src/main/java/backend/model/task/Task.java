@@ -26,10 +26,13 @@ import backend.system.GlobalState;
 @Inheritance
 public abstract class Task <T extends Result> implements Runnable, Describable, Configurable{
 	
-	@JsonProperty("Id")
+	@JsonProperty("id")
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
 	private long m_id;
+	
+	@JsonProperty("state")
+	private float m_state;
     
     @JsonProperty("configuration")
     @OneToOne(fetch = FetchType.EAGER, targetEntity = Result.class)
@@ -47,19 +50,33 @@ public abstract class Task <T extends Result> implements Runnable, Describable, 
 	
 	public void run()
 	{
+		m_state = 0;
 		execute();
+		m_state = 1;
 	}
 	
-	@JsonProperty("Id")
+	@JsonProperty("id")
 	public long id()
 	{
 		return m_id;
 	}
 	
-	@JsonProperty("Id")
+	@JsonProperty("id")
 	public void id(long id)
 	{
 		m_id = id;
+	}
+	
+	@JsonProperty("state")
+	public float state()
+	{
+		return m_state;
+	}
+	
+	@JsonProperty("state")
+	public void state(float state)
+	{
+		m_state = state;
 	}
 	
 	protected abstract void configured();

@@ -30,15 +30,12 @@ public class MonteCarloService extends ServicePlugin<JsonResult> {
 	
 	@Override
 	protected void configured() {
-		Result configuration = configuration();
-		String stockId = configuration.stringValue("stockId");
-		System.out.println("MonteCarloService> I got the following stockId: " + stockId);
 		addDependency("ad42c7ece9fd7f97a3b7daf3b55460a72c25f98a", "b80b17302e4da7adc8599b9fb302a3b48cbee13e");
 	}
 
 	@Override
 	public void execute() {		
-		System.out.println("MonteCarloService> Preparing data for MonteCarlo Job");
+//		System.out.println("MonteCarloService> Preparing data for MonteCarlo Job");
 		JsonResult deprep = (JsonResult) dependencies().get(0).result();
 		Document stockDataDocument = deprep.find("");
 		
@@ -71,11 +68,11 @@ public class MonteCarloService extends ServicePlugin<JsonResult> {
 	    double deviation = getStdDev(logReturn);
 	    double drift = average - (variance/2);
 	    
-        System.out.println("MonteCarloService> Initializing with Values:");
-        System.out.println("\tVariance: " + variance);
-        System.out.println("\tDrift: " + drift);
-        System.out.println("\tDeviation: " + deviation);
-        System.out.println("\tAverage: " + average);
+//        System.out.println("MonteCarloService> Initializing with Values:");
+//        System.out.println("\tVariance: " + variance);
+//        System.out.println("\tDrift: " + drift);
+//        System.out.println("\tDeviation: " + deviation);
+//        System.out.println("\tAverage: " + average);
 	    
 	    DictionaryResult jobConfiguration = new DictionaryResult();
 	    jobConfiguration.value("average", average);
@@ -84,7 +81,7 @@ public class MonteCarloService extends ServicePlugin<JsonResult> {
 	    jobConfiguration.value("drift", drift);
 	    jobConfiguration.value("lastClose", (double) (stockData.get(stockData.size() - 1).get(4)));
 				
-	    System.out.println("MonteCarloService> Starting Job");
+//	    System.out.println("MonteCarloService> Starting Job");
 		MonteCarloJob m_job = new MonteCarloJob();
 	    m_job.setMongoPersistence(persistenceUnit());
 		m_job.configuration(jobConfiguration);

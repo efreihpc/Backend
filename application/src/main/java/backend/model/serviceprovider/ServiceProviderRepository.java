@@ -2,6 +2,7 @@ package backend.model.serviceprovider;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -82,7 +83,7 @@ public class ServiceProviderRepository{
     	return m_registry.get(identifier);
     }
 	
-	public Iterable<GenericServiceProvider> findAll()
+	public List<GenericServiceProvider> findAll()
 	{
 		if(m_registry.size() != m_instances.size())
 			loadAllInstances();
@@ -90,7 +91,19 @@ public class ServiceProviderRepository{
 		return new ArrayList<GenericServiceProvider>(m_instances.values());
 	}
 	
-	public Iterable<GenericServiceProvider.ServiceProviderDescriptor> findAllDescriptors()
+	public GenericServiceProvider findByServiceIdentifier(String identifier)
+	{
+		List<GenericServiceProvider> allProviders = findAll();
+		for(GenericServiceProvider provider: allProviders)
+		{
+			if(provider.hasService(identifier))
+				return provider;
+		}
+		
+		return null;
+	}
+	
+	public List<GenericServiceProvider.ServiceProviderDescriptor> findAllDescriptors()
 	{
 		return new ArrayList<GenericServiceProvider.ServiceProviderDescriptor>(m_registry.values());
 	}
