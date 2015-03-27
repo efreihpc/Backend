@@ -37,7 +37,7 @@ public class MonteCarloService extends ServicePlugin<JsonResult> {
 	public void execute() {		
 //		System.out.println("MonteCarloService> Preparing data for MonteCarlo Job");
 		JsonResult deprep = (JsonResult) dependencies().get(0).result();
-		Document stockDataDocument = deprep.find("");
+		Document stockDataDocument = deprep.findOne("{}");
 		
 		stockDataDocument = (Document) stockDataDocument.get("storage");
 		ArrayList<ArrayList> stockData = (ArrayList<ArrayList>) stockDataDocument.get("data");
@@ -83,7 +83,6 @@ public class MonteCarloService extends ServicePlugin<JsonResult> {
 				
 //	    System.out.println("MonteCarloService> Starting Job");
 		MonteCarloJob m_job = new MonteCarloJob();
-	    m_job.setMongoPersistence(persistenceUnit());
 		m_job.configuration(jobConfiguration);
 		result(m_job.result());
 		

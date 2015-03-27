@@ -20,7 +20,6 @@ public class FinanceDataRetrievalService extends ServicePlugin<JsonResult> {
 	@Override
 	public void execute() {
 		QuandlDataRetrievalJob job = new QuandlDataRetrievalJob();
-		job.setMongoPersistence(persistenceUnit());
 		result(job.result());
 		
 		executeJob(job);

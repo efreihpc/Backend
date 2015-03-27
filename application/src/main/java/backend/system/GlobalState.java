@@ -6,6 +6,7 @@ public class GlobalState {
 	
 	static HashMap<String, Object> m_container = new HashMap<String, Object>();
 	
+	//TODO: raise exception if not found
 	public static <T> T get(String key)
 	{
 		return (T) m_container.get(key);

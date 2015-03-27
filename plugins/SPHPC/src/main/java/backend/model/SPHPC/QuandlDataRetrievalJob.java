@@ -27,27 +27,14 @@ public class QuandlDataRetrievalJob extends JobPlugin<JsonResult> {
 	@Transient
 	HttpClient m_httpClient;
 	
-	@Transient
-	MongoPersistenceUnit m_mongoPersistence;
-	
 	public QuandlDataRetrievalJob()
 	{
 		m_httpClient = HttpClientBuilder.create().build();
-	}
-	
-	public void setMongoPersistence(MongoPersistenceUnit mongoPersistence)
-	{
-		m_mongoPersistence = mongoPersistence;
-		result(new JsonResult(m_mongoPersistence));
+		result(new JsonResult());
 	}
 	
 	@Override
-	public void execute() {	
-		if(m_mongoPersistence == null)
-		{
-			System.out.println("QuandlDataRetrievalJob: No Mongopersistence Set!");
-		}
-		
+	public void execute() {		
 		Result configuration = configuration();
 		String stockId = configuration.stringValue("stockId");
 		String authToken = configuration.stringValue("OauthToken");

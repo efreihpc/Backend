@@ -47,15 +47,11 @@ import ro.fortsoft.pf4j.Extension;
 import backend.model.job.JobPlugin;
 import backend.model.result.JsonResult;
 import backend.model.result.Result;
-import backend.system.MongoPersistenceUnit;
 
 @Extension
 @Entity
 @Inheritance
 public class MonteCarloJob extends JobPlugin<JsonResult> {
-
-	@Transient
-	MongoPersistenceUnit m_mongoPersistence;
 	
 	@Transient
 	private cl_context m_context;
@@ -89,6 +85,7 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
 	
 	public MonteCarloJob()
 	{
+		result(new JsonResult());
 	}
 	
 	@Override
@@ -101,11 +98,6 @@ public class MonteCarloJob extends JobPlugin<JsonResult> {
 		release(kernel);
 		
 		validate();		
-	}
-
-	public void setMongoPersistence(MongoPersistenceUnit mongoPersistence) {
-		m_mongoPersistence = mongoPersistence;
-		result(new JsonResult(m_mongoPersistence));	
 	}
 	
 	private void initializePlatform()
