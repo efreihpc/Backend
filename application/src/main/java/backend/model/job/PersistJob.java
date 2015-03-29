@@ -7,17 +7,16 @@ import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import backend.model.result.DictionaryResult;
+import backend.model.result.Result;
 
 
 @Entity
-@Inheritance 
-
 public class PersistJob extends JobEntity<DictionaryResult> {
 
 	@Transient
 	JobPersistenceUnit m_jobPersistence;
 	
-	@OneToOne(fetch = FetchType.EAGER)
+	@OneToOne(fetch = FetchType.EAGER, targetEntity = JobEntity.class)
 	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
 	JobEntity m_jobToPersist;
 	

@@ -83,7 +83,6 @@ public class DictionaryResult extends Result{
 		result.putAll(m_sStorage);
 		result.putAll(m_dStorage);
 		
-		System.out.println(result);
 		return result.toJson();
 	}
 

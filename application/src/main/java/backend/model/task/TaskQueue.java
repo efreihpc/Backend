@@ -7,6 +7,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Transient;
 
 import org.springframework.core.task.SyncTaskExecutor;
@@ -22,7 +23,7 @@ import backend.model.service.ServiceEntity;
 import backend.system.GlobalState;
 
 @Entity
-@Inheritance
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @Service
 public class TaskQueue extends Task implements Consumer<Event<Long>>{
 

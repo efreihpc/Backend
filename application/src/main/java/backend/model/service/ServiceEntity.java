@@ -9,6 +9,7 @@ import java.util.Vector;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
@@ -22,7 +23,6 @@ import backend.model.job.JobEntity;
 import backend.model.job.JobPersistenceUnit;
 import backend.model.job.PersistJob;
 import backend.model.result.Result;
-import backend.model.result.ResultRepository;
 import backend.model.serviceprovider.ServiceProviderRepository;
 import backend.model.task.ConfigurationFailedException;
 import backend.system.GlobalPersistenceUnit;
@@ -31,9 +31,12 @@ import backend.system.execution.ThreadPoolExecutor;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+
+//TODO: Service should not persist himself
 @Entity
-@Inheritance
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @org.springframework.stereotype.Service
+@org.hibernate.annotations.DiscriminatorOptions(force=true)
 public abstract class ServiceEntity<T extends Result> extends Service<T> implements Consumer<Event<Long>>
 {    
     @JsonProperty("descriptor")
@@ -55,6 +58,8 @@ public abstract class ServiceEntity<T extends Result> extends Service<T> impleme
     private GlobalPersistenceUnit m_globalPersistenceUnit;
     @Transient
     private JobPersistenceUnit m_jobPersistence;
+    @Transient
+    private ServicePersistenceUnit m_servicePersistence;
     @Transient 
     private ThreadPoolExecutor m_jobExecutor;
     @Transient
@@ -115,6 +120,7 @@ public abstract class ServiceEntity<T extends Result> extends Service<T> impleme
 	public void persistenceUnit(GlobalPersistenceUnit persistenceUnit) {
 		m_globalPersistenceUnit = persistenceUnit;
 		m_jobPersistence = persistenceUnit.jobPersistence();
+		m_servicePersistence = persistenceUnit.servicePersistence();
 	}
 	
 	@Override
@@ -190,18 +196,28 @@ public abstract class ServiceEntity<T extends Result> extends Service<T> impleme
 			m_jobPersistence.save(job);
 		
 		m_waitingForJobs.add(job.id());
+		System.out.println(commonName() + ":" + id() +"> registering notification from: " + "job_finish" + job.id());
 		m_reactor.on($("job_finish" + job.id()), this);
 		m_jobExecutor.execute(job);
 	}
 	
     public void accept(Event<Long> ev) {
 		m_waitingForJobs.remove(ev.getData());
+    	System.out.println(commonName() + ":" + id() +"> recieved job_finish" + ev.getData());
+    	System.out.println(commonName() + ":" + id() +"> still waiting for " + m_waitingForJobs.size() + "jobs");
 		
 		if(m_waitingForJobs.size() == 0)
 		{
 			System.out.println("ServiceEntity> Notifying Service finished: " + descriptor().commonName() + id());
 			m_reactor.notify("service_finish" + id(), Event.wrap(id()));
+			finished();
+			System.out.println("ServiceEntity> Persisting: " + commonName() + ":" + id());
+			m_servicePersistence.save(this);
 		}
 
+    }
+    
+    protected void finished()
+    {
     }
 }

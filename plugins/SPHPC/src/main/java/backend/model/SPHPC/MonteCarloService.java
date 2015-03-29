@@ -5,23 +5,19 @@ import java.util.Arrays;
 
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
-import javax.persistence.Transient;
 
 import org.bson.Document;
 
 import ro.fortsoft.pf4j.Extension;
 import backend.model.result.DictionaryResult;
 import backend.model.result.JsonResult;
-import backend.model.result.Result;
 import backend.model.service.ServicePlugin;
+import backend.model.task.ConfigurationFailedException;
 
 @Extension
 @Entity
 @Inheritance
 public class MonteCarloService extends ServicePlugin<JsonResult> {
-	
-	@Transient
-	MonteCarloJob m_job;
 	
 	public MonteCarloService()
 	{
@@ -82,11 +78,17 @@ public class MonteCarloService extends ServicePlugin<JsonResult> {
 	    jobConfiguration.value("lastClose", (double) (stockData.get(stockData.size() - 1).get(4)));
 				
 //	    System.out.println("MonteCarloService> Starting Job");
-		MonteCarloJob m_job = new MonteCarloJob();
-		m_job.configuration(jobConfiguration);
-		result(m_job.result());
-		
-		executeJob(m_job);
+		MonteCarloJob job = new MonteCarloJob();
+		try 
+		{
+			job.configuration(jobConfiguration);
+		} 
+		catch (ConfigurationFailedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		result(job.result());
+		executeJob(job);
 	}
 	
 

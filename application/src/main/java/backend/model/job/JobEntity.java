@@ -6,25 +6,22 @@ import java.util.Vector;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import reactor.core.Reactor;
 import reactor.event.Event;
 import backend.model.descriptor.Descriptor;
-import backend.model.result.DictionaryResult;
 import backend.model.result.Result;
-import backend.model.result.ResultRepository;
 import backend.system.GlobalState;
 import backend.system.execution.ThreadPoolExecutor;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
-@Inheritance
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @org.springframework.stereotype.Service
 //T specifies the jobs result type
 public abstract class JobEntity<T extends Result> extends Job<T>

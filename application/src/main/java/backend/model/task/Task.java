@@ -1,7 +1,5 @@
 package backend.model.task;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,10 +9,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.persistence.InheritanceType;
 
 import backend.model.descriptor.Describable;
 import backend.model.result.Result;
@@ -22,9 +20,10 @@ import backend.model.result.ResultRepository;
 import backend.system.GlobalPersistenceUnit;
 import backend.system.GlobalState;
 
-//TODO: check if mandatory configuration is given
-@Entity
-@Inheritance
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+//TODO: check configuration for not stringvalues
+@MappedSuperclass
 public abstract class Task <T extends Result> implements Runnable, Describable, Configurable{
 	
 	@JsonProperty("id")
@@ -125,6 +124,8 @@ public abstract class Task <T extends Result> implements Runnable, Describable, 
     
     private void checkConfiguration(Result configuration) throws ConfigurationFailedException
     {
+    	if(m_requirements == null)
+    		return;
     	for(String requirement: m_requirements)
     	{
     		if(configuration().stringValue(requirement) == null)
