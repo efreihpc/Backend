@@ -3,6 +3,8 @@ $(document).ready(function(){
 	$("#MonteCarlo #Query").click(function(){monteCarloQuery($("#MonteCarlo #SearchField").val());});
 });
 
+google.load("visualization", "1", { packages: ["corechart"] });
+
 var timer;
 
 function addCheckStatusJob()
@@ -14,17 +16,27 @@ function displayService(jsonData)
 {
   $.each(jsonData, function(key, val)
   {
-      listElement = $("<li class=\"media\"><a class=\"media-left\" href=\"/job.html?identifier=" + val.id + "\"><span class=\"glyphicon glyphicon-tag\" aria-hidden=\"true\"></a><div class=\"media-body\"></span><h4 class=\"media-heading\">ID: " + val.id + "</h4><p>Name: " + val.descriptor.commonName + "</p></div></li>");
-
-      subList = $("<ul></ul>");
+         var datarray = [['day', 'close']];
+      listElement = $("<li  class=\"media\"><a class=\"media-left\" href=\"/job.html?identifier=" + val.id + "\"><span class=\"glyphicon glyphicon-tag\" aria-hidden=\"true\"></a><div class=\"media-body\"></span><h4 class=\"media-heading\">ID: " + val.id + "</h4><p>Name: " + val.descriptor.commonName + "</p><div id=\"chart_div\" style=\"width: 900px; height: 500px\"></div>  </div></li>");
 
       $.each(val.result.storage.storage.result_put, function(key, val)
       {
-        $("<li>" + val + "</li>").appendTo(subList);
+        datarray.push([key, val]);
       });
 
-      subList.appendTo(listElement);
       listElement.appendTo("#Services");
+
+
+
+            var data = google.visualization.arrayToDataTable(datarray);
+
+            var options = {
+                title: 'Monte Carlo Estimation'
+            };
+
+            var chart = new google.visualization.LineChart(
+                        document.getElementById('chart_div'));
+            chart.draw(data, options);
   });
 }
 
@@ -32,7 +44,7 @@ function monteCarloQuery(searchTerm)
 {
   configuration = {
     stockId: searchTerm,
-    OauthToken: "4e-vC8QFHWFu5zLHA6yu"
+    OauthToken: ""
   }
 
   queryService("ba6527deaac9505f6db41b10c6424ee463f4c2df", configuration, displayService);
