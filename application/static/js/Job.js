@@ -3,6 +3,8 @@ $(document).ready(function(){
 	$("#MonteCarlo #Query").click(function(){monteCarloQuery($("#MonteCarlo #SearchField").val());});
 });
 
+var timer;
+
 function addCheckStatusJob()
 {
   $.getJSON("http://localhost:8080/state");
@@ -12,7 +14,17 @@ function displayService(jsonData)
 {
   $.each(jsonData, function(key, val)
   {
-      $("<p>" + val.id + "</p>").appendTo("#Services");
+      listElement = $("<li class=\"media\"><a class=\"media-left\" href=\"/job.html?identifier=" + val.id + "\"><span class=\"glyphicon glyphicon-tag\" aria-hidden=\"true\"></a><div class=\"media-body\"></span><h4 class=\"media-heading\">ID: " + val.id + "</h4><p>Name: " + val.descriptor.commonName + "</p></div></li>");
+
+      subList = $("<ul></ul>");
+
+      $.each(val.result.storage.storage.result_put, function(key, val)
+      {
+        $("<li>" + val + "</li>").appendTo(subList);
+      });
+
+      subList.appendTo(listElement);
+      listElement.appendTo("#Services");
   });
 }
 
@@ -20,7 +32,7 @@ function monteCarloQuery(searchTerm)
 {
   configuration = {
     stockId: searchTerm,
-    OauthToken: ""
+    OauthToken: "4e-vC8QFHWFu5zLHA6yu"
   }
 
   queryService("ba6527deaac9505f6db41b10c6424ee463f4c2df", configuration, displayService);
@@ -40,7 +52,7 @@ function queryService(ServiceIdentifier, configuration, onFinish)
 
 function pollService(serviceUid, onFinish)
 {
-  setInterval(function() {doOnServiceFinishJsonId(serviceUid, onFinish);}, 5000);
+  timer = setInterval(function() {doOnServiceFinishJsonId(serviceUid, onFinish);}, 2000);
 }
 
 function doOnServiceFinishJsonId(serviceUid, finishedFunction)
@@ -55,6 +67,7 @@ function doOnServiceFinishJson(jsonData, finishedFunction)
   $.each(jsonData, function(key, val)
   {
     if(val.state == 1.0)
+      clearInterval(timer);
       finishedFunction(jsonData);
   });
 }
