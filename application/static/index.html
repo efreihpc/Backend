@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Job Scheduling Prototype</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+	<script src="js/Job.js"></script>
+</head>
+<body>
+  <div class="panel panel-default" id="Index">
+    <!-- Default panel contents -->
+    <div class="panel-heading">Job Index</div>
+	    <div class="panel-body">
+	      	<form class="form-inline" role="form">
+	      		<button id="Refresh" type="submit" class="btn btn-default">Refresh</button>
+	      		<button id="Check" type="submit" class="btn btn-default">Check Server Status</button>
+	    	</form>
+	    </div>
+
+    <ul id="JobIndex" class="media-list">
+    </ul>
+  </div>
+
+</body>
+</html>
