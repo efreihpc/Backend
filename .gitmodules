@@ -1,0 +1,3 @@
+[submodule "application/static/js/throbber"]
+	path = application/static/js/throbber
+	url = https://github.com/aino/throbber.js.git
