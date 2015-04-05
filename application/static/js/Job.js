@@ -1,6 +1,7 @@
 $(document).ready(function(){
 	$("#MonteCarlo").submit(function() { return false; });
-	$("#MonteCarlo #Query").click(function(){monteCarloQuery($("#MonteCarlo #SearchField").val());});
+	// $("#MonteCarlo #Query").click(function(){monteCarloQuery($("#MonteCarlo #SearchField").val());});
+  $("#MonteCarlo #Query").click(function(){queryQuandlCodes($("#MonteCarlo #SearchField").val());});
 });
 
 google.load("visualization", "1", { packages: ["corechart"] });
@@ -115,4 +116,40 @@ function doWithService(serviceTransfer, subject, object)
 function doWithServiceJson(jsonData, subject, object)
 {
     subject(jsonData.id, object);
+}
+
+function queryQuandlCodes(searchTerm)
+{
+    $.getJSON(
+    "https://www.quandl.com/api/v1/datasets.json?query=" + searchTerm,
+    function(data){ extractQuandlCodes(data, completeSearchField);});
+}
+
+function extractQuandlCodes(jsonData, onFinish)
+{
+  var quandlCodes = new Array();
+  $.each(jsonData.docs, function(key, val)
+  {
+    quandlCodes.push(val.source_code + "/" + val.code);
+  });
+
+  onFinish(quandlCodes);
+}
+
+function showArray(array)
+{
+  alert(array);
+}
+
+function completeSearchField(array)
+{
+  $("#MonteCarlo #SearchField").autocomplete(
+    {
+      source: array,
+      select: function(e,ui) {
+        monteCarloQuery(ui.item.value);
+      }
+    }
+  );
+    $("#MonteCarlo #SearchField").autocomplete( "search");
 }
